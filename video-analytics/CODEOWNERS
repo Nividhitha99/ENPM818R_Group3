@@ -1,0 +1,6 @@
+* @devops-team
+/backend/ @backend-team
+/frontend/ @frontend-team
+/terraform/ @infra-team
+/k8s/ @infra-team
+

@@ -1,0 +1,80 @@
+version: '3.8'
+
+services:
+  localstack:
+    image: localstack/localstack:latest
+    ports:
+      - "4566:4566"
+    environment:
+      - SERVICES=s3,sqs,dynamodb
+      - DEBUG=1
+      - DATA_DIR=/tmp/localstack/data
+    volumes:
+      - "./localstack_setup.sh:/etc/localstack/init/ready.d/init-aws.sh"
+
+  uploader:
+    build: ./backend/uploader
+    ports:
+      - "8001:8000"
+    environment:
+      - AWS_ACCESS_KEY_ID=test
+      - AWS_SECRET_ACCESS_KEY=test
+      - AWS_REGION=us-east-1
+      - AWS_ENDPOINT_URL=http://localstack:4566
+      - S3_BUCKET_NAME=video-uploads
+      - SQS_QUEUE_URL=http://localstack:4566/000000000000/video-jobs
+    depends_on:
+      - localstack
+
+  processor:
+    build: ./backend/processor
+    environment:
+      - AWS_ACCESS_KEY_ID=test
+      - AWS_SECRET_ACCESS_KEY=test
+      - AWS_REGION=us-east-1
+      - AWS_ENDPOINT_URL=http://localstack:4566
+      - SQS_QUEUE_URL=http://localstack:4566/000000000000/video-jobs
+      - DYNAMODB_TABLE_NAME=video-metadata
+    depends_on:
+      - localstack
+
+  analytics:
+    build: ./backend/analytics
+    ports:
+      - "8002:8000"
+    environment:
+      - AWS_ACCESS_KEY_ID=test
+      - AWS_SECRET_ACCESS_KEY=test
+      - AWS_REGION=us-east-1
+      - AWS_ENDPOINT_URL=http://localstack:4566
+      - DYNAMODB_TABLE_NAME=video-metadata
+    depends_on:
+      - localstack
+
+  auth:
+    build: ./backend/auth
+    ports:
+      - "8003:8000"
+    environment:
+      - JWT_SECRET=devsecret
+
+  gateway:
+    build: ./backend/gateway
+    ports:
+      - "8000:8000"
+    environment:
+      - UPLOADER_SERVICE_URL=http://uploader:8000
+      - ANALYTICS_SERVICE_URL=http://analytics:8000
+      - AUTH_SERVICE_URL=http://auth:8000
+    depends_on:
+      - uploader
+      - analytics
+      - auth
+
+  frontend:
+    build: ./frontend
+    ports:
+      - "3000:80"
+    depends_on:
+      - gateway
+
