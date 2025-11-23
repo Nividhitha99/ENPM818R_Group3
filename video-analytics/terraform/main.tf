@@ -18,13 +18,7 @@ terraform {
       version = "~> 2.11"
     }
   }
-  backend "s3" {
-    # Placeholder for state bucket
-    bucket = "video-analytics-terraform-state"
-    key    = "prod/terraform.tfstate"
-    region = "us-east-1"
-    encrypt = true
-  }
+ 
 }
 
 module "vpc" {
