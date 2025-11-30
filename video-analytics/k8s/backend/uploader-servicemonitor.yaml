@@ -1,0 +1,18 @@
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: uploader-servicemonitor
+  namespace: monitoring
+  labels:
+    release: monitoring   # REQUIRED
+spec:
+  selector:
+    matchLabels:
+      app: uploader
+  namespaceSelector:
+    matchNames:
+      - default
+  endpoints:
+    - port: http
+      path: /metrics
+      interval: 15s

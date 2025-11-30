@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: uploader-service
+  labels:
+    app: uploader
+spec:
+  selector:
+    app: uploader
+  ports:
+    - name: http
+      protocol: TCP
+      port: 8001
+      targetPort: 8001
+  type: ClusterIP
