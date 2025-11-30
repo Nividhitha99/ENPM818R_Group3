@@ -99,6 +99,14 @@ module "iam" {
   job_queue_arn      = module.sqs.queue_arn
   metadata_table_arn = module.dynamodb.table_arn
 }
+module "video_jobs_queue" {
+  source     = "./sqs"
+  queue_name = "video-analytics-queue"
+}
+module "uploader_s3_bucket" {
+  source      = "./s3"
+  bucket_name = "video-analytics-uploads"
+}
 
 
 
