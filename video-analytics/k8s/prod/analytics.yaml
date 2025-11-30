@@ -1,12 +1,21 @@
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: analytics-sa
+  namespace: default
+  annotations:
+    eks.amazonaws.com/role-arn: arn:aws:iam::385046010615:role/analytics-irsa-role
+
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: analytics
-  namespace: prod
+  namespace: default
   labels:
     app: analytics
 spec:
-  replicas: 2
+  replicas: 1
   selector:
     matchLabels:
       app: analytics
@@ -14,44 +23,35 @@ spec:
     metadata:
       labels:
         app: analytics
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/path: "/metrics"
+        prometheus.io/port: "8000"
     spec:
-      securityContext:
-        runAsNonRoot: true
-        runAsUser: 1000
+      serviceAccountName: analytics-sa
       containers:
-      - name: analytics
-        image: 123456789012.dkr.ecr.us-east-1.amazonaws.com/analytics:latest
-        ports:
-        - containerPort: 8000
-        env:
-        - name: DYNAMODB_TABLE_NAME
-          value: "video-metadata"
-        resources:
-          requests:
-            memory: "128Mi"
-            cpu: "100m"
-          limits:
-            memory: "256Mi"
-            cpu: "500m"
-        readinessProbe:
-          httpGet:
-            path: /health
-            port: 8000
-        livenessProbe:
-          httpGet:
-            path: /health
-            port: 8000
+        - name: analytics
+          image: 385046010615.dkr.ecr.us-east-1.amazonaws.com/analytics-service:1.0
+          imagePullPolicy: Always
+          env:
+            - name: AWS_REGION
+              value: "us-east-1"
+            - name: DYNAMODB_TABLE_NAME
+              value: "video-metadata"
+          ports:
+            - containerPort: 8000
+
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: analytics
-  namespace: prod
+  name: analytics-service
+  namespace: default
 spec:
   selector:
     app: analytics
   ports:
-  - port: 80
-    targetPort: 8000
+    - protocol: TCP
+      port: 8002
+      targetPort: 8000
   type: ClusterIP
-
