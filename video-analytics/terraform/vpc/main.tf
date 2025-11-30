@@ -1,42 +1,131 @@
-module "vpc" {
-  source = "terraform-aws-modules/vpc/aws"
-  version = "5.1.2"
+########################################
+# VARIABLES (removed duplicates)
+########################################
 
-  name = "video-analytics-vpc"
-  cidr = var.vpc_cidr
+variable "vpc_name" {}
+variable "project" {}
+variable "cluster_name" {}
+variable "vpc_cidr" {}
+variable "availability_zones" {
+  type = list(string)
+}
+variable "private_subnet_cidrs" {
+  type = list(string)
+}
+variable "public_subnet_cidrs" {
+  type = list(string)
+}
 
-  azs             = ["${var.aws_region}a", "${var.aws_region}b"]
-  private_subnets = ["10.0.1.0/24", "10.0.2.0/24"]
-  public_subnets  = ["10.0.101.0/24", "10.0.102.0/24"]
+########################################
+# VPC
+########################################
 
-  enable_nat_gateway = true
-  single_nat_gateway = true # For cost saving in dev, set false for prod
-  enable_vpn_gateway = false
+resource "aws_vpc" "this" {
+  cidr_block           = var.vpc_cidr
+  enable_dns_support   = true
+  enable_dns_hostnames = true
 
   tags = {
-    Terraform = "true"
-    Environment = "prod"
+    Name                                           = var.vpc_name
+    Project                                        = var.project
+    "kubernetes.io/cluster/${var.cluster_name}"    = "shared"
+  }
+}
+
+########################################
+# PUBLIC SUBNETS
+########################################
+
+resource "aws_subnet" "public" {
+  count = length(var.public_subnet_cidrs)
+
+  vpc_id                  = aws_vpc.this.id
+  cidr_block              = var.public_subnet_cidrs[count.index]
+  availability_zone       = var.availability_zones[count.index]
+  map_public_ip_on_launch = true  # Important for ALB & EKS nodegroups
+
+  tags = {
+    Name                                      = "${var.vpc_name}-public-${count.index}"
+    "kubernetes.io/role/elb"                  = "1"
     "kubernetes.io/cluster/${var.cluster_name}" = "shared"
+    Project                                   = var.project
   }
 
-  public_subnet_tags = {
-    "kubernetes.io/role/elb" = 1
-  }
-
-  private_subnet_tags = {
-    "kubernetes.io/role/internal-elb" = 1
+  # Prevent accidental recreation
+  lifecycle {
+    ignore_changes = [
+      cidr_block,
+      map_public_ip_on_launch,
+      tags,
+    ]
   }
 }
 
-variable "vpc_cidr" {}
-variable "aws_region" {}
-variable "cluster_name" {}
+########################################
+# PRIVATE SUBNETS
+########################################
 
-output "vpc_id" {
-  value = module.vpc.vpc_id
+resource "aws_subnet" "private" {
+  count = length(var.private_subnet_cidrs)
+
+  vpc_id            = aws_vpc.this.id
+  cidr_block        = var.private_subnet_cidrs[count.index]
+  availability_zone = var.availability_zones[count.index]
+
+  tags = {
+    Name                                      = "${var.vpc_name}-private-${count.index}"
+    "kubernetes.io/role/internal-elb"         = "1"
+    "kubernetes.io/cluster/${var.cluster_name}" = "shared"
+    Project                                   = var.project
+  }
+
+  lifecycle {
+    ignore_changes = [
+      cidr_block,
+      tags,
+    ]
+  }
 }
 
-output "private_subnets" {
-  value = module.vpc.private_subnets
+########################################
+# INTERNET GATEWAY
+########################################
+
+resource "aws_internet_gateway" "igw" {
+  vpc_id = aws_vpc.this.id
+
+  tags = {
+    Name    = "${var.vpc_name}-igw"
+    Project = var.project
+  }
 }
 
+########################################
+# PUBLIC ROUTE TABLE
+########################################
+
+resource "aws_route_table" "public" {
+  vpc_id = aws_vpc.this.id
+
+  tags = {
+    Name    = "${var.vpc_name}-public-rt"
+    Project = var.project
+  }
+}
+
+resource "aws_route" "public_route" {
+  route_table_id         = aws_route_table.public.id
+  destination_cidr_block = "0.0.0.0/0"
+  gateway_id             = aws_internet_gateway.igw.id
+}
+
+resource "aws_route_table_association" "public_assoc" {
+  count          = length(aws_subnet.public)
+  subnet_id      = aws_subnet.public[count.index].id
+  route_table_id = aws_route_table.public.id
+}
+
+########################################
+# OUTPUTS (REMOVED FROM HERE)
+########################################
+# (outputs remain in outputs.tf)
