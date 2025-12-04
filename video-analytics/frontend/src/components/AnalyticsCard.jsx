@@ -7,6 +7,7 @@ function AnalyticsCard({ title, value, icon: Icon, color = 'indigo' }) {
     green: 'from-green-500 to-emerald-500',
     purple: 'from-purple-500 to-pink-500',
     orange: 'from-orange-500 to-red-500',
+    red: 'from-red-500 to-pink-500',
   };
 
   return (

@@ -2,4 +2,6 @@ fastapi
 uvicorn
 boto3
 prometheus-client
+ffmpeg-python
+Pillow
 

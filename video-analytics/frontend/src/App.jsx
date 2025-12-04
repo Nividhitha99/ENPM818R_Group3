@@ -5,7 +5,6 @@ import Navbar from './components/Navbar';
 import Dashboard from './pages/Dashboard';
 import Uploads from './pages/Uploads';
 import Analytics from './pages/Analytics';
-import Settings from './pages/Settings';
 
 function App() {
   const [darkMode, setDarkMode] = useState(false);
@@ -29,7 +28,8 @@ function App() {
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/uploads" element={<Uploads />} />
             <Route path="/analytics" element={<Analytics />} />
-            <Route path="/settings" element={<Settings />} />
+            {/* Redirect any unknown routes (including /settings) to dashboard */}
+            <Route path="*" element={<Navigate to="/dashboard" replace />} />
           </Routes>
         </main>
       </div>
