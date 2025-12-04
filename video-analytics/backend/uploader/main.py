@@ -115,7 +115,9 @@ async def upload_video(file: UploadFile = File(...)):
                     file.file,  # File-like object that streams
                     BUCKET_NAME,
                     s3_video_key,
-                    ExtraArgs={'ContentType': file.content_type or 'video/mp4'}
+                    ExtraArgs={
+                        "ContentType": file.content_type or "video/mp4"
+                    }
                 )
                 logger.info(f"Video stored in S3: s3://{BUCKET_NAME}/{s3_video_key}, size={file_size} bytes")
             except ClientError as e:

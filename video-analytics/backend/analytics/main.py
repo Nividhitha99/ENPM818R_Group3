@@ -76,16 +76,55 @@ def get_videos(
                             metadata = json.loads(metadata_obj['Body'].read().decode('utf-8'))
                             
                             s3_key = metadata.get('s3_key', metadata.get('s3_video_key', ''))
-                            # Generate presigned URL for video access
+                            # Generate presigned URL for video access with Content-Type for streaming
                             try:
+                                content_type = metadata.get('content_type', 'video/mp4')
                                 processed_url = s3_client.generate_presigned_url(
                                     'get_object',
-                                    Params={'Bucket': S3_BUCKET, 'Key': s3_key},
+                                    Params={
+                                        'Bucket': S3_BUCKET, 
+                                        'Key': s3_key,
+                                        'ResponseContentType': content_type
+                                    },
                                     ExpiresIn=PRESIGNED_URL_EXPIRATION
                                 )
                             except Exception as e:
                                 logger.warning(f"Failed to generate presigned URL for {s3_key}: {str(e)}")
                                 processed_url = metadata.get('processed_url', f"https://{S3_BUCKET}.s3.amazonaws.com/{s3_key}")
+                            
+                            thumbnail_url = metadata.get('thumbnail_url', '')
+                            
+                            # If thumbnail_url is an S3 key (starts with thumbnails/), generate presigned URL
+                            if thumbnail_url and thumbnail_url.startswith('thumbnails/'):
+                                try:
+                                    thumbnail_url = s3_client.generate_presigned_url(
+                                        'get_object',
+                                        Params={'Bucket': S3_BUCKET, 'Key': thumbnail_url},
+                                        ExpiresIn=PRESIGNED_URL_EXPIRATION
+                                    )
+                                except Exception as e:
+                                    logger.warning(f"Failed to generate presigned URL for thumbnail {thumbnail_url}: {str(e)}")
+                                    # Keep original URL if presigned generation fails
+                            
+                            if not thumbnail_url and metadata.get('status') == 'PROCESSED':
+                                # Check if thumbnail exists in S3
+                                thumbnail_key = f"thumbnails/{metadata.get('video_id')}.jpg"
+                                try:
+                                    s3_client.head_object(Bucket=S3_BUCKET, Key=thumbnail_key)
+                                    # Thumbnail exists, generate presigned URL
+                                    thumbnail_url = s3_client.generate_presigned_url(
+                                        'get_object',
+                                        Params={'Bucket': S3_BUCKET, 'Key': thumbnail_key},
+                                        ExpiresIn=PRESIGNED_URL_EXPIRATION
+                                    )
+                                    logger.info(f"Found thumbnail in S3 for {metadata.get('video_id')}, generated presigned URL")
+                                except ClientError:
+                                    # Thumbnail doesn't exist, generate fallback
+                                    size_mb = round(metadata.get('size', metadata.get('file_size', 0)) / (1024 * 1024), 2)
+                                    runtime = metadata.get('runtime', 0)
+                                    if size_mb > 0 and runtime > 0:
+                                        thumbnail_url = f"https://via.placeholder.com/320x180.png?text={size_mb}MB*{runtime}s"
+                                        logger.info(f"Generated fallback thumbnail for {metadata.get('video_id')}: {thumbnail_url}")
                             
                             video = {
                                 'video_id': metadata.get('video_id', ''),
@@ -93,6 +132,7 @@ def get_videos(
                                 's3_bucket': metadata.get('s3_bucket', S3_BUCKET),
                                 's3_key': s3_key,
                                 'processed_url': processed_url,
+                                'thumbnail_url': thumbnail_url,
                                 'timestamp': int(metadata.get('timestamp', metadata.get('upload_timestamp', 0))),
                                 'size': int(metadata.get('size', metadata.get('file_size', 0))),
                                 'runtime': int(metadata.get('runtime', 0)),
@@ -149,16 +189,54 @@ def get_video(video_id: str):
             
             # Format response with all required fields
             s3_key = metadata.get('s3_key', metadata.get('s3_video_key', ''))
-            # Generate presigned URL for video access
+            # Generate presigned URL for video access with Content-Type for streaming
             try:
+                content_type = metadata.get('content_type', 'video/mp4')
                 processed_url = s3_client.generate_presigned_url(
                     'get_object',
-                    Params={'Bucket': S3_BUCKET, 'Key': s3_key},
+                    Params={
+                        'Bucket': S3_BUCKET, 
+                        'Key': s3_key,
+                        'ResponseContentType': content_type
+                    },
                     ExpiresIn=PRESIGNED_URL_EXPIRATION
                 )
             except Exception as e:
                 logger.warning(f"Failed to generate presigned URL for {s3_key}: {str(e)}")
                 processed_url = metadata.get('processed_url', f"https://{S3_BUCKET}.s3.amazonaws.com/{s3_key}")
+            
+            thumbnail_url = metadata.get('thumbnail_url', '')
+            
+            # If thumbnail_url is an S3 key (starts with thumbnails/), generate presigned URL
+            if thumbnail_url and thumbnail_url.startswith('thumbnails/'):
+                try:
+                    thumbnail_url = s3_client.generate_presigned_url(
+                        'get_object',
+                        Params={'Bucket': S3_BUCKET, 'Key': thumbnail_url},
+                        ExpiresIn=PRESIGNED_URL_EXPIRATION
+                    )
+                except Exception as e:
+                    logger.warning(f"Failed to generate presigned URL for thumbnail {thumbnail_url}: {str(e)}")
+                    # Keep original URL if presigned generation fails
+            
+            if not thumbnail_url and metadata.get('status') == 'PROCESSED':
+                # Check if thumbnail exists in S3
+                thumbnail_key = f"thumbnails/{video_id}.jpg"
+                try:
+                    s3_client.head_object(Bucket=S3_BUCKET, Key=thumbnail_key)
+                    # Thumbnail exists, generate presigned URL
+                    thumbnail_url = s3_client.generate_presigned_url(
+                        'get_object',
+                        Params={'Bucket': S3_BUCKET, 'Key': thumbnail_key},
+                        ExpiresIn=PRESIGNED_URL_EXPIRATION
+                    )
+                    logger.info(f"Found thumbnail in S3 for {video_id}, generated presigned URL")
+                except ClientError:
+                    # Thumbnail doesn't exist, generate fallback
+                    size_mb = round(metadata.get('size', metadata.get('file_size', 0)) / (1024 * 1024), 2)
+                    runtime = metadata.get('runtime', 0)
+                    if size_mb > 0 and runtime > 0:
+                        thumbnail_url = f"https://via.placeholder.com/320x180.png?text={size_mb}MB*{runtime}s"
             
             video = {
                 'video_id': metadata.get('video_id', video_id),
@@ -166,6 +244,7 @@ def get_video(video_id: str):
                 's3_bucket': metadata.get('s3_bucket', S3_BUCKET),
                 's3_key': s3_key,
                 'processed_url': processed_url,
+                'thumbnail_url': thumbnail_url,
                 'timestamp': int(metadata.get('timestamp', metadata.get('upload_timestamp', 0))),
                 'size': int(metadata.get('size', metadata.get('file_size', 0))),
                 'runtime': int(metadata.get('runtime', 0)),
