@@ -1,55 +1,44 @@
 version: '3.8'
 
 services:
-  localstack:
-    image: localstack/localstack:latest
-    ports:
-      - "4566:4566"
-    environment:
-      - SERVICES=s3,sqs,dynamodb
-      - DEBUG=1
-      - DATA_DIR=/tmp/localstack/data
-    volumes:
-      - "./localstack_setup.sh:/etc/localstack/init/ready.d/init-aws.sh"
-
   uploader:
-    build: ./backend/uploader
+    build:
+      context: ./backend/uploader
+      dockerfile: Dockerfile.dev
+    volumes:
+      # Bind mount for live code reload - changes in backend/uploader automatically reload
+      - ./backend/uploader:/app
+      # Mount AWS credentials from host (Windows path)
+      - ${USERPROFILE}/.aws:/root/.aws:ro
     ports:
       - "8001:8000"
     environment:
-      - AWS_ACCESS_KEY_ID=test
-      - AWS_SECRET_ACCESS_KEY=test
       - AWS_REGION=us-east-1
-      - AWS_ENDPOINT_URL=http://localstack:4566
-      - S3_BUCKET_NAME=video-uploads
-      - SQS_QUEUE_URL=http://localstack:4566/000000000000/video-jobs
-    depends_on:
-      - localstack
+      - S3_BUCKET_NAME=video-analytics-uploads
+      - SQS_QUEUE_URL=https://sqs.us-east-1.amazonaws.com/385046010615/video-processing-jobs
 
   processor:
     build: ./backend/processor
+    volumes:
+      # Mount AWS credentials from host (Windows path) - mount to both root and appuser locations
+      - ${USERPROFILE}/.aws:/root/.aws:ro
+      - ${USERPROFILE}/.aws:/home/appuser/.aws:ro
     environment:
-      - AWS_ACCESS_KEY_ID=test
-      - AWS_SECRET_ACCESS_KEY=test
       - AWS_REGION=us-east-1
-      - AWS_ENDPOINT_URL=http://localstack:4566
-      - SQS_QUEUE_URL=http://localstack:4566/000000000000/video-jobs
-      - DYNAMODB_TABLE_NAME=video-metadata
-    depends_on:
-      - localstack
+      - SQS_QUEUE_URL=https://sqs.us-east-1.amazonaws.com/385046010615/video-processing-jobs
+      - S3_BUCKET_NAME=video-analytics-uploads
 
   analytics:
     build: ./backend/analytics
+    volumes:
+      # Mount AWS credentials from host (Windows path) - mount to both root and appuser locations
+      - ${USERPROFILE}/.aws:/root/.aws:ro
+      - ${USERPROFILE}/.aws:/home/appuser/.aws:ro
     ports:
       - "8002:8000"
     environment:
-      - AWS_ACCESS_KEY_ID=test
-      - AWS_SECRET_ACCESS_KEY=test
       - AWS_REGION=us-east-1
-      - AWS_ENDPOINT_URL=http://localstack:4566
-      - DYNAMODB_TABLE_NAME=video-metadata
-    depends_on:
-      - localstack
+      - S3_BUCKET_NAME=video-analytics-uploads
 
   auth:
     build: ./backend/auth

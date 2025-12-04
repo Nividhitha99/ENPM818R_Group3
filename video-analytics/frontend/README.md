@@ -52,7 +52,6 @@ src/
 │   ├── Dashboard.jsx
 │   ├── Uploads.jsx
 │   ├── Analytics.jsx
-│   └── Settings.jsx
 ├── App.jsx              # Main app with routing
 ├── main.jsx             # Entry point
 └── index.css            # TailwindCSS styles
@@ -90,5 +89,4 @@ The frontend expects these endpoints (configured via nginx proxy):
 - `/dashboard` - Main dashboard (default)
 - `/uploads` - Video upload page
 - `/analytics` - Analytics and charts
-- `/settings` - Settings page
 

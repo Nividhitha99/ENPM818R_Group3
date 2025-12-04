@@ -49,28 +49,25 @@ function UploadCard() {
       setUploading(true);
       setProgress(0);
 
-      progressIntervalRef.current = setInterval(() => {
-        setProgress((prev) => {
-          if (prev >= 90) {
-            if (progressIntervalRef.current) {
-              clearInterval(progressIntervalRef.current);
-            }
-            return 90;
-          }
-          return prev + 10;
-        });
-      }, 200);
+      // Progress will be tracked via onUploadProgress callback
+      // No need for fake interval
 
       await axios.post('/api/uploader/upload', formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
+        timeout: 600000, // 10 minutes timeout for large files
+        onUploadProgress: (progressEvent) => {
+          if (progressEvent.total) {
+            const percentCompleted = Math.round(
+              (progressEvent.loaded * 100) / progressEvent.total
+            );
+            setProgress(percentCompleted);
+          }
+        },
       });
 
-      if (progressIntervalRef.current) {
-        clearInterval(progressIntervalRef.current);
-      }
-      setProgress(100);
+      // Progress already at 100% from onUploadProgress
       setToast({ type: 'success', message: 'Upload successful!' });
       setFile(null);
       setTimeout(() => {
@@ -121,6 +118,9 @@ function UploadCard() {
           </p>
           <p className="text-sm text-gray-500 dark:text-gray-500">
             Supports MP4, MOV, AVI, and more
+          </p>
+          <p className="text-sm text-gray-500 dark:text-gray-500 mt-1 font-medium">
+            Upload videos &lt; 500 MB
           </p>
         </div>
 

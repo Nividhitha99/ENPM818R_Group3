@@ -5,14 +5,12 @@ import {
   HomeIcon,
   CloudArrowUpIcon,
   ChartBarIcon,
-  Cog6ToothIcon,
 } from '@heroicons/react/24/outline';
 
 const menuItems = [
   { path: '/dashboard', icon: HomeIcon, label: 'Dashboard' },
   { path: '/uploads', icon: CloudArrowUpIcon, label: 'Uploads' },
   { path: '/analytics', icon: ChartBarIcon, label: 'Analytics' },
-  { path: '/settings', icon: Cog6ToothIcon, label: 'Settings' },
 ];
 
 function Sidebar() {
