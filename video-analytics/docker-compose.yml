@@ -9,7 +9,8 @@ services:
       # Bind mount for live code reload - changes in backend/uploader automatically reload
       - ./backend/uploader:/app
       # Mount AWS credentials from host (Windows path)
-      - ${USERPROFILE}/.aws:/root/.aws:ro
+      - ${HOME}/.aws:/root/.aws:ro
+
     ports:
       - "8001:8000"
     environment:
@@ -21,8 +22,8 @@ services:
     build: ./backend/processor
     volumes:
       # Mount AWS credentials from host (Windows path) - mount to both root and appuser locations
-      - ${USERPROFILE}/.aws:/root/.aws:ro
-      - ${USERPROFILE}/.aws:/home/appuser/.aws:ro
+      - ${HOME}/.aws:/root/.aws:ro
+      - ${HOME}/.aws:/home/appuser/.aws:ro
     environment:
       - AWS_REGION=us-east-1
       - SQS_QUEUE_URL=https://sqs.us-east-1.amazonaws.com/385046010615/video-processing-jobs
@@ -32,8 +33,8 @@ services:
     build: ./backend/analytics
     volumes:
       # Mount AWS credentials from host (Windows path) - mount to both root and appuser locations
-      - ${USERPROFILE}/.aws:/root/.aws:ro
-      - ${USERPROFILE}/.aws:/home/appuser/.aws:ro
+      - ${HOME}/.aws:/root/.aws:ro
+      - ${HOME}/.aws:/home/appuser/.aws:ro
     ports:
       - "8002:8000"
     environment:
