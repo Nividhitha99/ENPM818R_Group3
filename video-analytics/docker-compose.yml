@@ -19,6 +19,8 @@ services:
 
   processor:
     build: ./backend/processor
+    ports:
+      - "8010:8000"
     volumes:
       # Mount AWS credentials from host (Windows path) - mount to both root and appuser locations
       - ${USERPROFILE}/.aws:/root/.aws:ro
