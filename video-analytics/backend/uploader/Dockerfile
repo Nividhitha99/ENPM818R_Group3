@@ -11,6 +11,9 @@ FROM python:3.11-slim
 
 WORKDIR /app
 
+ENV PYTHONDONTWRITEBYTECODE=1 \
+  PYTHONUNBUFFERED=1
+
 # Create non-root user
 RUN useradd -m -u 1000 appuser
 

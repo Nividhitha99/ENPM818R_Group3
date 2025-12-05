@@ -9,6 +9,9 @@ FROM python:3.11-slim
 
 WORKDIR /app
 
+ENV PYTHONDONTWRITEBYTECODE=1 \
+  PYTHONUNBUFFERED=1
+
 RUN useradd -m -u 1000 appuser
 
 COPY --from=builder /install /usr/local
