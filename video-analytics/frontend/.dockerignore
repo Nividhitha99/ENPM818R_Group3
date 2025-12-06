@@ -1,4 +1,73 @@
+# Dependencies
 node_modules
-build
-.env
+npm-debug.log*
+yarn-error.log
+yarn-debug.log*
 
+# Build outputs
+build
+dist
+.cache
+coverage
+
+# Environment files
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# IDE and editor files
+.vscode
+.idea
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Git
+.git
+.gitignore
+.gitattributes
+
+# Windows specific files
+desktop.ini
+Thumbs.db
+*.lnk
+~$*
+*.tmp
+*.temp
+
+# OneDrive metadata - be very aggressive
+.onedrive*
+~$*
+*.odtmp
+*OneDrive*
+*onedrive*
+
+# Documentation
+README.md
+*.md
+DOCKER_FIX_ANALYSIS.md
+DEPLOYMENT_COMMANDS.md
+
+# Docker files themselves
+Dockerfile
+.dockerignore
+docker-compose.yml
+
+# Test files
+coverage
+.nyc_output
+__tests__
+*.test.js
+*.test.jsx
+*.spec.js
+*.spec.jsx
+
+# Misc
+*.log
+.cache
+*.bak
+*.backup
+*.orig
