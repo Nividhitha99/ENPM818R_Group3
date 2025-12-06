@@ -1,0 +1,96 @@
+name: Build and Push Images to ECR
+
+on:
+  push:
+    branches:
+      - main
+      - member4-processor_analytics
+    paths:
+      - 'video-analytics/backend/**'
+      - 'video-analytics/frontend/**'
+      - 'video-analytics/docker-compose.yml'
+      - '.github/workflows/build-and-push.yml'
+  workflow_dispatch:
+
+env:
+  AWS_REGION: us-east-1
+  AWS_ACCOUNT_ID: 385046010615
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: arn:aws:iam::${{ env.AWS_ACCOUNT_ID }}:role/github-actions-ecr-role
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v2
+
+      - name: Set image tag
+        id: image-tag
+        run: echo "tag=$(echo ${{ github.sha }} | cut -c 1-7)" >> $GITHUB_OUTPUT
+
+      - name: Build and push Auth Service
+        uses: docker/build-push-action@v5
+        with:
+          context: ./video-analytics/backend/auth
+          push: true
+          tags: |
+            ${{ env.AWS_ACCOUNT_ID }}.dkr.ecr.${{ env.AWS_REGION }}.amazonaws.com/auth-service:latest
+            ${{ env.AWS_ACCOUNT_ID }}.dkr.ecr.${{ env.AWS_REGION }}.amazonaws.com/auth-service:${{ steps.image-tag.outputs.tag }}
+
+      - name: Build and push Gateway Service
+        uses: docker/build-push-action@v5
+        with:
+          context: ./video-analytics/backend/gateway
+          push: true
+          tags: |
+            ${{ env.AWS_ACCOUNT_ID }}.dkr.ecr.${{ env.AWS_REGION }}.amazonaws.com/gateway-service:latest
+            ${{ env.AWS_ACCOUNT_ID }}.dkr.ecr.${{ env.AWS_REGION }}.amazonaws.com/gateway-service:${{ steps.image-tag.outputs.tag }}
+
+      - name: Build and push Uploader Service
+        uses: docker/build-push-action@v5
+        with:
+          context: ./video-analytics/backend/uploader
+          dockerfile: ./video-analytics/backend/uploader/Dockerfile
+          push: true
+          tags: |
+            ${{ env.AWS_ACCOUNT_ID }}.dkr.ecr.${{ env.AWS_REGION }}.amazonaws.com/uploader-service:latest
+            ${{ env.AWS_ACCOUNT_ID }}.dkr.ecr.${{ env.AWS_REGION }}.amazonaws.com/uploader-service:${{ steps.image-tag.outputs.tag }}
+
+      - name: Build and push Processor Service
+        uses: docker/build-push-action@v5
+        with:
+          context: ./video-analytics/backend/processor
+          push: true
+          tags: |
+            ${{ env.AWS_ACCOUNT_ID }}.dkr.ecr.${{ env.AWS_REGION }}.amazonaws.com/processor-service:latest
+            ${{ env.AWS_ACCOUNT_ID }}.dkr.ecr.${{ env.AWS_REGION }}.amazonaws.com/processor-service:${{ steps.image-tag.outputs.tag }}
+
+      - name: Build and push Analytics Service
+        uses: docker/build-push-action@v5
+        with:
+          context: ./video-analytics/backend/analytics
+          push: true
+          tags: |
+            ${{ env.AWS_ACCOUNT_ID }}.dkr.ecr.${{ env.AWS_REGION }}.amazonaws.com/analytics-service:latest
+            ${{ env.AWS_ACCOUNT_ID }}.dkr.ecr.${{ env.AWS_REGION }}.amazonaws.com/analytics-service:${{ steps.image-tag.outputs.tag }}
+
+      - name: Build and push Frontend
+        uses: docker/build-push-action@v5
+        with:
+          context: ./video-analytics/frontend
+          push: true
+          tags: |
+            ${{ env.AWS_ACCOUNT_ID }}.dkr.ecr.${{ env.AWS_REGION }}.amazonaws.com/frontend:latest
+            ${{ env.AWS_ACCOUNT_ID }}.dkr.ecr.${{ env.AWS_REGION }}.amazonaws.com/frontend:${{ steps.image-tag.outputs.tag }}
