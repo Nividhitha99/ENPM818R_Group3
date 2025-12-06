@@ -1,20 +1,17 @@
-name: Build and Push Images to ECR
+# .github/workflows/build-and-push.yml
+name: Build and Push to ECR
 
 on:
   push:
-    branches:
-      - main
-      - member4-processor_analytics
-    paths:
-      - 'video-analytics/backend/**'
-      - 'video-analytics/frontend/**'
-      - 'video-analytics/docker-compose.yml'
-      - '.github/workflows/build-and-push.yml'
-  workflow_dispatch:
+    branches: [ member4-processor_analytics ]
+  pull_request:
+    branches: [ main ]
 
 env:
   AWS_REGION: us-east-1
-  AWS_ACCOUNT_ID: 385046010615
+  ECR_REGISTRY: 385046010615.dkr.ecr.us-east-1.amazonaws.com
+  ECR_REPOSITORY_PROCESSOR: processor-service
+  ECR_REPOSITORY_ANALYTICS: analytics-service
 
 jobs:
   build-and-push:
@@ -22,54 +19,40 @@ jobs:
     permissions:
       id-token: write
       contents: read
+
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+    - name: Checkout code
+      uses: actions/checkout@v3
 
-      - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v4
-        with:
-          role-to-assume: arn:aws:iam::${{ env.AWS_ACCOUNT_ID }}:role/github-actions-ecr-role
-          aws-region: ${{ env.AWS_REGION }}
+    - name: Configure AWS credentials
+      uses: aws-actions/configure-aws-credentials@v2
+      with:
+        role-to-assume: arn:aws:iam::385046010615:role/github-actions-role
+        aws-region: ${{ env.AWS_REGION }}
+        role-session-name: GitHubActions-${{ github.sha }}
 
-      - name: Amazon ECR "Login" Action for GitHub Actions
-        uses: aws-actions/amazon-ecr-login@v2
-        id: login-ecr
+    - name: Login to Amazon ECR
+      id: login-ecr
+      uses: aws-actions/amazon-ecr-login@v1
 
-      - name: Set image tag
-        id: image-tag
-        run: echo "tag=$(echo ${{ github.sha }} | cut -c 1-7)" >> $GITHUB_OUTPUT
+    - name: Build, tag, and push processor service
+      env:
+        ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+        IMAGE_TAG: ${{ github.sha }}
+      run: |
+        cd video_analytics/backend/processor
+        docker build -t $ECR_REGISTRY/$ECR_REPOSITORY_PROCESSOR:$IMAGE_TAG .
+        docker push $ECR_REGISTRY/$ECR_REPOSITORY_PROCESSOR:$IMAGE_TAG
+        docker tag $ECR_REGISTRY/$ECR_REPOSITORY_PROCESSOR:$IMAGE_TAG $ECR_REGISTRY/$ECR_REPOSITORY_PROCESSOR:latest
+        docker push $ECR_REGISTRY/$ECR_REPOSITORY_PROCESSOR:latest
 
-      - name: Build, tag, and push image to Amazon ECR
-        env:
-          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-        run: |
-          # Auth Service
-          docker build -t $ECR_REGISTRY/auth-service:latest -t $ECR_REGISTRY/auth-service:${{ steps.image-tag.outputs.tag }} video-analytics/backend/auth
-          docker push $ECR_REGISTRY/auth-service:latest
-          docker push $ECR_REGISTRY/auth-service:${{ steps.image-tag.outputs.tag }}
-          
-          # Gateway Service
-          docker build -t $ECR_REGISTRY/gateway-service:latest -t $ECR_REGISTRY/gateway-service:${{ steps.image-tag.outputs.tag }} video-analytics/backend/gateway
-          docker push $ECR_REGISTRY/gateway-service:latest
-          docker push $ECR_REGISTRY/gateway-service:${{ steps.image-tag.outputs.tag }}
-          
-          # Uploader Service
-          docker build -t $ECR_REGISTRY/uploader-service:latest -t $ECR_REGISTRY/uploader-service:${{ steps.image-tag.outputs.tag }} video-analytics/backend/uploader
-          docker push $ECR_REGISTRY/uploader-service:latest
-          docker push $ECR_REGISTRY/uploader-service:${{ steps.image-tag.outputs.tag }}
-          
-          # Processor Service
-          docker build -t $ECR_REGISTRY/processor-service:latest -t $ECR_REGISTRY/processor-service:${{ steps.image-tag.outputs.tag }} video-analytics/backend/processor
-          docker push $ECR_REGISTRY/processor-service:latest
-          docker push $ECR_REGISTRY/processor-service:${{ steps.image-tag.outputs.tag }}
-          
-          # Analytics Service
-          docker build -t $ECR_REGISTRY/analytics-service:latest -t $ECR_REGISTRY/analytics-service:${{ steps.image-tag.outputs.tag }} video-analytics/backend/analytics
-          docker push $ECR_REGISTRY/analytics-service:latest
-          docker push $ECR_REGISTRY/analytics-service:${{ steps.image-tag.outputs.tag }}
-          
-          # Frontend
-          docker build -t $ECR_REGISTRY/frontend:latest -t $ECR_REGISTRY/frontend:${{ steps.image-tag.outputs.tag }} video-analytics/frontend
-          docker push $ECR_REGISTRY/frontend:latest
-          docker push $ECR_REGISTRY/frontend:${{ steps.image-tag.outputs.tag }}
+    - name: Build, tag, and push analytics service
+      env:
+        ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+        IMAGE_TAG: ${{ github.sha }}
+      run: |
+        cd video_analytics/backend/analytics
+        docker build -t $ECR_REGISTRY/$ECR_REPOSITORY_ANALYTICS:$IMAGE_TAG .
+        docker push $ECR_REGISTRY/$ECR_REPOSITORY_ANALYTICS:$IMAGE_TAG
+        docker tag $ECR_REGISTRY/$ECR_REPOSITORY_ANALYTICS:$IMAGE_TAG $ECR_REGISTRY/$ECR_REPOSITORY_ANALYTICS:latest
+        docker push $ECR_REGISTRY/$ECR_REPOSITORY_ANALYTICS:latest
