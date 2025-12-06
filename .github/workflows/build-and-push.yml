@@ -15,6 +15,7 @@ on:
 env:
   AWS_REGION: us-east-1
   AWS_ACCOUNT_ID: 385046010615
+  REGISTRY: 385046010615.dkr.ecr.us-east-1.amazonaws.com
 
 jobs:
   build-and-push:
@@ -32,78 +33,53 @@ jobs:
           role-to-assume: arn:aws:iam::${{ env.AWS_ACCOUNT_ID }}:role/github-actions-ecr-role
           aws-region: ${{ env.AWS_REGION }}
 
-      - name: Get ECR password
-        id: ecr-password
-        run: |
-          PASSWORD=$(aws ecr get-authorization-token --query 'authorizationData[0].authorizationToken' --output text | base64 --decode | cut -d: -f2)
-          echo "::add-mask::$PASSWORD"
-          echo "password=$PASSWORD" >> $GITHUB_OUTPUT
-
       - name: Login to Amazon ECR
-        uses: docker/login-action@v3
-        with:
-          registry: ${{ env.AWS_ACCOUNT_ID }}.dkr.ecr.${{ env.AWS_REGION }}.amazonaws.com
-          username: AWS
-          password: ${{ steps.ecr-password.outputs.password }}
+        id: login-ecr
+        run: |
+          aws ecr get-login-password --region ${{ env.AWS_REGION }} | docker login --username AWS --password-stdin ${{ env.REGISTRY }}
 
       - name: Set image tag
         id: image-tag
         run: echo "tag=$(echo ${{ github.sha }} | cut -c 1-7)" >> $GITHUB_OUTPUT
 
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
-
       - name: Build and push Auth Service
-        uses: docker/build-push-action@v5
-        with:
-          context: ./video-analytics/backend/auth
-          push: true
-          tags: |
-            ${{ env.AWS_ACCOUNT_ID }}.dkr.ecr.${{ env.AWS_REGION }}.amazonaws.com/auth-service:latest
-            ${{ env.AWS_ACCOUNT_ID }}.dkr.ecr.${{ env.AWS_REGION }}.amazonaws.com/auth-service:${{ steps.image-tag.outputs.tag }}
+        run: |
+          cd video-analytics/backend/auth
+          docker build -t ${{ env.REGISTRY }}/auth-service:latest -t ${{ env.REGISTRY }}/auth-service:${{ steps.image-tag.outputs.tag }} .
+          docker push ${{ env.REGISTRY }}/auth-service:latest
+          docker push ${{ env.REGISTRY }}/auth-service:${{ steps.image-tag.outputs.tag }}
 
       - name: Build and push Gateway Service
-        uses: docker/build-push-action@v5
-        with:
-          context: ./video-analytics/backend/gateway
-          push: true
-          tags: |
-            ${{ env.AWS_ACCOUNT_ID }}.dkr.ecr.${{ env.AWS_REGION }}.amazonaws.com/gateway-service:latest
-            ${{ env.AWS_ACCOUNT_ID }}.dkr.ecr.${{ env.AWS_REGION }}.amazonaws.com/gateway-service:${{ steps.image-tag.outputs.tag }}
+        run: |
+          cd video-analytics/backend/gateway
+          docker build -t ${{ env.REGISTRY }}/gateway-service:latest -t ${{ env.REGISTRY }}/gateway-service:${{ steps.image-tag.outputs.tag }} .
+          docker push ${{ env.REGISTRY }}/gateway-service:latest
+          docker push ${{ env.REGISTRY }}/gateway-service:${{ steps.image-tag.outputs.tag }}
 
       - name: Build and push Uploader Service
-        uses: docker/build-push-action@v5
-        with:
-          context: ./video-analytics/backend/uploader
-          dockerfile: ./video-analytics/backend/uploader/Dockerfile
-          push: true
-          tags: |
-            ${{ env.AWS_ACCOUNT_ID }}.dkr.ecr.${{ env.AWS_REGION }}.amazonaws.com/uploader-service:latest
-            ${{ env.AWS_ACCOUNT_ID }}.dkr.ecr.${{ env.AWS_REGION }}.amazonaws.com/uploader-service:${{ steps.image-tag.outputs.tag }}
+        run: |
+          cd video-analytics/backend/uploader
+          docker build -t ${{ env.REGISTRY }}/uploader-service:latest -t ${{ env.REGISTRY }}/uploader-service:${{ steps.image-tag.outputs.tag }} .
+          docker push ${{ env.REGISTRY }}/uploader-service:latest
+          docker push ${{ env.REGISTRY }}/uploader-service:${{ steps.image-tag.outputs.tag }}
 
       - name: Build and push Processor Service
-        uses: docker/build-push-action@v5
-        with:
-          context: ./video-analytics/backend/processor
-          push: true
-          tags: |
-            ${{ env.AWS_ACCOUNT_ID }}.dkr.ecr.${{ env.AWS_REGION }}.amazonaws.com/processor-service:latest
-            ${{ env.AWS_ACCOUNT_ID }}.dkr.ecr.${{ env.AWS_REGION }}.amazonaws.com/processor-service:${{ steps.image-tag.outputs.tag }}
+        run: |
+          cd video-analytics/backend/processor
+          docker build -t ${{ env.REGISTRY }}/processor-service:latest -t ${{ env.REGISTRY }}/processor-service:${{ steps.image-tag.outputs.tag }} .
+          docker push ${{ env.REGISTRY }}/processor-service:latest
+          docker push ${{ env.REGISTRY }}/processor-service:${{ steps.image-tag.outputs.tag }}
 
       - name: Build and push Analytics Service
-        uses: docker/build-push-action@v5
-        with:
-          context: ./video-analytics/backend/analytics
-          push: true
-          tags: |
-            ${{ env.AWS_ACCOUNT_ID }}.dkr.ecr.${{ env.AWS_REGION }}.amazonaws.com/analytics-service:latest
-            ${{ env.AWS_ACCOUNT_ID }}.dkr.ecr.${{ env.AWS_REGION }}.amazonaws.com/analytics-service:${{ steps.image-tag.outputs.tag }}
+        run: |
+          cd video-analytics/backend/analytics
+          docker build -t ${{ env.REGISTRY }}/analytics-service:latest -t ${{ env.REGISTRY }}/analytics-service:${{ steps.image-tag.outputs.tag }} .
+          docker push ${{ env.REGISTRY }}/analytics-service:latest
+          docker push ${{ env.REGISTRY }}/analytics-service:${{ steps.image-tag.outputs.tag }}
 
       - name: Build and push Frontend
-        uses: docker/build-push-action@v5
-        with:
-          context: ./video-analytics/frontend
-          push: true
-          tags: |
-            ${{ env.AWS_ACCOUNT_ID }}.dkr.ecr.${{ env.AWS_REGION }}.amazonaws.com/frontend:latest
-            ${{ env.AWS_ACCOUNT_ID }}.dkr.ecr.${{ env.AWS_REGION }}.amazonaws.com/frontend:${{ steps.image-tag.outputs.tag }}
+        run: |
+          cd video-analytics/frontend
+          docker build -t ${{ env.REGISTRY }}/frontend:latest -t ${{ env.REGISTRY }}/frontend:${{ steps.image-tag.outputs.tag }} .
+          docker push ${{ env.REGISTRY }}/frontend:latest
+          docker push ${{ env.REGISTRY }}/frontend:${{ steps.image-tag.outputs.tag }}
