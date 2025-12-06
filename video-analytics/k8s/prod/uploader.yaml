@@ -2,9 +2,9 @@ apiVersion: v1
 kind: ServiceAccount
 metadata:
   name: uploader-sa
-  namespace: default
+  namespace: prod
   annotations:
-    eks.amazonaws.com/role-arn: arn:aws:iam::385046010615:role/uploader-irsa-role   # to be created later
+    eks.amazonaws.com/role-arn: arn:aws:iam::385046010615:role/uploader-irsa-role
 
 ---
 apiVersion: apps/v1
