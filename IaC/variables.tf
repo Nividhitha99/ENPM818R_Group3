@@ -14,6 +14,35 @@ variable "eks_users" {
     policy = string
   }))
 
-  default = {}
+  default = {
+  group3_project_user = {
+    arn    = "arn:aws:iam::385046010615:user/group3-project-user"
+    policy = "ADMIN"
+  }
+  group3_member2 = {
+    arn    = "arn:aws:iam::385046010615:user/group3-member2"
+    policy = "ADMIN"
+  }
+  group3_member3 = {
+    arn    = "arn:aws:iam::385046010615:user/group3-member3"
+    policy = "ADMIN"
+  }
+  group3_member4 = {
+    arn    = "arn:aws:iam::385046010615:user/group3-member4"
+    policy = "ADMIN"
+  }
+  group3_member5 = {
+    arn    = "arn:aws:iam::385046010615:user/group3-member5"
+    policy = "ADMIN"
+  }
+  group3_member6 = {
+    arn    = "arn:aws:iam::385046010615:user/group3-member6"
+    policy = "ADMIN"
+  }
+  group3_member7 = {
+    arn    = "arn:aws:iam::385046010615:user/group3-member7"
+    policy = "ADMIN"
+  }
+}
 
 }
