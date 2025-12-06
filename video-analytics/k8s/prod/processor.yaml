@@ -31,7 +31,7 @@ spec:
       serviceAccountName: processor-sa
       containers:
         - name: processor
-          image: 385046010615.dkr.ecr.us-east-1.amazonaws.com/processor-service:1.0
+          image: 385046010615.dkr.ecr.us-east-1.amazonaws.com/processor-service:latest
           imagePullPolicy: Always
           ports:
             - containerPort: 8000

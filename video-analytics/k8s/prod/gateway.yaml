@@ -28,7 +28,7 @@ spec:
       serviceAccountName: gateway-sa
       containers:
         - name: gateway
-          image: 385046010615.dkr.ecr.us-east-1.amazonaws.com/gateway-service:1.0
+          image: 385046010615.dkr.ecr.us-east-1.amazonaws.com/gateway-service:latest
           imagePullPolicy: Always
           env:
             - name: UPLOADER_SERVICE_URL
