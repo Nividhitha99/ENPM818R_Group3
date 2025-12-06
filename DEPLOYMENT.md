@@ -32,7 +32,7 @@ kubectl exec -n prod <POD> -- env | grep AWS_ROLE_ARN
 ## Prometheus & Grafana
 
 ### Access
-- Prometheus: http://prometheus.monitoring.svc.cluster.local:9090
+- Prometheus: http://k8s-monitori-grafana-7448b91123-4076a7b0845bbf44.elb.us-east-1.amazonaws.com:3000
 - Grafana: http://k8s-monitori-grafana-7448b91123-4076a7b0845bbf44.elb.us-east-1.amazonaws.com:3000
 - Credentials: admin / admin123
 
