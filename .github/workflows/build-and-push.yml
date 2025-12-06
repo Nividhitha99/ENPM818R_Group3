@@ -32,9 +32,19 @@ jobs:
           role-to-assume: arn:aws:iam::${{ env.AWS_ACCOUNT_ID }}:role/github-actions-ecr-role
           aws-region: ${{ env.AWS_REGION }}
 
+      - name: Get ECR password
+        id: ecr-password
+        run: |
+          PASSWORD=$(aws ecr get-authorization-token --query 'authorizationData[0].authorizationToken' --output text | base64 --decode | cut -d: -f2)
+          echo "::add-mask::$PASSWORD"
+          echo "password=$PASSWORD" >> $GITHUB_OUTPUT
+
       - name: Login to Amazon ECR
-        id: login-ecr
-        uses: aws-actions/amazon-ecr-login@v2
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.AWS_ACCOUNT_ID }}.dkr.ecr.${{ env.AWS_REGION }}.amazonaws.com
+          username: AWS
+          password: ${{ steps.ecr-password.outputs.password }}
 
       - name: Set image tag
         id: image-tag
@@ -48,7 +58,6 @@ jobs:
         with:
           context: ./video-analytics/backend/auth
           push: true
-          registry: ${{ steps.login-ecr.outputs.registry }}
           tags: |
             ${{ env.AWS_ACCOUNT_ID }}.dkr.ecr.${{ env.AWS_REGION }}.amazonaws.com/auth-service:latest
             ${{ env.AWS_ACCOUNT_ID }}.dkr.ecr.${{ env.AWS_REGION }}.amazonaws.com/auth-service:${{ steps.image-tag.outputs.tag }}
@@ -58,7 +67,6 @@ jobs:
         with:
           context: ./video-analytics/backend/gateway
           push: true
-          registry: ${{ steps.login-ecr.outputs.registry }}
           tags: |
             ${{ env.AWS_ACCOUNT_ID }}.dkr.ecr.${{ env.AWS_REGION }}.amazonaws.com/gateway-service:latest
             ${{ env.AWS_ACCOUNT_ID }}.dkr.ecr.${{ env.AWS_REGION }}.amazonaws.com/gateway-service:${{ steps.image-tag.outputs.tag }}
@@ -69,7 +77,6 @@ jobs:
           context: ./video-analytics/backend/uploader
           dockerfile: ./video-analytics/backend/uploader/Dockerfile
           push: true
-          registry: ${{ steps.login-ecr.outputs.registry }}
           tags: |
             ${{ env.AWS_ACCOUNT_ID }}.dkr.ecr.${{ env.AWS_REGION }}.amazonaws.com/uploader-service:latest
             ${{ env.AWS_ACCOUNT_ID }}.dkr.ecr.${{ env.AWS_REGION }}.amazonaws.com/uploader-service:${{ steps.image-tag.outputs.tag }}
@@ -79,7 +86,6 @@ jobs:
         with:
           context: ./video-analytics/backend/processor
           push: true
-          registry: ${{ steps.login-ecr.outputs.registry }}
           tags: |
             ${{ env.AWS_ACCOUNT_ID }}.dkr.ecr.${{ env.AWS_REGION }}.amazonaws.com/processor-service:latest
             ${{ env.AWS_ACCOUNT_ID }}.dkr.ecr.${{ env.AWS_REGION }}.amazonaws.com/processor-service:${{ steps.image-tag.outputs.tag }}
@@ -89,7 +95,6 @@ jobs:
         with:
           context: ./video-analytics/backend/analytics
           push: true
-          registry: ${{ steps.login-ecr.outputs.registry }}
           tags: |
             ${{ env.AWS_ACCOUNT_ID }}.dkr.ecr.${{ env.AWS_REGION }}.amazonaws.com/analytics-service:latest
             ${{ env.AWS_ACCOUNT_ID }}.dkr.ecr.${{ env.AWS_REGION }}.amazonaws.com/analytics-service:${{ steps.image-tag.outputs.tag }}
@@ -99,7 +104,6 @@ jobs:
         with:
           context: ./video-analytics/frontend
           push: true
-          registry: ${{ steps.login-ecr.outputs.registry }}
           tags: |
             ${{ env.AWS_ACCOUNT_ID }}.dkr.ecr.${{ env.AWS_REGION }}.amazonaws.com/frontend:latest
             ${{ env.AWS_ACCOUNT_ID }}.dkr.ecr.${{ env.AWS_REGION }}.amazonaws.com/frontend:${{ steps.image-tag.outputs.tag }}
