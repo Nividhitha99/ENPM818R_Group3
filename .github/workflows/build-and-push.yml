@@ -36,7 +36,12 @@ jobs:
       - name: Login to Amazon ECR
         id: login-ecr
         run: |
-          aws ecr get-login-password --region ${{ env.AWS_REGION }} | docker login --username AWS --password-stdin ${{ env.REGISTRY }}
+          set -e
+          echo "Getting ECR login token..."
+          PASSWORD=$(aws ecr get-login-password --region ${{ env.AWS_REGION }})
+          echo "Logging in to ECR registry..."
+          echo "$PASSWORD" | docker login --username AWS --password-stdin ${{ env.REGISTRY }}
+          echo "ECR login successful"
 
       - name: Set image tag
         id: image-tag
@@ -44,6 +49,7 @@ jobs:
 
       - name: Build and push Auth Service
         run: |
+          set -e
           cd video-analytics/backend/auth
           docker build -t ${{ env.REGISTRY }}/auth-service:latest -t ${{ env.REGISTRY }}/auth-service:${{ steps.image-tag.outputs.tag }} .
           docker push ${{ env.REGISTRY }}/auth-service:latest
@@ -51,6 +57,7 @@ jobs:
 
       - name: Build and push Gateway Service
         run: |
+          set -e
           cd video-analytics/backend/gateway
           docker build -t ${{ env.REGISTRY }}/gateway-service:latest -t ${{ env.REGISTRY }}/gateway-service:${{ steps.image-tag.outputs.tag }} .
           docker push ${{ env.REGISTRY }}/gateway-service:latest
@@ -58,6 +65,7 @@ jobs:
 
       - name: Build and push Uploader Service
         run: |
+          set -e
           cd video-analytics/backend/uploader
           docker build -t ${{ env.REGISTRY }}/uploader-service:latest -t ${{ env.REGISTRY }}/uploader-service:${{ steps.image-tag.outputs.tag }} .
           docker push ${{ env.REGISTRY }}/uploader-service:latest
@@ -65,6 +73,7 @@ jobs:
 
       - name: Build and push Processor Service
         run: |
+          set -e
           cd video-analytics/backend/processor
           docker build -t ${{ env.REGISTRY }}/processor-service:latest -t ${{ env.REGISTRY }}/processor-service:${{ steps.image-tag.outputs.tag }} .
           docker push ${{ env.REGISTRY }}/processor-service:latest
@@ -72,6 +81,7 @@ jobs:
 
       - name: Build and push Analytics Service
         run: |
+          set -e
           cd video-analytics/backend/analytics
           docker build -t ${{ env.REGISTRY }}/analytics-service:latest -t ${{ env.REGISTRY }}/analytics-service:${{ steps.image-tag.outputs.tag }} .
           docker push ${{ env.REGISTRY }}/analytics-service:latest
@@ -79,6 +89,7 @@ jobs:
 
       - name: Build and push Frontend
         run: |
+          set -e
           cd video-analytics/frontend
           docker build -t ${{ env.REGISTRY }}/frontend:latest -t ${{ env.REGISTRY }}/frontend:${{ steps.image-tag.outputs.tag }} .
           docker push ${{ env.REGISTRY }}/frontend:latest
