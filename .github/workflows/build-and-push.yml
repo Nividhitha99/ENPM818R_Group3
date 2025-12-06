@@ -15,7 +15,6 @@ on:
 env:
   AWS_REGION: us-east-1
   AWS_ACCOUNT_ID: 385046010615
-  REGISTRY: 385046010615.dkr.ecr.us-east-1.amazonaws.com
 
 jobs:
   build-and-push:
@@ -33,15 +32,18 @@ jobs:
           role-to-assume: arn:aws:iam::${{ env.AWS_ACCOUNT_ID }}:role/github-actions-ecr-role
           aws-region: ${{ env.AWS_REGION }}
 
-      - name: Login to Amazon ECR
-        id: login-ecr
+      - name: Get ECR password and login
+        id: login
         run: |
-          set -e
-          echo "Getting ECR login token..."
           PASSWORD=$(aws ecr get-login-password --region ${{ env.AWS_REGION }})
-          echo "Logging in to ECR registry..."
-          echo "$PASSWORD" | docker login --username AWS --password-stdin ${{ env.REGISTRY }}
-          echo "ECR login successful"
+          echo "::add-mask::$PASSWORD"
+          echo "password=$PASSWORD" >> $GITHUB_OUTPUT
+          aws ecr get-authorization-token --region ${{ env.AWS_REGION }} | grep -o '[0-9]*' | head -1 > /tmp/account_id
+          echo "registry=${{ env.AWS_ACCOUNT_ID }}.dkr.ecr.${{ env.AWS_REGION }}.amazonaws.com" >> $GITHUB_OUTPUT
+          
+      - name: Login Docker
+        run: |
+          echo "${{ steps.login.outputs.password }}" | docker login --username AWS --password-stdin ${{ env.AWS_ACCOUNT_ID }}.dkr.ecr.${{ env.AWS_REGION }}.amazonaws.com
 
       - name: Set image tag
         id: image-tag
@@ -49,48 +51,42 @@ jobs:
 
       - name: Build and push Auth Service
         run: |
-          set -e
           cd video-analytics/backend/auth
-          docker build -t ${{ env.REGISTRY }}/auth-service:latest -t ${{ env.REGISTRY }}/auth-service:${{ steps.image-tag.outputs.tag }} .
-          docker push ${{ env.REGISTRY }}/auth-service:latest
-          docker push ${{ env.REGISTRY }}/auth-service:${{ steps.image-tag.outputs.tag }}
+          docker build -t ${{ env.AWS_ACCOUNT_ID }}.dkr.ecr.${{ env.AWS_REGION }}.amazonaws.com/auth-service:latest -t ${{ env.AWS_ACCOUNT_ID }}.dkr.ecr.${{ env.AWS_REGION }}.amazonaws.com/auth-service:${{ steps.image-tag.outputs.tag }} .
+          docker push ${{ env.AWS_ACCOUNT_ID }}.dkr.ecr.${{ env.AWS_REGION }}.amazonaws.com/auth-service:latest
+          docker push ${{ env.AWS_ACCOUNT_ID }}.dkr.ecr.${{ env.AWS_REGION }}.amazonaws.com/auth-service:${{ steps.image-tag.outputs.tag }}
 
       - name: Build and push Gateway Service
         run: |
-          set -e
           cd video-analytics/backend/gateway
-          docker build -t ${{ env.REGISTRY }}/gateway-service:latest -t ${{ env.REGISTRY }}/gateway-service:${{ steps.image-tag.outputs.tag }} .
-          docker push ${{ env.REGISTRY }}/gateway-service:latest
-          docker push ${{ env.REGISTRY }}/gateway-service:${{ steps.image-tag.outputs.tag }}
+          docker build -t ${{ env.AWS_ACCOUNT_ID }}.dkr.ecr.${{ env.AWS_REGION }}.amazonaws.com/gateway-service:latest -t ${{ env.AWS_ACCOUNT_ID }}.dkr.ecr.${{ env.AWS_REGION }}.amazonaws.com/gateway-service:${{ steps.image-tag.outputs.tag }} .
+          docker push ${{ env.AWS_ACCOUNT_ID }}.dkr.ecr.${{ env.AWS_REGION }}.amazonaws.com/gateway-service:latest
+          docker push ${{ env.AWS_ACCOUNT_ID }}.dkr.ecr.${{ env.AWS_REGION }}.amazonaws.com/gateway-service:${{ steps.image-tag.outputs.tag }}
 
       - name: Build and push Uploader Service
         run: |
-          set -e
           cd video-analytics/backend/uploader
-          docker build -t ${{ env.REGISTRY }}/uploader-service:latest -t ${{ env.REGISTRY }}/uploader-service:${{ steps.image-tag.outputs.tag }} .
-          docker push ${{ env.REGISTRY }}/uploader-service:latest
-          docker push ${{ env.REGISTRY }}/uploader-service:${{ steps.image-tag.outputs.tag }}
+          docker build -t ${{ env.AWS_ACCOUNT_ID }}.dkr.ecr.${{ env.AWS_REGION }}.amazonaws.com/uploader-service:latest -t ${{ env.AWS_ACCOUNT_ID }}.dkr.ecr.${{ env.AWS_REGION }}.amazonaws.com/uploader-service:${{ steps.image-tag.outputs.tag }} .
+          docker push ${{ env.AWS_ACCOUNT_ID }}.dkr.ecr.${{ env.AWS_REGION }}.amazonaws.com/uploader-service:latest
+          docker push ${{ env.AWS_ACCOUNT_ID }}.dkr.ecr.${{ env.AWS_REGION }}.amazonaws.com/uploader-service:${{ steps.image-tag.outputs.tag }}
 
       - name: Build and push Processor Service
         run: |
-          set -e
           cd video-analytics/backend/processor
-          docker build -t ${{ env.REGISTRY }}/processor-service:latest -t ${{ env.REGISTRY }}/processor-service:${{ steps.image-tag.outputs.tag }} .
-          docker push ${{ env.REGISTRY }}/processor-service:latest
-          docker push ${{ env.REGISTRY }}/processor-service:${{ steps.image-tag.outputs.tag }}
+          docker build -t ${{ env.AWS_ACCOUNT_ID }}.dkr.ecr.${{ env.AWS_REGION }}.amazonaws.com/processor-service:latest -t ${{ env.AWS_ACCOUNT_ID }}.dkr.ecr.${{ env.AWS_REGION }}.amazonaws.com/processor-service:${{ steps.image-tag.outputs.tag }} .
+          docker push ${{ env.AWS_ACCOUNT_ID }}.dkr.ecr.${{ env.AWS_REGION }}.amazonaws.com/processor-service:latest
+          docker push ${{ env.AWS_ACCOUNT_ID }}.dkr.ecr.${{ env.AWS_REGION }}.amazonaws.com/processor-service:${{ steps.image-tag.outputs.tag }}
 
       - name: Build and push Analytics Service
         run: |
-          set -e
           cd video-analytics/backend/analytics
-          docker build -t ${{ env.REGISTRY }}/analytics-service:latest -t ${{ env.REGISTRY }}/analytics-service:${{ steps.image-tag.outputs.tag }} .
-          docker push ${{ env.REGISTRY }}/analytics-service:latest
-          docker push ${{ env.REGISTRY }}/analytics-service:${{ steps.image-tag.outputs.tag }}
+          docker build -t ${{ env.AWS_ACCOUNT_ID }}.dkr.ecr.${{ env.AWS_REGION }}.amazonaws.com/analytics-service:latest -t ${{ env.AWS_ACCOUNT_ID }}.dkr.ecr.${{ env.AWS_REGION }}.amazonaws.com/analytics-service:${{ steps.image-tag.outputs.tag }} .
+          docker push ${{ env.AWS_ACCOUNT_ID }}.dkr.ecr.${{ env.AWS_REGION }}.amazonaws.com/analytics-service:latest
+          docker push ${{ env.AWS_ACCOUNT_ID }}.dkr.ecr.${{ env.AWS_REGION }}.amazonaws.com/analytics-service:${{ steps.image-tag.outputs.tag }}
 
       - name: Build and push Frontend
         run: |
-          set -e
           cd video-analytics/frontend
-          docker build -t ${{ env.REGISTRY }}/frontend:latest -t ${{ env.REGISTRY }}/frontend:${{ steps.image-tag.outputs.tag }} .
-          docker push ${{ env.REGISTRY }}/frontend:latest
-          docker push ${{ env.REGISTRY }}/frontend:${{ steps.image-tag.outputs.tag }}
+          docker build -t ${{ env.AWS_ACCOUNT_ID }}.dkr.ecr.${{ env.AWS_REGION }}.amazonaws.com/frontend:latest -t ${{ env.AWS_ACCOUNT_ID }}.dkr.ecr.${{ env.AWS_REGION }}.amazonaws.com/frontend:${{ steps.image-tag.outputs.tag }} .
+          docker push ${{ env.AWS_ACCOUNT_ID }}.dkr.ecr.${{ env.AWS_REGION }}.amazonaws.com/frontend:latest
+          docker push ${{ env.AWS_ACCOUNT_ID }}.dkr.ecr.${{ env.AWS_REGION }}.amazonaws.com/frontend:${{ steps.image-tag.outputs.tag }}
