@@ -17,10 +17,9 @@ spec:
     spec:
       securityContext:
         runAsNonRoot: true
-        runAsUser: 101 # nginx user often 101
       containers:
       - name: frontend
-        image: 123456789012.dkr.ecr.us-east-1.amazonaws.com/frontend:latest
+        image: 385046010615.dkr.ecr.us-east-1.amazonaws.com/frontend:latest
         ports:
         - containerPort: 8080
         resources:
