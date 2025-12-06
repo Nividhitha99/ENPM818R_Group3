@@ -11,7 +11,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: analytics
-  namespace: default
+  namespace: prod
   labels:
     app: analytics
 spec:
@@ -35,9 +35,15 @@ spec:
           imagePullPolicy: Always
           env:
             - name: AWS_REGION
-              value: "us-east-1"
+              valueFrom:
+                configMapKeyRef:
+                  name: video-analytics-config
+                  key: AWS_REGION
             - name: DYNAMODB_TABLE_NAME
-              value: "video-metadata"
+              valueFrom:
+                configMapKeyRef:
+                  name: video-analytics-config
+                  key: DYNAMODB_TABLE_NAME
           ports:
             - containerPort: 8000
 
@@ -45,13 +51,13 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: analytics-service
-  namespace: default
+  name: analytics
+  namespace: prod
 spec:
   selector:
     app: analytics
   ports:
     - protocol: TCP
-      port: 8002
+      port: 8000
       targetPort: 8000
   type: ClusterIP

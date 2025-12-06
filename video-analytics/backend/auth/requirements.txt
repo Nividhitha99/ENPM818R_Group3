@@ -3,4 +3,6 @@ uvicorn
 python-jose[cryptography]
 python-multipart
 pydantic
+passlib[bcrypt]
+prometheus-client
 

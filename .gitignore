@@ -3,3 +3,5 @@ terraform.tfstate
 terraform.tfstate.backup
 .terraform.lock.hcl
 .terraform*
+local-testing-scripts/
+video-analytics/backend/processor/__pycache__/
