@@ -1,195 +1,298 @@
 # IRSA (IAM Roles for Service Accounts) Configuration
+# Enables Kubernetes service accounts to assume IAM roles for AWS API access
 
-# Get OIDC Provider thumbprint
-data "tls_certificate" "cluster" {
-  url = data.aws_eks_cluster.existing.identity[0].oidc[0].issuer
+# Get the OIDC provider endpoint from the EKS cluster
+data "aws_eks_cluster" "cluster" {
+  name = module.eks.cluster_name
 }
 
-# Reference existing OIDC Provider or create if doesn't exist
-data "aws_iam_openid_connect_provider" "eks" {
-  arn = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:oidc-provider/${replace(data.aws_eks_cluster.existing.identity[0].oidc[0].issuer, "https://", "")}"
+# Create OIDC Provider for IRSA
+resource "aws_iam_openid_connect_provider" "eks" {
+  client_id_list  = ["sts.amazonaws.com"]
+  thumbprint_list = [data.tls_certificate.eks.certificates[0].sha1_fingerprint]
+  url             = data.aws_eks_cluster.cluster.identity[0].oidc[0].issuer
+
+  tags = {
+    Name    = "${module.eks.cluster_name}-irsa"
+    Project = "ENPM818R_Group3"
+  }
 }
 
-# Helper function to create IRSA role trust policy
+# Get the TLS certificate from the OIDC provider
+data "tls_certificate" "eks" {
+  url = data.aws_eks_cluster.cluster.identity[0].oidc[0].issuer
+}
+
+# Helper local for creating trust policies
 locals {
-  namespace = "prod"
-  oidc_provider_arn = data.aws_iam_openid_connect_provider.eks.arn
-  oidc_provider_url = replace(data.aws_eks_cluster.existing.identity[0].oidc[0].issuer, "https://", "")
-  
-  services = {
-    auth = {
-      namespace = "prod"
-    }
-    analytics = {
-      namespace = "prod"
-    }
-    gateway = {
-      namespace = "prod"
-    }
-    processor = {
-      namespace = "prod"
-    }
-    uploader = {
-      namespace = "prod"
-    }
-    frontend = {
-      namespace = "prod"
-    }
-  }
+  oidc_provider_arn = aws_iam_openid_connect_provider.eks.arn
+  oidc_url          = replace(aws_iam_openid_connect_provider.eks.url, "https://", "")
 }
 
-# Create trust policy for IRSA roles
-data "aws_iam_policy_document" "irsa_trust_policy" {
-  for_each = local.services
+# Auth Service IRSA Role
+resource "aws_iam_role" "auth_irsa" {
+  name = "auth-irsa-role"
 
-  statement {
-    actions = ["sts:AssumeRoleWithWebIdentity"]
-    
-    principals {
-      type        = "Federated"
-      identifiers = [local.oidc_provider_arn]
-    }
-
-    condition {
-      test     = "StringEquals"
-      variable = "${local.oidc_provider_url}:sub"
-      values   = ["system:serviceaccount:${each.value.namespace}:${each.key}-sa"]
-    }
-
-    condition {
-      test     = "StringEquals"
-      variable = "${local.oidc_provider_url}:aud"
-      values   = ["sts.amazonaws.com"]
-    }
-  }
-}
-
-# Import existing auth-irsa-role
-resource "aws_iam_role" "auth" {
-  name               = "auth-irsa-role"
-  assume_role_policy = data.aws_iam_policy_document.irsa_trust_policy["auth"].json
-
-  tags = {
-    Name        = "auth-irsa-role"
-    Service     = "auth"
-    Environment = "prod"
-  }
-
-  lifecycle {
-    ignore_changes = [assume_role_policy]
-  }
-}
-
-# Create analytics-irsa-role
-resource "aws_iam_role" "analytics" {
-  name               = "analytics-irsa-role"
-  assume_role_policy = data.aws_iam_policy_document.irsa_trust_policy["analytics"].json
-
-  tags = {
-    Name        = "analytics-irsa-role"
-    Service     = "analytics"
-    Environment = "prod"
-  }
-}
-
-# Create gateway-irsa-role
-resource "aws_iam_role" "gateway" {
-  name               = "gateway-irsa-role"
-  assume_role_policy = data.aws_iam_policy_document.irsa_trust_policy["gateway"].json
-
-  tags = {
-    Name        = "gateway-irsa-role"
-    Service     = "gateway"
-    Environment = "prod"
-  }
-}
-
-# Create processor-irsa-role
-resource "aws_iam_role" "processor" {
-  name               = "processor-irsa-role"
-  assume_role_policy = data.aws_iam_policy_document.irsa_trust_policy["processor"].json
-
-  tags = {
-    Name        = "processor-irsa-role"
-    Service     = "processor"
-    Environment = "prod"
-  }
-}
-
-# Create uploader-irsa-role
-resource "aws_iam_role" "uploader" {
-  name               = "uploader-irsa-role"
-  assume_role_policy = data.aws_iam_policy_document.irsa_trust_policy["uploader"].json
-
-  tags = {
-    Name        = "uploader-irsa-role"
-    Service     = "uploader"
-    Environment = "prod"
-  }
-}
-
-# Create frontend-irsa-role
-resource "aws_iam_role" "frontend" {
-  name               = "frontend-irsa-role"
-  assume_role_policy = data.aws_iam_policy_document.irsa_trust_policy["frontend"].json
-
-  tags = {
-    Name        = "frontend-irsa-role"
-    Service     = "frontend"
-    Environment = "prod"
-  }
-}
-
-# Example: S3 policy for uploader service (adjust based on your needs)
-data "aws_iam_policy_document" "uploader_policy" {
-  statement {
-    actions = [
-      "s3:GetObject",
-      "s3:PutObject",
-      "s3:ListBucket"
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Effect = "Allow"
+        Principal = {
+          Federated = local.oidc_provider_arn
+        }
+        Action = "sts:AssumeRoleWithWebIdentity"
+        Condition = {
+          StringEquals = {
+            "${local.oidc_url}:sub" = "system:serviceaccount:prod:auth-sa"
+            "${local.oidc_url}:aud" = "sts.amazonaws.com"
+          }
+        }
+      }
     ]
-    resources = ["arn:aws:s3:::video-analytics-bucket/*", "arn:aws:s3:::video-analytics-bucket"]
+  })
+
+  tags = {
+    Service = "auth"
+    Project = "ENPM818R_Group3"
   }
 }
 
-resource "aws_iam_role_policy" "uploader" {
-  name   = "uploader-s3-policy"
-  role   = aws_iam_role.uploader.id
-  policy = data.aws_iam_policy_document.uploader_policy.json
-}
+# Analytics Service IRSA Role
+resource "aws_iam_role" "analytics_irsa" {
+  name = "analytics-irsa-role"
 
-# Example: DynamoDB policy for analytics service (adjust based on your needs)
-data "aws_iam_policy_document" "analytics_policy" {
-  statement {
-    actions = [
-      "dynamodb:GetItem",
-      "dynamodb:Query",
-      "dynamodb:Scan"
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Effect = "Allow"
+        Principal = {
+          Federated = local.oidc_provider_arn
+        }
+        Action = "sts:AssumeRoleWithWebIdentity"
+        Condition = {
+          StringEquals = {
+            "${local.oidc_url}:sub" = "system:serviceaccount:prod:analytics-sa"
+            "${local.oidc_url}:aud" = "sts.amazonaws.com"
+          }
+        }
+      }
     ]
-    resources = ["arn:aws:dynamodb:us-east-1:385046010615:table/analytics-*"]
+  })
+
+  tags = {
+    Service = "analytics"
+    Project = "ENPM818R_Group3"
   }
 }
 
-resource "aws_iam_role_policy" "analytics" {
-  name   = "analytics-dynamodb-policy"
-  role   = aws_iam_role.analytics.id
-  policy = data.aws_iam_policy_document.analytics_policy.json
+# Analytics DynamoDB Policy
+resource "aws_iam_role_policy" "analytics_dynamodb" {
+  name = "analytics-dynamodb-policy"
+  role = aws_iam_role.analytics_irsa.id
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Effect = "Allow"
+        Action = [
+          "dynamodb:Scan",
+          "dynamodb:Query",
+          "dynamodb:GetItem"
+        ]
+        Resource = "arn:aws:dynamodb:${data.aws_caller_identity.current.region}:${data.aws_caller_identity.current.account_id}:table/analytics-*"
+      }
+    ]
+  })
 }
 
-# Output IRSA role ARNs
-output "irsa_role_arns" {
-  description = "ARNs of all IRSA roles"
+# Processor Service IRSA Role
+resource "aws_iam_role" "processor_irsa" {
+  name = "processor-irsa-role"
+
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Effect = "Allow"
+        Principal = {
+          Federated = local.oidc_provider_arn
+        }
+        Action = "sts:AssumeRoleWithWebIdentity"
+        Condition = {
+          StringEquals = {
+            "${local.oidc_url}:sub" = "system:serviceaccount:prod:processor-sa"
+            "${local.oidc_url}:aud" = "sts.amazonaws.com"
+          }
+        }
+      }
+    ]
+  })
+
+  tags = {
+    Service = "processor"
+    Project = "ENPM818R_Group3"
+  }
+}
+
+# Uploader Service IRSA Role
+resource "aws_iam_role" "uploader_irsa" {
+  name = "uploader-irsa-role"
+
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Effect = "Allow"
+        Principal = {
+          Federated = local.oidc_provider_arn
+        }
+        Action = "sts:AssumeRoleWithWebIdentity"
+        Condition = {
+          StringEquals = {
+            "${local.oidc_url}:sub" = "system:serviceaccount:prod:uploader-sa"
+            "${local.oidc_url}:aud" = "sts.amazonaws.com"
+          }
+        }
+      }
+    ]
+  })
+
+  tags = {
+    Service = "uploader"
+    Project = "ENPM818R_Group3"
+  }
+}
+
+# Uploader S3 Policy
+resource "aws_iam_role_policy" "uploader_s3" {
+  name = "uploader-s3-policy"
+  role = aws_iam_role.uploader_irsa.id
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Effect = "Allow"
+        Action = [
+          "s3:PutObject",
+          "s3:GetObject",
+          "s3:ListBucket"
+        ]
+        Resource = [
+          "arn:aws:s3:::video-analytics-bucket",
+          "arn:aws:s3:::video-analytics-bucket/*"
+        ]
+      }
+    ]
+  })
+}
+
+# Gateway Service IRSA Role
+resource "aws_iam_role" "gateway_irsa" {
+  name = "gateway-irsa-role"
+
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Effect = "Allow"
+        Principal = {
+          Federated = local.oidc_provider_arn
+        }
+        Action = "sts:AssumeRoleWithWebIdentity"
+        Condition = {
+          StringEquals = {
+            "${local.oidc_url}:sub" = "system:serviceaccount:prod:gateway-sa"
+            "${local.oidc_url}:aud" = "sts.amazonaws.com"
+          }
+        }
+      }
+    ]
+  })
+
+  tags = {
+    Service = "gateway"
+    Project = "ENPM818R_Group3"
+  }
+}
+
+# Frontend Service IRSA Role
+resource "aws_iam_role" "frontend_irsa" {
+  name = "frontend-irsa-role"
+
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Effect = "Allow"
+        Principal = {
+          Federated = local.oidc_provider_arn
+        }
+        Action = "sts:AssumeRoleWithWebIdentity"
+        Condition = {
+          StringEquals = {
+            "${local.oidc_url}:sub" = "system:serviceaccount:prod:frontend-sa"
+            "${local.oidc_url}:aud" = "sts.amazonaws.com"
+          }
+        }
+      }
+    ]
+  })
+
+  tags = {
+    Service = "frontend"
+    Project = "ENPM818R_Group3"
+  }
+}
+
+# CloudWatch Agent IRSA Role (for monitoring)
+resource "aws_iam_role" "cloudwatch_agent_irsa" {
+  name = "eks-cloudwatch-agent-irsa-role"
+
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Effect = "Allow"
+        Principal = {
+          Federated = local.oidc_provider_arn
+        }
+        Action = "sts:AssumeRoleWithWebIdentity"
+        Condition = {
+          StringEquals = {
+            "${local.oidc_url}:sub" = "system:serviceaccount:amazon-cloudwatch:cloudwatch-agent"
+            "${local.oidc_url}:aud" = "sts.amazonaws.com"
+          }
+        }
+      }
+    ]
+  })
+
+  tags = {
+    Service = "cloudwatch-agent"
+    Project = "ENPM818R_Group3"
+  }
+}
+
+# CloudWatch Agent Policy
+resource "aws_iam_role_policy_attachment" "cloudwatch_agent_policy" {
+  role       = aws_iam_role.cloudwatch_agent_irsa.name
+  policy_arn = "arn:aws:iam::aws:policy/CloudWatchAgentServerPolicy"
+}
+
+# Outputs for IRSA roles
+output "irsa_roles" {
+  description = "IRSA role information"
   value = {
-    auth      = aws_iam_role.auth.arn
-    analytics = aws_iam_role.analytics.arn
-    gateway   = aws_iam_role.gateway.arn
-    processor = aws_iam_role.processor.arn
-    uploader  = aws_iam_role.uploader.arn
-    frontend  = aws_iam_role.frontend.arn
+    oidc_provider_arn = local.oidc_provider_arn
+    auth_role_arn     = aws_iam_role.auth_irsa.arn
+    analytics_role_arn = aws_iam_role.analytics_irsa.arn
+    processor_role_arn = aws_iam_role.processor_irsa.arn
+    uploader_role_arn  = aws_iam_role.uploader_irsa.arn
+    gateway_role_arn   = aws_iam_role.gateway_irsa.arn
+    frontend_role_arn  = aws_iam_role.frontend_irsa.arn
   }
-}
-
-output "oidc_provider_arn" {
-  description = "ARN of the OIDC provider"
-  value       = local.oidc_provider_arn
 }

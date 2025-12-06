@@ -4,7 +4,7 @@ metadata:
   name: uploader-sa
   namespace: prod
   annotations:
-    eks.amazonaws.com/role-arn: arn:aws:iam::385046010615:role/uploader-irsa-role
+    eks.amazonaws.com/role-arn: arn:aws:iam::385046010615:role/uploader-irsa-role   # to be created later
 
 ---
 apiVersion: apps/v1

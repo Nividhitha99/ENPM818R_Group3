@@ -25,32 +25,25 @@
 
 output "vpc_id" {
   description = "The ID of the VPC"
-  value       = data.aws_vpc.existing.id
+  value       = module.vpc.vpc_id
 }
-
 output "private_subnets" {
   description = "List of private subnets"
-  value       = data.aws_subnets.private.ids
+  value       = module.vpc.private_subnets
+}
+output "public_subnets" {
+  description = "List of public subnets"
+  value       = module.vpc.public_subnets
 }
 
 output "eks_cluster_endpoint" {
   description = "EKS Cluster Endpoint"
-  value       = data.aws_eks_cluster.existing.endpoint
+  value       = module.eks.cluster_endpoint
 }
 
 output "eks_cluster_id" {
-  description = "EKS Cluster Name"
-  value       = data.aws_eks_cluster.existing.name
-}
-
-output "eks_cluster_arn" {
-  description = "EKS Cluster ARN"
-  value       = data.aws_eks_cluster.existing.arn
-}
-
-output "eks_cluster_certificate_authority_data" {
-  description = "EKS Cluster Certificate Authority Data"
-  value       = data.aws_eks_cluster.existing.certificate_authority[0].data
+  description = "EKS Cluster Endpoint"
+  value       = module.eks.cluster_id
 }
 
 # output "kubeconfig" {

@@ -4,7 +4,7 @@ metadata:
   name: processor-sa
   namespace: prod
   annotations:
-    eks.amazonaws.com/role-arn: arn:aws:iam::385046010615:role/processor-irsa-role
+    eks.amazonaws.com/role-arn: arn:aws:iam::385046010615:role/processor-irsa-role   # to be created after cluster
 
 ---
 apiVersion: apps/v1
