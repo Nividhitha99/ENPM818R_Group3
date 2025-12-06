@@ -30,11 +30,14 @@ module "eks" {
   name    = "g3-eks-cluster"
   subnet_ids = module.vpc.private_subnets
   vpc_id = module.vpc.vpc_id
-  
-  access_entries = {
+  endpoint_public_access = true
+  endpoint_private_access = true
+  endpoint_public_access_cidrs = ["0.0.0.0/0"]
+
+  access_entries = merge(
+  {
     cluster_admin = {
       principal_arn = data.aws_caller_identity.current.arn
-
       type = "STANDARD"
 
       policy_associations = {
@@ -47,30 +50,47 @@ module "eks" {
         }
       }
     }
+  },
+
+  # Dynamic users from variable
+  {
+    for name, user in var.eks_users : name => {
+      principal_arn = user.arn
+      type          = "STANDARD"
+
+      policy_associations = {
+        main = {
+          policy_arn = user.policy == "ADMIN" ? "arn:aws:eks::aws:cluster-access-policy/AmazonEKSClusterAdminPolicy" : "arn:aws:eks::aws:cluster-access-policy/AmazonEKSClusterReadOnlyPolicy"
+          access_scope = {
+            type = "cluster"
+            namespaces = []
+          }
+        }
+      }
+    }
   }
+  )
 
 
-  # Control plane logging if desired
-  # enable_irsa = true
-  
+
   # Create two managed node groups across at least 2 AZs.
   eks_managed_node_groups = {
     general-1 = {
       name = "general-1"
       instance_types = ["t3.medium", "t3.large", "t3a.medium"]
       ami_type = "AL2023_x86_64_STANDARD"
-      desired_capacity = 2
-      min_size = 1
-      max_size = 3
+      desired_size = 4
+      min_size = 3
+      max_size = 5
     }
 
     general-2 = {
       name = "general-2"
       instance_types = ["t3.medium", "t3.large", "t3a.medium"]
       ami_type = "AL2023_x86_64_STANDARD"
-      desired_capacity = 2
-      min_size = 1
-      max_size = 3
+      desired_size = 4
+      min_size = 3
+      max_size = 5
     }
   }
 
@@ -83,5 +103,199 @@ module "eks" {
     vpc-cni = {
       before_compute = true
     }
+  }
+
+  enable_irsa = true
+
+  tags = {
+    Project     = "ENPM818R_Group3"
+  }
+}
+
+# Data: cluster oidc provider from module output
+data "aws_iam_openid_connect_provider" "oidc" {
+  url = module.eks.cluster_oidc_issuer_url # module output when enable_irsa = true
+}
+
+# IAM role assume policy for IRSA
+data "aws_iam_policy_document" "alb_assume_role" {
+  statement {
+    actions = ["sts:AssumeRoleWithWebIdentity"]
+    principals {
+      type = "Federated"
+      identifiers = [data.aws_iam_openid_connect_provider.oidc.arn]
+    }
+    condition {
+      test     = "StringEquals"
+      variable = "${replace(module.eks.cluster_oidc_issuer_url, "https://", "")}:sub"
+      values   = ["system:serviceaccount:kube-system:aws-load-balancer-controller"]
+    }
+  }
+}
+
+resource "aws_iam_role" "alb_irsa_role" {
+  name               = "${module.eks.cluster_name}-alb-irsa"
+  assume_role_policy = data.aws_iam_policy_document.alb_assume_role.json
+}
+
+resource "aws_iam_role_policy_attachment" "alb_policy_attach" {
+  role       = aws_iam_role.alb_irsa_role.name
+  policy_arn = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:policy/AWSLoadBalancerControllerIAMPolicy"
+}
+
+
+resource "kubernetes_service_account" "alb" {
+  metadata {
+    name      = "aws-load-balancer-controller"
+    namespace = "kube-system"
+    annotations = {
+      "eks.amazonaws.com/role-arn" = aws_iam_role.alb_irsa_role.arn
+    }
+  }
+}
+
+resource "helm_release" "aws_lb_controller" {
+  name       = "aws-load-balancer-controller"
+  repository = "https://aws.github.io/eks-charts"
+  chart      = "aws-load-balancer-controller"
+  namespace  = "kube-system"
+
+  values = [<<EOF
+clusterName: ${module.eks.cluster_name}
+serviceAccount:
+  create: false
+  name: ${kubernetes_service_account.alb.metadata[0].name}
+region: ${var.region}
+vpcId: ${module.vpc.vpc_id}
+EOF
+  ]
+  depends_on = [aws_iam_role_policy_attachment.alb_policy_attach]
+}
+
+
+# C. Create IAM role + install Cluster Autoscaler (IRSA)
+
+# Assume role policy document for autoscaler
+data "aws_iam_policy_document" "autoscaler_assume" {
+  statement {
+    actions = ["sts:AssumeRoleWithWebIdentity"]
+    principals {
+      type = "Federated"
+      identifiers = [data.aws_iam_openid_connect_provider.oidc.arn]
+    }
+    condition {
+      test     = "StringEquals"
+      variable = "${replace(module.eks.cluster_oidc_issuer_url, "https://", "")}:sub"
+      values   = ["system:serviceaccount:kube-system:cluster-autoscaler"]
+    }
+  }
+}
+
+resource "aws_iam_role" "cluster_autoscaler_irsa_role" {
+  name               = "${module.eks.cluster_name}-cluster-autoscaler-irsa"
+  assume_role_policy = data.aws_iam_policy_document.autoscaler_assume.json
+}
+
+resource "aws_iam_policy" "cluster_autoscaler_policy" {
+  name   = "${module.eks.cluster_name}-autoscaler-policy"
+  policy = file("${path.module}/policies/cluster-autoscaler-policy.json")
+}
+
+resource "aws_iam_role_policy_attachment" "attach_autoscaler_policy" {
+  role       = aws_iam_role.cluster_autoscaler_irsa_role.name
+  policy_arn = aws_iam_policy.cluster_autoscaler_policy.arn
+}
+
+resource "kubernetes_service_account" "cluster_autoscaler" {
+  metadata {
+    name      = "cluster-autoscaler"
+    namespace = "kube-system"
+    annotations = {
+      "eks.amazonaws.com/role-arn" = aws_iam_role.cluster_autoscaler_irsa_role.arn
+    }
+  }
+}
+
+# Helm install cluster-autoscaler
+resource "helm_release" "cluster_autoscaler" {
+  name       = "cluster-autoscaler"
+  repository = "https://kubernetes.github.io/autoscaler"
+  chart      = "cluster-autoscaler"
+  namespace  = "kube-system"
+  values = [<<EOF
+    autoDiscovery:
+      clusterName: ${module.eks.cluster_name}
+    awsRegion: ${var.region}
+    serviceAccount:
+      create: false
+      name: ${kubernetes_service_account.cluster_autoscaler.metadata[0].name}
+    extraArgs:
+      skip-nodes-with-local-storage: false
+      expander: least-waste
+    EOF
+  ]
+  depends_on = [aws_iam_role_policy_attachment.attach_autoscaler_policy]
+}
+
+
+# ========== ENVIRONMENTS ==========
+locals {
+  environments = ["dev", "staging", "prod"]
+}
+
+# ========== NAMESPACE CREATION ==========
+resource "kubernetes_namespace" "env" {
+  for_each = toset(local.environments)
+
+  metadata {
+    name = each.key
+  }
+}
+
+# ========== SERVICE ACCOUNTS ==========
+resource "kubernetes_service_account" "ci" {
+  for_each = kubernetes_namespace.env
+
+  metadata {
+    name      = "ci"
+    namespace = each.key
+  }
+}
+
+# ========== READ-ONLY ROLES ==========
+resource "kubernetes_role" "ci_readonly" {
+  for_each = kubernetes_namespace.env
+
+  metadata {
+    name      = "ci-readonly"
+    namespace = each.key
+  }
+
+  rule {
+    api_groups = [""]
+    resources  = ["pods", "pods/log", "services"]
+    verbs      = ["get", "list", "watch"]
+  }
+}
+
+# ========== ROLE BINDINGS ==========
+resource "kubernetes_role_binding" "ci_readonly_binding" {
+  for_each = kubernetes_namespace.env
+
+  metadata {
+    name      = "ci-readonly-binding"
+    namespace = each.key
+  }
+
+  role_ref {
+    api_group = "rbac.authorization.k8s.io"
+    kind      = "Role"
+    name      = kubernetes_role.ci_readonly[each.key].metadata[0].name
+  }
+
+  subject {
+    kind      = "ServiceAccount"
+    name      = kubernetes_service_account.ci[each.key].metadata[0].name
+    namespace = each.key
   }
 }
