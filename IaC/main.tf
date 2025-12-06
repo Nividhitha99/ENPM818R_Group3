@@ -30,9 +30,9 @@ module "eks" {
   name    = "g3-eks-cluster"
   subnet_ids = module.vpc.private_subnets
   vpc_id = module.vpc.vpc_id
-  endpoint_public_access = true
+  # endpoint_public_access = true
   endpoint_private_access = true
-  endpoint_public_access_cidrs = ["0.0.0.0/0"]
+  # endpoint_public_access_cidrs = ["0.0.0.0/0"]
 
   access_entries = merge(
   {
