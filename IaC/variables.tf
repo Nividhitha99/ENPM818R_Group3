@@ -7,3 +7,13 @@ variable "ami_id" {
   type = string
   description = "The AMI ID to use for the instance"
 }
+
+variable "eks_users" {
+  type = map(object({
+    arn    = string
+    policy = string
+  }))
+
+  default = {}
+
+}
