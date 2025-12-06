@@ -32,9 +32,11 @@ kubectl exec -n prod <POD> -- env | grep AWS_ROLE_ARN
 ## Prometheus & Grafana
 
 ### Access
-- Prometheus: http://k8s-monitori-grafana-7448b91123-4076a7b0845bbf44.elb.us-east-1.amazonaws.com:3000
-- Grafana: http://k8s-monitori-grafana-7448b91123-4076a7b0845bbf44.elb.us-east-1.amazonaws.com:3000
-- Credentials: admin / admin123
+- **Prometheus (LoadBalancer)**: http://k8s-monitori-promethe-c70c64809c-3207c6ab19cbd45a.elb.us-east-1.amazonaws.com:9090 ✅ (Fully operational)
+- **Prometheus (Internal)**: http://prometheus.monitoring.svc.cluster.local:9090 (within cluster only)
+- **Prometheus (Port Forward)**: `kubectl port-forward -n monitoring svc/prometheus 9090:9090`
+- **Grafana**: http://k8s-monitori-grafana-7448b91123-4076a7b0845bbf44.elb.us-east-1.amazonaws.com:3000 ✅ (Fully operational)
+- **Credentials**: admin / admin123 (⚠️ Change in production!)
 
 ### Scraping
 Prometheus scrapes:
@@ -61,6 +63,7 @@ kubectl apply -f video-analytics/k8s/monitoring/
 
 ✅ IRSA configured for all 6 microservices
 ✅ CloudWatch monitoring enabled
-✅ Prometheus + Grafana deployed
+✅ Prometheus + Grafana fully deployed and accessible
+✅ LoadBalancer targets healthy (8/8)
 ✅ 5/6 services running (uploader has app config issue)
 ✅ All infrastructure as code
