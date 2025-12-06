@@ -19,7 +19,9 @@ spec:
       - name: frontend
         image: 385046010615.dkr.ecr.us-east-1.amazonaws.com/frontend:latest
         ports:
-        - containerPort: 8080
+        - name: http
+          containerPort: 8080
+          protocol: TCP
         resources:
           requests:
             memory: "64Mi"

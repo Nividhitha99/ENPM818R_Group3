@@ -12,8 +12,8 @@ COPY . .
 # Build the frontend
 RUN npm run build
 
-# Stage 2: Nginx server to serve static frontend
-FROM nginx:alpine
+# Stage 2: Nginx server to serve static frontend (unprivileged)
+FROM nginxinc/nginx-unprivileged:1.27-alpine
 COPY --from=builder /app/build /usr/share/nginx/html
-EXPOSE 80
-CMD ["nginx", "-g", "daemon off;"]
+EXPOSE 8080
+USER 101
