@@ -32,18 +32,9 @@ jobs:
           role-to-assume: arn:aws:iam::${{ env.AWS_ACCOUNT_ID }}:role/github-actions-ecr-role
           aws-region: ${{ env.AWS_REGION }}
 
-      - name: Get ECR password and login
-        id: login
+      - name: Login Docker to ECR
         run: |
-          PASSWORD=$(aws ecr get-login-password --region ${{ env.AWS_REGION }})
-          echo "::add-mask::$PASSWORD"
-          echo "password=$PASSWORD" >> $GITHUB_OUTPUT
-          aws ecr get-authorization-token --region ${{ env.AWS_REGION }} | grep -o '[0-9]*' | head -1 > /tmp/account_id
-          echo "registry=${{ env.AWS_ACCOUNT_ID }}.dkr.ecr.${{ env.AWS_REGION }}.amazonaws.com" >> $GITHUB_OUTPUT
-          
-      - name: Login Docker
-        run: |
-          echo "${{ steps.login.outputs.password }}" | docker login --username AWS --password-stdin ${{ env.AWS_ACCOUNT_ID }}.dkr.ecr.${{ env.AWS_REGION }}.amazonaws.com
+          aws ecr get-login-password --region ${{ env.AWS_REGION }} | docker login --username AWS --password-stdin ${{ env.AWS_ACCOUNT_ID }}.dkr.ecr.${{ env.AWS_REGION }}.amazonaws.com
 
       - name: Set image tag
         id: image-tag
