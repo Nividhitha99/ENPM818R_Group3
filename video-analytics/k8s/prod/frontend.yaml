@@ -15,8 +15,6 @@ spec:
       labels:
         app: frontend
     spec:
-      securityContext:
-        runAsNonRoot: true
       containers:
       - name: frontend
         image: 385046010615.dkr.ecr.us-east-1.amazonaws.com/frontend:latest
