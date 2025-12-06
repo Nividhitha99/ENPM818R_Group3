@@ -40,11 +40,15 @@ jobs:
         id: image-tag
         run: echo "tag=$(echo ${{ github.sha }} | cut -c 1-7)" >> $GITHUB_OUTPUT
 
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
       - name: Build and push Auth Service
         uses: docker/build-push-action@v5
         with:
           context: ./video-analytics/backend/auth
           push: true
+          registry: ${{ steps.login-ecr.outputs.registry }}
           tags: |
             ${{ env.AWS_ACCOUNT_ID }}.dkr.ecr.${{ env.AWS_REGION }}.amazonaws.com/auth-service:latest
             ${{ env.AWS_ACCOUNT_ID }}.dkr.ecr.${{ env.AWS_REGION }}.amazonaws.com/auth-service:${{ steps.image-tag.outputs.tag }}
@@ -54,6 +58,7 @@ jobs:
         with:
           context: ./video-analytics/backend/gateway
           push: true
+          registry: ${{ steps.login-ecr.outputs.registry }}
           tags: |
             ${{ env.AWS_ACCOUNT_ID }}.dkr.ecr.${{ env.AWS_REGION }}.amazonaws.com/gateway-service:latest
             ${{ env.AWS_ACCOUNT_ID }}.dkr.ecr.${{ env.AWS_REGION }}.amazonaws.com/gateway-service:${{ steps.image-tag.outputs.tag }}
@@ -64,6 +69,7 @@ jobs:
           context: ./video-analytics/backend/uploader
           dockerfile: ./video-analytics/backend/uploader/Dockerfile
           push: true
+          registry: ${{ steps.login-ecr.outputs.registry }}
           tags: |
             ${{ env.AWS_ACCOUNT_ID }}.dkr.ecr.${{ env.AWS_REGION }}.amazonaws.com/uploader-service:latest
             ${{ env.AWS_ACCOUNT_ID }}.dkr.ecr.${{ env.AWS_REGION }}.amazonaws.com/uploader-service:${{ steps.image-tag.outputs.tag }}
@@ -73,6 +79,7 @@ jobs:
         with:
           context: ./video-analytics/backend/processor
           push: true
+          registry: ${{ steps.login-ecr.outputs.registry }}
           tags: |
             ${{ env.AWS_ACCOUNT_ID }}.dkr.ecr.${{ env.AWS_REGION }}.amazonaws.com/processor-service:latest
             ${{ env.AWS_ACCOUNT_ID }}.dkr.ecr.${{ env.AWS_REGION }}.amazonaws.com/processor-service:${{ steps.image-tag.outputs.tag }}
@@ -82,6 +89,7 @@ jobs:
         with:
           context: ./video-analytics/backend/analytics
           push: true
+          registry: ${{ steps.login-ecr.outputs.registry }}
           tags: |
             ${{ env.AWS_ACCOUNT_ID }}.dkr.ecr.${{ env.AWS_REGION }}.amazonaws.com/analytics-service:latest
             ${{ env.AWS_ACCOUNT_ID }}.dkr.ecr.${{ env.AWS_REGION }}.amazonaws.com/analytics-service:${{ steps.image-tag.outputs.tag }}
@@ -91,6 +99,7 @@ jobs:
         with:
           context: ./video-analytics/frontend
           push: true
+          registry: ${{ steps.login-ecr.outputs.registry }}
           tags: |
             ${{ env.AWS_ACCOUNT_ID }}.dkr.ecr.${{ env.AWS_REGION }}.amazonaws.com/frontend:latest
             ${{ env.AWS_ACCOUNT_ID }}.dkr.ecr.${{ env.AWS_REGION }}.amazonaws.com/frontend:${{ steps.image-tag.outputs.tag }}
