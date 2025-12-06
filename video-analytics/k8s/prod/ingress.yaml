@@ -12,20 +12,13 @@ spec:
   rules:
   - http:
       paths:
-      - path: /api/uploader
+      - path: /api
         pathType: Prefix
         backend:
           service:
-            name: uploader
+            name: gateway
             port:
-              number: 80
-      - path: /api/analytics
-        pathType: Prefix
-        backend:
-          service:
-            name: analytics
-            port:
-              number: 80
+              number: 8000
       - path: /
         pathType: Prefix
         backend:

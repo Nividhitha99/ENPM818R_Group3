@@ -2,7 +2,7 @@ apiVersion: v1
 kind: ServiceAccount
 metadata:
   name: processor-sa
-  namespace: default
+  namespace: prod
   annotations:
     eks.amazonaws.com/role-arn: arn:aws:iam::385046010615:role/processor-irsa-role   # to be created after cluster
 
@@ -11,7 +11,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: processor
-  namespace: default
+  namespace: prod
   labels:
     app: processor
 spec:
@@ -31,14 +31,38 @@ spec:
       serviceAccountName: processor-sa
       containers:
         - name: processor
-          image: 385046010615.dkr.ecr.us-east-1.amazonaws.com/processor-service:1.0
+          image: 385046010615.dkr.ecr.us-east-1.amazonaws.com/processor-service:latest
           imagePullPolicy: Always
           ports:
             - containerPort: 8000
           env:
             - name: AWS_REGION
-              value: "us-east-1"
+              valueFrom:
+                configMapKeyRef:
+                  name: video-analytics-config
+                  key: AWS_REGION
             - name: SQS_QUEUE_URL
-              value: "https://sqs.us-east-1.amazonaws.com/385046010615/video-processing-jobs"
+              valueFrom:
+                configMapKeyRef:
+                  name: video-analytics-config
+                  key: SQS_QUEUE_URL
             - name: DYNAMODB_TABLE_NAME
-              value: "video-metadata"
+              valueFrom:
+                configMapKeyRef:
+                  name: video-analytics-config
+                  key: DYNAMODB_TABLE_NAME
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: processor
+  namespace: prod
+spec:
+  selector:
+    app: processor
+  ports:
+    - port: 8000
+      targetPort: 8000
+      protocol: TCP
+  type: ClusterIP
