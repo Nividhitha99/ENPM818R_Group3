@@ -31,25 +31,6 @@ jobs:
         with:
           role-to-assume: arn:aws:iam::${{ env.AWS_ACCOUNT_ID }}:role/github-actions-ecr-role
           aws-region: ${{ env.AWS_REGION }}
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-
-      - name: Debug AWS credentials and OIDC token
-        run: |
-          echo "AWS_ROLE_ARN: $AWS_ROLE_ARN"
-          echo "AWS_WEB_IDENTITY_TOKEN_FILE: $AWS_WEB_IDENTITY_TOKEN_FILE"
-          if [ -n "$AWS_WEB_IDENTITY_TOKEN_FILE" ]; then
-            echo "=== OIDC Token Content (first 100 chars) ==="
-            head -c 100 "$AWS_WEB_IDENTITY_TOKEN_FILE"
-            echo ""
-            echo "=== Full OIDC Token ==="
-            cat "$AWS_WEB_IDENTITY_TOKEN_FILE"
-          else
-            echo "No OIDC token file found - using access keys"
-          fi
-          echo ""
-          echo "Testing AWS credentials..."
-          aws sts get-caller-identity
 
       - name: Amazon ECR "Login" Action for GitHub Actions
         uses: aws-actions/amazon-ecr-login@v2
