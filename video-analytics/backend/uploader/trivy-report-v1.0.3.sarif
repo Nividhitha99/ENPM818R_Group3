@@ -1,0 +1,3276 @@
+{
+  "version": "2.1.0",
+  "$schema": "https://raw.githubusercontent.com/oasis-tcs/sarif-spec/main/sarif-2.1/schema/sarif-schema-2.1.0.json",
+  "runs": [
+    {
+      "tool": {
+        "driver": {
+          "fullName": "Trivy Vulnerability Scanner",
+          "informationUri": "https://github.com/aquasecurity/trivy",
+          "name": "Trivy",
+          "rules": [
+            {
+              "id": "CVE-2011-3374",
+              "name": "OsPackageVulnerability",
+              "shortDescription": {
+                "text": "It was found that apt-key in apt, all versions, do not correctly valid ..."
+              },
+              "fullDescription": {
+                "text": "It was found that apt-key in apt, all versions, do not correctly validate gpg keys with the master keyring, leading to a potential man-in-the-middle attack."
+              },
+              "defaultConfiguration": {
+                "level": "note"
+              },
+              "helpUri": "https://avd.aquasec.com/nvd/cve-2011-3374",
+              "help": {
+                "text": "Vulnerability CVE-2011-3374\nSeverity: LOW\nPackage: libapt-pkg7.0\nFixed Version: \nLink: [CVE-2011-3374](https://avd.aquasec.com/nvd/cve-2011-3374)\nIt was found that apt-key in apt, all versions, do not correctly validate gpg keys with the master keyring, leading to a potential man-in-the-middle attack.",
+                "markdown": "**Vulnerability CVE-2011-3374**\n| Severity | Package | Fixed Version | Link |\n| --- | --- | --- | --- |\n|LOW|libapt-pkg7.0||[CVE-2011-3374](https://avd.aquasec.com/nvd/cve-2011-3374)|\n\nIt was found that apt-key in apt, all versions, do not correctly validate gpg keys with the master keyring, leading to a potential man-in-the-middle attack."
+              },
+              "properties": {
+                "precision": "very-high",
+                "security-severity": "2.0",
+                "tags": [
+                  "vulnerability",
+                  "security",
+                  "LOW"
+                ]
+              }
+            },
+            {
+              "id": "TEMP-0841856-B18BAF",
+              "name": "OsPackageVulnerability",
+              "shortDescription": {
+                "text": "[Privilege escalation possible to other user than root]"
+              },
+              "fullDescription": {
+                "text": "[Privilege escalation possible to other user than root]"
+              },
+              "defaultConfiguration": {
+                "level": "note"
+              },
+              "helpUri": "https://security-tracker.debian.org/tracker/TEMP-0841856-B18BAF",
+              "help": {
+                "text": "Vulnerability TEMP-0841856-B18BAF\nSeverity: LOW\nPackage: bash\nFixed Version: \nLink: [TEMP-0841856-B18BAF](https://security-tracker.debian.org/tracker/TEMP-0841856-B18BAF)\n",
+                "markdown": "**Vulnerability TEMP-0841856-B18BAF**\n| Severity | Package | Fixed Version | Link |\n| --- | --- | --- | --- |\n|LOW|bash||[TEMP-0841856-B18BAF](https://security-tracker.debian.org/tracker/TEMP-0841856-B18BAF)|\n\n"
+              },
+              "properties": {
+                "precision": "very-high",
+                "security-severity": "2.0",
+                "tags": [
+                  "vulnerability",
+                  "security",
+                  "LOW"
+                ]
+              }
+            },
+            {
+              "id": "CVE-2025-14104",
+              "name": "OsPackageVulnerability",
+              "shortDescription": {
+                "text": "util-linux: util-linux: Heap buffer overread in setpwnam() when processing 256-byte usernames"
+              },
+              "fullDescription": {
+                "text": "A flaw was found in util-linux. This vulnerability allows a heap buffer overread when processing 256-byte usernames, specifically within the `setpwnam()` function, affecting SUID (Set User ID) login-utils utilities writing to the password database."
+              },
+              "defaultConfiguration": {
+                "level": "warning"
+              },
+              "helpUri": "https://avd.aquasec.com/nvd/cve-2025-14104",
+              "help": {
+                "text": "Vulnerability CVE-2025-14104\nSeverity: MEDIUM\nPackage: util-linux\nFixed Version: \nLink: [CVE-2025-14104](https://avd.aquasec.com/nvd/cve-2025-14104)\nA flaw was found in util-linux. This vulnerability allows a heap buffer overread when processing 256-byte usernames, specifically within the `setpwnam()` function, affecting SUID (Set User ID) login-utils utilities writing to the password database.",
+                "markdown": "**Vulnerability CVE-2025-14104**\n| Severity | Package | Fixed Version | Link |\n| --- | --- | --- | --- |\n|MEDIUM|util-linux||[CVE-2025-14104](https://avd.aquasec.com/nvd/cve-2025-14104)|\n\nA flaw was found in util-linux. This vulnerability allows a heap buffer overread when processing 256-byte usernames, specifically within the `setpwnam()` function, affecting SUID (Set User ID) login-utils utilities writing to the password database."
+              },
+              "properties": {
+                "precision": "very-high",
+                "security-severity": "5.5",
+                "tags": [
+                  "vulnerability",
+                  "security",
+                  "MEDIUM"
+                ]
+              }
+            },
+            {
+              "id": "CVE-2022-0563",
+              "name": "OsPackageVulnerability",
+              "shortDescription": {
+                "text": "util-linux: partial disclosure of arbitrary files in chfn and chsh when compiled with libreadline"
+              },
+              "fullDescription": {
+                "text": "A flaw was found in the util-linux chfn and chsh utilities when compiled with Readline support. The Readline library uses an \"INPUTRC\" environment variable to get a path to the library config file. When the library cannot parse the specified file, it prints an error message containing data from the file. This flaw allows an unprivileged user to read root-owned files, potentially leading to privilege escalation. This flaw affects util-linux versions prior to 2.37.4."
+              },
+              "defaultConfiguration": {
+                "level": "note"
+              },
+              "helpUri": "https://avd.aquasec.com/nvd/cve-2022-0563",
+              "help": {
+                "text": "Vulnerability CVE-2022-0563\nSeverity: LOW\nPackage: util-linux\nFixed Version: \nLink: [CVE-2022-0563](https://avd.aquasec.com/nvd/cve-2022-0563)\nA flaw was found in the util-linux chfn and chsh utilities when compiled with Readline support. The Readline library uses an \"INPUTRC\" environment variable to get a path to the library config file. When the library cannot parse the specified file, it prints an error message containing data from the file. This flaw allows an unprivileged user to read root-owned files, potentially leading to privilege escalation. This flaw affects util-linux versions prior to 2.37.4.",
+                "markdown": "**Vulnerability CVE-2022-0563**\n| Severity | Package | Fixed Version | Link |\n| --- | --- | --- | --- |\n|LOW|util-linux||[CVE-2022-0563](https://avd.aquasec.com/nvd/cve-2022-0563)|\n\nA flaw was found in the util-linux chfn and chsh utilities when compiled with Readline support. The Readline library uses an \"INPUTRC\" environment variable to get a path to the library config file. When the library cannot parse the specified file, it prints an error message containing data from the file. This flaw allows an unprivileged user to read root-owned files, potentially leading to privilege escalation. This flaw affects util-linux versions prior to 2.37.4."
+              },
+              "properties": {
+                "precision": "very-high",
+                "security-severity": "2.0",
+                "tags": [
+                  "vulnerability",
+                  "security",
+                  "LOW"
+                ]
+              }
+            },
+            {
+              "id": "CVE-2017-18018",
+              "name": "OsPackageVulnerability",
+              "shortDescription": {
+                "text": "coreutils: race condition vulnerability in chown and chgrp"
+              },
+              "fullDescription": {
+                "text": "In GNU Coreutils through 8.29, chown-core.c in chown and chgrp does not prevent replacement of a plain file with a symlink during use of the POSIX \"-R -L\" options, which allows local users to modify the ownership of arbitrary files by leveraging a race condition."
+              },
+              "defaultConfiguration": {
+                "level": "note"
+              },
+              "helpUri": "https://avd.aquasec.com/nvd/cve-2017-18018",
+              "help": {
+                "text": "Vulnerability CVE-2017-18018\nSeverity: LOW\nPackage: coreutils\nFixed Version: \nLink: [CVE-2017-18018](https://avd.aquasec.com/nvd/cve-2017-18018)\nIn GNU Coreutils through 8.29, chown-core.c in chown and chgrp does not prevent replacement of a plain file with a symlink during use of the POSIX \"-R -L\" options, which allows local users to modify the ownership of arbitrary files by leveraging a race condition.",
+                "markdown": "**Vulnerability CVE-2017-18018**\n| Severity | Package | Fixed Version | Link |\n| --- | --- | --- | --- |\n|LOW|coreutils||[CVE-2017-18018](https://avd.aquasec.com/nvd/cve-2017-18018)|\n\nIn GNU Coreutils through 8.29, chown-core.c in chown and chgrp does not prevent replacement of a plain file with a symlink during use of the POSIX \"-R -L\" options, which allows local users to modify the ownership of arbitrary files by leveraging a race condition."
+              },
+              "properties": {
+                "precision": "very-high",
+                "security-severity": "2.0",
+                "tags": [
+                  "vulnerability",
+                  "security",
+                  "LOW"
+                ]
+              }
+            },
+            {
+              "id": "CVE-2025-5278",
+              "name": "OsPackageVulnerability",
+              "shortDescription": {
+                "text": "coreutils: Heap Buffer Under-Read in GNU Coreutils sort via Key Specification"
+              },
+              "fullDescription": {
+                "text": "A flaw was found in GNU Coreutils. The sort utility's begfield() function is vulnerable to a heap buffer under-read. The program may access memory outside the allocated buffer if a user runs a crafted command using the traditional key format. A malicious input could lead to a crash or leak sensitive data."
+              },
+              "defaultConfiguration": {
+                "level": "note"
+              },
+              "helpUri": "https://avd.aquasec.com/nvd/cve-2025-5278",
+              "help": {
+                "text": "Vulnerability CVE-2025-5278\nSeverity: LOW\nPackage: coreutils\nFixed Version: \nLink: [CVE-2025-5278](https://avd.aquasec.com/nvd/cve-2025-5278)\nA flaw was found in GNU Coreutils. The sort utility's begfield() function is vulnerable to a heap buffer under-read. The program may access memory outside the allocated buffer if a user runs a crafted command using the traditional key format. A malicious input could lead to a crash or leak sensitive data.",
+                "markdown": "**Vulnerability CVE-2025-5278**\n| Severity | Package | Fixed Version | Link |\n| --- | --- | --- | --- |\n|LOW|coreutils||[CVE-2025-5278](https://avd.aquasec.com/nvd/cve-2025-5278)|\n\nA flaw was found in GNU Coreutils. The sort utility's begfield() function is vulnerable to a heap buffer under-read. The program may access memory outside the allocated buffer if a user runs a crafted command using the traditional key format. A malicious input could lead to a crash or leak sensitive data."
+              },
+              "properties": {
+                "precision": "very-high",
+                "security-severity": "2.0",
+                "tags": [
+                  "vulnerability",
+                  "security",
+                  "LOW"
+                ]
+              }
+            },
+            {
+              "id": "CVE-2025-10966",
+              "name": "OsPackageVulnerability",
+              "shortDescription": {
+                "text": "curl: Curl missing SFTP host verification with wolfSSH backend"
+              },
+              "fullDescription": {
+                "text": "curl's code for managing SSH connections when SFTP was done using the wolfSSH\npowered backend was flawed and missed host verification mechanisms.\n\nThis prevents curl from detecting MITM attackers and more."
+              },
+              "defaultConfiguration": {
+                "level": "note"
+              },
+              "helpUri": "https://avd.aquasec.com/nvd/cve-2025-10966",
+              "help": {
+                "text": "Vulnerability CVE-2025-10966\nSeverity: LOW\nPackage: libcurl4t64\nFixed Version: \nLink: [CVE-2025-10966](https://avd.aquasec.com/nvd/cve-2025-10966)\ncurl's code for managing SSH connections when SFTP was done using the wolfSSH\npowered backend was flawed and missed host verification mechanisms.\n\nThis prevents curl from detecting MITM attackers and more.",
+                "markdown": "**Vulnerability CVE-2025-10966**\n| Severity | Package | Fixed Version | Link |\n| --- | --- | --- | --- |\n|LOW|libcurl4t64||[CVE-2025-10966](https://avd.aquasec.com/nvd/cve-2025-10966)|\n\ncurl's code for managing SSH connections when SFTP was done using the wolfSSH\npowered backend was flawed and missed host verification mechanisms.\n\nThis prevents curl from detecting MITM attackers and more."
+              },
+              "properties": {
+                "precision": "very-high",
+                "security-severity": "2.0",
+                "tags": [
+                  "vulnerability",
+                  "security",
+                  "LOW"
+                ]
+              }
+            },
+            {
+              "id": "CVE-2010-4756",
+              "name": "OsPackageVulnerability",
+              "shortDescription": {
+                "text": "glibc: glob implementation can cause excessive CPU and memory consumption due to crafted glob expressions"
+              },
+              "fullDescription": {
+                "text": "The glob implementation in the GNU C Library (aka glibc or libc6) allows remote authenticated users to cause a denial of service (CPU and memory consumption) via crafted glob expressions that do not match any pathnames, as demonstrated by glob expressions in STAT commands to an FTP daemon, a different vulnerability than CVE-2010-2632."
+              },
+              "defaultConfiguration": {
+                "level": "note"
+              },
+              "helpUri": "https://avd.aquasec.com/nvd/cve-2010-4756",
+              "help": {
+                "text": "Vulnerability CVE-2010-4756\nSeverity: LOW\nPackage: libc6\nFixed Version: \nLink: [CVE-2010-4756](https://avd.aquasec.com/nvd/cve-2010-4756)\nThe glob implementation in the GNU C Library (aka glibc or libc6) allows remote authenticated users to cause a denial of service (CPU and memory consumption) via crafted glob expressions that do not match any pathnames, as demonstrated by glob expressions in STAT commands to an FTP daemon, a different vulnerability than CVE-2010-2632.",
+                "markdown": "**Vulnerability CVE-2010-4756**\n| Severity | Package | Fixed Version | Link |\n| --- | --- | --- | --- |\n|LOW|libc6||[CVE-2010-4756](https://avd.aquasec.com/nvd/cve-2010-4756)|\n\nThe glob implementation in the GNU C Library (aka glibc or libc6) allows remote authenticated users to cause a denial of service (CPU and memory consumption) via crafted glob expressions that do not match any pathnames, as demonstrated by glob expressions in STAT commands to an FTP daemon, a different vulnerability than CVE-2010-2632."
+              },
+              "properties": {
+                "precision": "very-high",
+                "security-severity": "2.0",
+                "tags": [
+                  "vulnerability",
+                  "security",
+                  "LOW"
+                ]
+              }
+            },
+            {
+              "id": "CVE-2018-20796",
+              "name": "OsPackageVulnerability",
+              "shortDescription": {
+                "text": "glibc: uncontrolled recursion in function check_dst_limits_calc_pos_1 in posix/regexec.c"
+              },
+              "fullDescription": {
+                "text": "In the GNU C Library (aka glibc or libc6) through 2.29, check_dst_limits_calc_pos_1 in posix/regexec.c has Uncontrolled Recursion, as demonstrated by '(\\227|)(\\\\1\\\\1|t1|\\\\\\2537)+' in grep."
+              },
+              "defaultConfiguration": {
+                "level": "note"
+              },
+              "helpUri": "https://avd.aquasec.com/nvd/cve-2018-20796",
+              "help": {
+                "text": "Vulnerability CVE-2018-20796\nSeverity: LOW\nPackage: libc6\nFixed Version: \nLink: [CVE-2018-20796](https://avd.aquasec.com/nvd/cve-2018-20796)\nIn the GNU C Library (aka glibc or libc6) through 2.29, check_dst_limits_calc_pos_1 in posix/regexec.c has Uncontrolled Recursion, as demonstrated by '(\\227|)(\\\\1\\\\1|t1|\\\\\\2537)+' in grep.",
+                "markdown": "**Vulnerability CVE-2018-20796**\n| Severity | Package | Fixed Version | Link |\n| --- | --- | --- | --- |\n|LOW|libc6||[CVE-2018-20796](https://avd.aquasec.com/nvd/cve-2018-20796)|\n\nIn the GNU C Library (aka glibc or libc6) through 2.29, check_dst_limits_calc_pos_1 in posix/regexec.c has Uncontrolled Recursion, as demonstrated by '(\\227|)(\\\\1\\\\1|t1|\\\\\\2537)+' in grep."
+              },
+              "properties": {
+                "precision": "very-high",
+                "security-severity": "2.0",
+                "tags": [
+                  "vulnerability",
+                  "security",
+                  "LOW"
+                ]
+              }
+            },
+            {
+              "id": "CVE-2019-1010022",
+              "name": "OsPackageVulnerability",
+              "shortDescription": {
+                "text": "glibc: stack guard protection bypass"
+              },
+              "fullDescription": {
+                "text": "GNU Libc current is affected by: Mitigation bypass. The impact is: Attacker may bypass stack guard protection. The component is: nptl. The attack vector is: Exploit stack buffer overflow vulnerability and use this bypass vulnerability to bypass stack guard. NOTE: Upstream comments indicate \"this is being treated as a non-security bug and no real threat."
+              },
+              "defaultConfiguration": {
+                "level": "note"
+              },
+              "helpUri": "https://avd.aquasec.com/nvd/cve-2019-1010022",
+              "help": {
+                "text": "Vulnerability CVE-2019-1010022\nSeverity: LOW\nPackage: libc6\nFixed Version: \nLink: [CVE-2019-1010022](https://avd.aquasec.com/nvd/cve-2019-1010022)\nGNU Libc current is affected by: Mitigation bypass. The impact is: Attacker may bypass stack guard protection. The component is: nptl. The attack vector is: Exploit stack buffer overflow vulnerability and use this bypass vulnerability to bypass stack guard. NOTE: Upstream comments indicate \"this is being treated as a non-security bug and no real threat.",
+                "markdown": "**Vulnerability CVE-2019-1010022**\n| Severity | Package | Fixed Version | Link |\n| --- | --- | --- | --- |\n|LOW|libc6||[CVE-2019-1010022](https://avd.aquasec.com/nvd/cve-2019-1010022)|\n\nGNU Libc current is affected by: Mitigation bypass. The impact is: Attacker may bypass stack guard protection. The component is: nptl. The attack vector is: Exploit stack buffer overflow vulnerability and use this bypass vulnerability to bypass stack guard. NOTE: Upstream comments indicate \"this is being treated as a non-security bug and no real threat."
+              },
+              "properties": {
+                "precision": "very-high",
+                "security-severity": "2.0",
+                "tags": [
+                  "vulnerability",
+                  "security",
+                  "LOW"
+                ]
+              }
+            },
+            {
+              "id": "CVE-2019-1010023",
+              "name": "OsPackageVulnerability",
+              "shortDescription": {
+                "text": "glibc: running ldd on malicious ELF leads to code execution because of wrong size computation"
+              },
+              "fullDescription": {
+                "text": "GNU Libc current is affected by: Re-mapping current loaded library with malicious ELF file. The impact is: In worst case attacker may evaluate privileges. The component is: libld. The attack vector is: Attacker sends 2 ELF files to victim and asks to run ldd on it. ldd execute code. NOTE: Upstream comments indicate \"this is being treated as a non-security bug and no real threat."
+              },
+              "defaultConfiguration": {
+                "level": "note"
+              },
+              "helpUri": "https://avd.aquasec.com/nvd/cve-2019-1010023",
+              "help": {
+                "text": "Vulnerability CVE-2019-1010023\nSeverity: LOW\nPackage: libc6\nFixed Version: \nLink: [CVE-2019-1010023](https://avd.aquasec.com/nvd/cve-2019-1010023)\nGNU Libc current is affected by: Re-mapping current loaded library with malicious ELF file. The impact is: In worst case attacker may evaluate privileges. The component is: libld. The attack vector is: Attacker sends 2 ELF files to victim and asks to run ldd on it. ldd execute code. NOTE: Upstream comments indicate \"this is being treated as a non-security bug and no real threat.",
+                "markdown": "**Vulnerability CVE-2019-1010023**\n| Severity | Package | Fixed Version | Link |\n| --- | --- | --- | --- |\n|LOW|libc6||[CVE-2019-1010023](https://avd.aquasec.com/nvd/cve-2019-1010023)|\n\nGNU Libc current is affected by: Re-mapping current loaded library with malicious ELF file. The impact is: In worst case attacker may evaluate privileges. The component is: libld. The attack vector is: Attacker sends 2 ELF files to victim and asks to run ldd on it. ldd execute code. NOTE: Upstream comments indicate \"this is being treated as a non-security bug and no real threat."
+              },
+              "properties": {
+                "precision": "very-high",
+                "security-severity": "2.0",
+                "tags": [
+                  "vulnerability",
+                  "security",
+                  "LOW"
+                ]
+              }
+            },
+            {
+              "id": "CVE-2019-1010024",
+              "name": "OsPackageVulnerability",
+              "shortDescription": {
+                "text": "glibc: ASLR bypass using cache of thread stack and heap"
+              },
+              "fullDescription": {
+                "text": "GNU Libc current is affected by: Mitigation bypass. The impact is: Attacker may bypass ASLR using cache of thread stack and heap. The component is: glibc. NOTE: Upstream comments indicate \"this is being treated as a non-security bug and no real threat."
+              },
+              "defaultConfiguration": {
+                "level": "note"
+              },
+              "helpUri": "https://avd.aquasec.com/nvd/cve-2019-1010024",
+              "help": {
+                "text": "Vulnerability CVE-2019-1010024\nSeverity: LOW\nPackage: libc6\nFixed Version: \nLink: [CVE-2019-1010024](https://avd.aquasec.com/nvd/cve-2019-1010024)\nGNU Libc current is affected by: Mitigation bypass. The impact is: Attacker may bypass ASLR using cache of thread stack and heap. The component is: glibc. NOTE: Upstream comments indicate \"this is being treated as a non-security bug and no real threat.",
+                "markdown": "**Vulnerability CVE-2019-1010024**\n| Severity | Package | Fixed Version | Link |\n| --- | --- | --- | --- |\n|LOW|libc6||[CVE-2019-1010024](https://avd.aquasec.com/nvd/cve-2019-1010024)|\n\nGNU Libc current is affected by: Mitigation bypass. The impact is: Attacker may bypass ASLR using cache of thread stack and heap. The component is: glibc. NOTE: Upstream comments indicate \"this is being treated as a non-security bug and no real threat."
+              },
+              "properties": {
+                "precision": "very-high",
+                "security-severity": "2.0",
+                "tags": [
+                  "vulnerability",
+                  "security",
+                  "LOW"
+                ]
+              }
+            },
+            {
+              "id": "CVE-2019-1010025",
+              "name": "OsPackageVulnerability",
+              "shortDescription": {
+                "text": "glibc: information disclosure of heap addresses of pthread_created thread"
+              },
+              "fullDescription": {
+                "text": "GNU Libc current is affected by: Mitigation bypass. The impact is: Attacker may guess the heap addresses of pthread_created thread. The component is: glibc. NOTE: the vendor's position is \"ASLR bypass itself is not a vulnerability."
+              },
+              "defaultConfiguration": {
+                "level": "note"
+              },
+              "helpUri": "https://avd.aquasec.com/nvd/cve-2019-1010025",
+              "help": {
+                "text": "Vulnerability CVE-2019-1010025\nSeverity: LOW\nPackage: libc6\nFixed Version: \nLink: [CVE-2019-1010025](https://avd.aquasec.com/nvd/cve-2019-1010025)\nGNU Libc current is affected by: Mitigation bypass. The impact is: Attacker may guess the heap addresses of pthread_created thread. The component is: glibc. NOTE: the vendor's position is \"ASLR bypass itself is not a vulnerability.",
+                "markdown": "**Vulnerability CVE-2019-1010025**\n| Severity | Package | Fixed Version | Link |\n| --- | --- | --- | --- |\n|LOW|libc6||[CVE-2019-1010025](https://avd.aquasec.com/nvd/cve-2019-1010025)|\n\nGNU Libc current is affected by: Mitigation bypass. The impact is: Attacker may guess the heap addresses of pthread_created thread. The component is: glibc. NOTE: the vendor's position is \"ASLR bypass itself is not a vulnerability."
+              },
+              "properties": {
+                "precision": "very-high",
+                "security-severity": "2.0",
+                "tags": [
+                  "vulnerability",
+                  "security",
+                  "LOW"
+                ]
+              }
+            },
+            {
+              "id": "CVE-2019-9192",
+              "name": "OsPackageVulnerability",
+              "shortDescription": {
+                "text": "glibc: uncontrolled recursion in function check_dst_limits_calc_pos_1 in posix/regexec.c"
+              },
+              "fullDescription": {
+                "text": "In the GNU C Library (aka glibc or libc6) through 2.29, check_dst_limits_calc_pos_1 in posix/regexec.c has Uncontrolled Recursion, as demonstrated by '(|)(\\\\1\\\\1)*' in grep, a different issue than CVE-2018-20796. NOTE: the software maintainer disputes that this is a vulnerability because the behavior occurs only with a crafted pattern"
+              },
+              "defaultConfiguration": {
+                "level": "note"
+              },
+              "helpUri": "https://avd.aquasec.com/nvd/cve-2019-9192",
+              "help": {
+                "text": "Vulnerability CVE-2019-9192\nSeverity: LOW\nPackage: libc6\nFixed Version: \nLink: [CVE-2019-9192](https://avd.aquasec.com/nvd/cve-2019-9192)\nIn the GNU C Library (aka glibc or libc6) through 2.29, check_dst_limits_calc_pos_1 in posix/regexec.c has Uncontrolled Recursion, as demonstrated by '(|)(\\\\1\\\\1)*' in grep, a different issue than CVE-2018-20796. NOTE: the software maintainer disputes that this is a vulnerability because the behavior occurs only with a crafted pattern",
+                "markdown": "**Vulnerability CVE-2019-9192**\n| Severity | Package | Fixed Version | Link |\n| --- | --- | --- | --- |\n|LOW|libc6||[CVE-2019-9192](https://avd.aquasec.com/nvd/cve-2019-9192)|\n\nIn the GNU C Library (aka glibc or libc6) through 2.29, check_dst_limits_calc_pos_1 in posix/regexec.c has Uncontrolled Recursion, as demonstrated by '(|)(\\\\1\\\\1)*' in grep, a different issue than CVE-2018-20796. NOTE: the software maintainer disputes that this is a vulnerability because the behavior occurs only with a crafted pattern"
+              },
+              "properties": {
+                "precision": "very-high",
+                "security-severity": "2.0",
+                "tags": [
+                  "vulnerability",
+                  "security",
+                  "LOW"
+                ]
+              }
+            },
+            {
+              "id": "CVE-2011-3389",
+              "name": "OsPackageVulnerability",
+              "shortDescription": {
+                "text": "HTTPS: block-wise chosen-plaintext attack against SSL/TLS (BEAST)"
+              },
+              "fullDescription": {
+                "text": "The SSL protocol, as used in certain configurations in Microsoft Windows and Microsoft Internet Explorer, Mozilla Firefox, Google Chrome, Opera, and other products, encrypts data by using CBC mode with chained initialization vectors, which allows man-in-the-middle attackers to obtain plaintext HTTP headers via a blockwise chosen-boundary attack (BCBA) on an HTTPS session, in conjunction with JavaScript code that uses (1) the HTML5 WebSocket API, (2) the Java URLConnection API, or (3) the Silverlight WebClient API, aka a \"BEAST\" attack."
+              },
+              "defaultConfiguration": {
+                "level": "note"
+              },
+              "helpUri": "https://avd.aquasec.com/nvd/cve-2011-3389",
+              "help": {
+                "text": "Vulnerability CVE-2011-3389\nSeverity: LOW\nPackage: libgnutls30t64\nFixed Version: \nLink: [CVE-2011-3389](https://avd.aquasec.com/nvd/cve-2011-3389)\nThe SSL protocol, as used in certain configurations in Microsoft Windows and Microsoft Internet Explorer, Mozilla Firefox, Google Chrome, Opera, and other products, encrypts data by using CBC mode with chained initialization vectors, which allows man-in-the-middle attackers to obtain plaintext HTTP headers via a blockwise chosen-boundary attack (BCBA) on an HTTPS session, in conjunction with JavaScript code that uses (1) the HTML5 WebSocket API, (2) the Java URLConnection API, or (3) the Silverlight WebClient API, aka a \"BEAST\" attack.",
+                "markdown": "**Vulnerability CVE-2011-3389**\n| Severity | Package | Fixed Version | Link |\n| --- | --- | --- | --- |\n|LOW|libgnutls30t64||[CVE-2011-3389](https://avd.aquasec.com/nvd/cve-2011-3389)|\n\nThe SSL protocol, as used in certain configurations in Microsoft Windows and Microsoft Internet Explorer, Mozilla Firefox, Google Chrome, Opera, and other products, encrypts data by using CBC mode with chained initialization vectors, which allows man-in-the-middle attackers to obtain plaintext HTTP headers via a blockwise chosen-boundary attack (BCBA) on an HTTPS session, in conjunction with JavaScript code that uses (1) the HTML5 WebSocket API, (2) the Java URLConnection API, or (3) the Silverlight WebClient API, aka a \"BEAST\" attack."
+              },
+              "properties": {
+                "precision": "very-high",
+                "security-severity": "2.0",
+                "tags": [
+                  "vulnerability",
+                  "security",
+                  "LOW"
+                ]
+              }
+            },
+            {
+              "id": "CVE-2025-9820",
+              "name": "OsPackageVulnerability",
+              "shortDescription": {
+                "text": "[GNUTLS-SA-2025-11-18]"
+              },
+              "fullDescription": {
+                "text": "[GNUTLS-SA-2025-11-18]"
+              },
+              "defaultConfiguration": {
+                "level": "note"
+              },
+              "helpUri": "https://avd.aquasec.com/nvd/cve-2025-9820",
+              "help": {
+                "text": "Vulnerability CVE-2025-9820\nSeverity: UNKNOWN\nPackage: libgnutls30t64\nFixed Version: \nLink: [CVE-2025-9820](https://avd.aquasec.com/nvd/cve-2025-9820)\n",
+                "markdown": "**Vulnerability CVE-2025-9820**\n| Severity | Package | Fixed Version | Link |\n| --- | --- | --- | --- |\n|UNKNOWN|libgnutls30t64||[CVE-2025-9820](https://avd.aquasec.com/nvd/cve-2025-9820)|\n\n"
+              },
+              "properties": {
+                "precision": "very-high",
+                "security-severity": "0.0",
+                "tags": [
+                  "vulnerability",
+                  "security",
+                  "UNKNOWN"
+                ]
+              }
+            },
+            {
+              "id": "CVE-2018-5709",
+              "name": "OsPackageVulnerability",
+              "shortDescription": {
+                "text": "krb5: integer overflow in dbentry-\u003en_key_data in kadmin/dbutil/dump.c"
+              },
+              "fullDescription": {
+                "text": "An issue was discovered in MIT Kerberos 5 (aka krb5) through 1.16. There is a variable \"dbentry-\u003en_key_data\" in kadmin/dbutil/dump.c that can store 16-bit data but unknowingly the developer has assigned a \"u4\" variable to it, which is for 32-bit data. An attacker can use this vulnerability to affect other artifacts of the database as we know that a Kerberos database dump file contains trusted data."
+              },
+              "defaultConfiguration": {
+                "level": "note"
+              },
+              "helpUri": "https://avd.aquasec.com/nvd/cve-2018-5709",
+              "help": {
+                "text": "Vulnerability CVE-2018-5709\nSeverity: LOW\nPackage: libkrb5support0\nFixed Version: \nLink: [CVE-2018-5709](https://avd.aquasec.com/nvd/cve-2018-5709)\nAn issue was discovered in MIT Kerberos 5 (aka krb5) through 1.16. There is a variable \"dbentry-\u003en_key_data\" in kadmin/dbutil/dump.c that can store 16-bit data but unknowingly the developer has assigned a \"u4\" variable to it, which is for 32-bit data. An attacker can use this vulnerability to affect other artifacts of the database as we know that a Kerberos database dump file contains trusted data.",
+                "markdown": "**Vulnerability CVE-2018-5709**\n| Severity | Package | Fixed Version | Link |\n| --- | --- | --- | --- |\n|LOW|libkrb5support0||[CVE-2018-5709](https://avd.aquasec.com/nvd/cve-2018-5709)|\n\nAn issue was discovered in MIT Kerberos 5 (aka krb5) through 1.16. There is a variable \"dbentry-\u003en_key_data\" in kadmin/dbutil/dump.c that can store 16-bit data but unknowingly the developer has assigned a \"u4\" variable to it, which is for 32-bit data. An attacker can use this vulnerability to affect other artifacts of the database as we know that a Kerberos database dump file contains trusted data."
+              },
+              "properties": {
+                "precision": "very-high",
+                "security-severity": "2.0",
+                "tags": [
+                  "vulnerability",
+                  "security",
+                  "LOW"
+                ]
+              }
+            },
+            {
+              "id": "CVE-2024-26458",
+              "name": "OsPackageVulnerability",
+              "shortDescription": {
+                "text": "krb5: Memory leak at /krb5/src/lib/rpc/pmap_rmt.c"
+              },
+              "fullDescription": {
+                "text": "Kerberos 5 (aka krb5) 1.21.2 contains a memory leak in /krb5/src/lib/rpc/pmap_rmt.c."
+              },
+              "defaultConfiguration": {
+                "level": "note"
+              },
+              "helpUri": "https://avd.aquasec.com/nvd/cve-2024-26458",
+              "help": {
+                "text": "Vulnerability CVE-2024-26458\nSeverity: LOW\nPackage: libkrb5support0\nFixed Version: \nLink: [CVE-2024-26458](https://avd.aquasec.com/nvd/cve-2024-26458)\nKerberos 5 (aka krb5) 1.21.2 contains a memory leak in /krb5/src/lib/rpc/pmap_rmt.c.",
+                "markdown": "**Vulnerability CVE-2024-26458**\n| Severity | Package | Fixed Version | Link |\n| --- | --- | --- | --- |\n|LOW|libkrb5support0||[CVE-2024-26458](https://avd.aquasec.com/nvd/cve-2024-26458)|\n\nKerberos 5 (aka krb5) 1.21.2 contains a memory leak in /krb5/src/lib/rpc/pmap_rmt.c."
+              },
+              "properties": {
+                "precision": "very-high",
+                "security-severity": "2.0",
+                "tags": [
+                  "vulnerability",
+                  "security",
+                  "LOW"
+                ]
+              }
+            },
+            {
+              "id": "CVE-2024-26461",
+              "name": "OsPackageVulnerability",
+              "shortDescription": {
+                "text": "krb5: Memory leak at /krb5/src/lib/gssapi/krb5/k5sealv3.c"
+              },
+              "fullDescription": {
+                "text": "Kerberos 5 (aka krb5) 1.21.2 contains a memory leak vulnerability in /krb5/src/lib/gssapi/krb5/k5sealv3.c."
+              },
+              "defaultConfiguration": {
+                "level": "note"
+              },
+              "helpUri": "https://avd.aquasec.com/nvd/cve-2024-26461",
+              "help": {
+                "text": "Vulnerability CVE-2024-26461\nSeverity: LOW\nPackage: libkrb5support0\nFixed Version: \nLink: [CVE-2024-26461](https://avd.aquasec.com/nvd/cve-2024-26461)\nKerberos 5 (aka krb5) 1.21.2 contains a memory leak vulnerability in /krb5/src/lib/gssapi/krb5/k5sealv3.c.",
+                "markdown": "**Vulnerability CVE-2024-26461**\n| Severity | Package | Fixed Version | Link |\n| --- | --- | --- | --- |\n|LOW|libkrb5support0||[CVE-2024-26461](https://avd.aquasec.com/nvd/cve-2024-26461)|\n\nKerberos 5 (aka krb5) 1.21.2 contains a memory leak vulnerability in /krb5/src/lib/gssapi/krb5/k5sealv3.c."
+              },
+              "properties": {
+                "precision": "very-high",
+                "security-severity": "2.0",
+                "tags": [
+                  "vulnerability",
+                  "security",
+                  "LOW"
+                ]
+              }
+            },
+            {
+              "id": "CVE-2015-3276",
+              "name": "OsPackageVulnerability",
+              "shortDescription": {
+                "text": "openldap: incorrect multi-keyword mode cipherstring parsing"
+              },
+              "fullDescription": {
+                "text": "The nss_parse_ciphers function in libraries/libldap/tls_m.c in OpenLDAP does not properly parse OpenSSL-style multi-keyword mode cipher strings, which might cause a weaker than intended cipher to be used and allow remote attackers to have unspecified impact via unknown vectors."
+              },
+              "defaultConfiguration": {
+                "level": "note"
+              },
+              "helpUri": "https://avd.aquasec.com/nvd/cve-2015-3276",
+              "help": {
+                "text": "Vulnerability CVE-2015-3276\nSeverity: LOW\nPackage: libldap2\nFixed Version: \nLink: [CVE-2015-3276](https://avd.aquasec.com/nvd/cve-2015-3276)\nThe nss_parse_ciphers function in libraries/libldap/tls_m.c in OpenLDAP does not properly parse OpenSSL-style multi-keyword mode cipher strings, which might cause a weaker than intended cipher to be used and allow remote attackers to have unspecified impact via unknown vectors.",
+                "markdown": "**Vulnerability CVE-2015-3276**\n| Severity | Package | Fixed Version | Link |\n| --- | --- | --- | --- |\n|LOW|libldap2||[CVE-2015-3276](https://avd.aquasec.com/nvd/cve-2015-3276)|\n\nThe nss_parse_ciphers function in libraries/libldap/tls_m.c in OpenLDAP does not properly parse OpenSSL-style multi-keyword mode cipher strings, which might cause a weaker than intended cipher to be used and allow remote attackers to have unspecified impact via unknown vectors."
+              },
+              "properties": {
+                "precision": "very-high",
+                "security-severity": "2.0",
+                "tags": [
+                  "vulnerability",
+                  "security",
+                  "LOW"
+                ]
+              }
+            },
+            {
+              "id": "CVE-2017-14159",
+              "name": "OsPackageVulnerability",
+              "shortDescription": {
+                "text": "openldap: Privilege escalation via PID file manipulation"
+              },
+              "fullDescription": {
+                "text": "slapd in OpenLDAP 2.4.45 and earlier creates a PID file after dropping privileges to a non-root account, which might allow local users to kill arbitrary processes by leveraging access to this non-root account for PID file modification before a root script executes a \"kill `cat /pathname`\" command, as demonstrated by openldap-initscript."
+              },
+              "defaultConfiguration": {
+                "level": "note"
+              },
+              "helpUri": "https://avd.aquasec.com/nvd/cve-2017-14159",
+              "help": {
+                "text": "Vulnerability CVE-2017-14159\nSeverity: LOW\nPackage: libldap2\nFixed Version: \nLink: [CVE-2017-14159](https://avd.aquasec.com/nvd/cve-2017-14159)\nslapd in OpenLDAP 2.4.45 and earlier creates a PID file after dropping privileges to a non-root account, which might allow local users to kill arbitrary processes by leveraging access to this non-root account for PID file modification before a root script executes a \"kill `cat /pathname`\" command, as demonstrated by openldap-initscript.",
+                "markdown": "**Vulnerability CVE-2017-14159**\n| Severity | Package | Fixed Version | Link |\n| --- | --- | --- | --- |\n|LOW|libldap2||[CVE-2017-14159](https://avd.aquasec.com/nvd/cve-2017-14159)|\n\nslapd in OpenLDAP 2.4.45 and earlier creates a PID file after dropping privileges to a non-root account, which might allow local users to kill arbitrary processes by leveraging access to this non-root account for PID file modification before a root script executes a \"kill `cat /pathname`\" command, as demonstrated by openldap-initscript."
+              },
+              "properties": {
+                "precision": "very-high",
+                "security-severity": "2.0",
+                "tags": [
+                  "vulnerability",
+                  "security",
+                  "LOW"
+                ]
+              }
+            },
+            {
+              "id": "CVE-2017-17740",
+              "name": "OsPackageVulnerability",
+              "shortDescription": {
+                "text": "openldap: contrib/slapd-modules/nops/nops.c attempts to free stack buffer allowing remote attackers to cause a denial of service"
+              },
+              "fullDescription": {
+                "text": "contrib/slapd-modules/nops/nops.c in OpenLDAP through 2.4.45, when both the nops module and the memberof overlay are enabled, attempts to free a buffer that was allocated on the stack, which allows remote attackers to cause a denial of service (slapd crash) via a member MODDN operation."
+              },
+              "defaultConfiguration": {
+                "level": "note"
+              },
+              "helpUri": "https://avd.aquasec.com/nvd/cve-2017-17740",
+              "help": {
+                "text": "Vulnerability CVE-2017-17740\nSeverity: LOW\nPackage: libldap2\nFixed Version: \nLink: [CVE-2017-17740](https://avd.aquasec.com/nvd/cve-2017-17740)\ncontrib/slapd-modules/nops/nops.c in OpenLDAP through 2.4.45, when both the nops module and the memberof overlay are enabled, attempts to free a buffer that was allocated on the stack, which allows remote attackers to cause a denial of service (slapd crash) via a member MODDN operation.",
+                "markdown": "**Vulnerability CVE-2017-17740**\n| Severity | Package | Fixed Version | Link |\n| --- | --- | --- | --- |\n|LOW|libldap2||[CVE-2017-17740](https://avd.aquasec.com/nvd/cve-2017-17740)|\n\ncontrib/slapd-modules/nops/nops.c in OpenLDAP through 2.4.45, when both the nops module and the memberof overlay are enabled, attempts to free a buffer that was allocated on the stack, which allows remote attackers to cause a denial of service (slapd crash) via a member MODDN operation."
+              },
+              "properties": {
+                "precision": "very-high",
+                "security-severity": "2.0",
+                "tags": [
+                  "vulnerability",
+                  "security",
+                  "LOW"
+                ]
+              }
+            },
+            {
+              "id": "CVE-2020-15719",
+              "name": "OsPackageVulnerability",
+              "shortDescription": {
+                "text": "openldap: Certificate validation incorrectly matches name against CN-ID"
+              },
+              "fullDescription": {
+                "text": "libldap in certain third-party OpenLDAP packages has a certificate-validation flaw when the third-party package is asserting RFC6125 support. It considers CN even when there is a non-matching subjectAltName (SAN). This is fixed in, for example, openldap-2.4.46-10.el8 in Red Hat Enterprise Linux."
+              },
+              "defaultConfiguration": {
+                "level": "note"
+              },
+              "helpUri": "https://avd.aquasec.com/nvd/cve-2020-15719",
+              "help": {
+                "text": "Vulnerability CVE-2020-15719\nSeverity: LOW\nPackage: libldap2\nFixed Version: \nLink: [CVE-2020-15719](https://avd.aquasec.com/nvd/cve-2020-15719)\nlibldap in certain third-party OpenLDAP packages has a certificate-validation flaw when the third-party package is asserting RFC6125 support. It considers CN even when there is a non-matching subjectAltName (SAN). This is fixed in, for example, openldap-2.4.46-10.el8 in Red Hat Enterprise Linux.",
+                "markdown": "**Vulnerability CVE-2020-15719**\n| Severity | Package | Fixed Version | Link |\n| --- | --- | --- | --- |\n|LOW|libldap2||[CVE-2020-15719](https://avd.aquasec.com/nvd/cve-2020-15719)|\n\nlibldap in certain third-party OpenLDAP packages has a certificate-validation flaw when the third-party package is asserting RFC6125 support. It considers CN even when there is a non-matching subjectAltName (SAN). This is fixed in, for example, openldap-2.4.46-10.el8 in Red Hat Enterprise Linux."
+              },
+              "properties": {
+                "precision": "very-high",
+                "security-severity": "2.0",
+                "tags": [
+                  "vulnerability",
+                  "security",
+                  "LOW"
+                ]
+              }
+            },
+            {
+              "id": "CVE-2025-6141",
+              "name": "OsPackageVulnerability",
+              "shortDescription": {
+                "text": "gnu-ncurses: ncurses Stack Buffer Overflow"
+              },
+              "fullDescription": {
+                "text": "A vulnerability has been found in GNU ncurses up to 6.5-20250322 and classified as problematic. This vulnerability affects the function postprocess_termcap of the file tinfo/parse_entry.c. The manipulation leads to stack-based buffer overflow. The attack needs to be approached locally. Upgrading to version 6.5-20250329 is able to address this issue. It is recommended to upgrade the affected component."
+              },
+              "defaultConfiguration": {
+                "level": "note"
+              },
+              "helpUri": "https://avd.aquasec.com/nvd/cve-2025-6141",
+              "help": {
+                "text": "Vulnerability CVE-2025-6141\nSeverity: LOW\nPackage: ncurses-bin\nFixed Version: \nLink: [CVE-2025-6141](https://avd.aquasec.com/nvd/cve-2025-6141)\nA vulnerability has been found in GNU ncurses up to 6.5-20250322 and classified as problematic. This vulnerability affects the function postprocess_termcap of the file tinfo/parse_entry.c. The manipulation leads to stack-based buffer overflow. The attack needs to be approached locally. Upgrading to version 6.5-20250329 is able to address this issue. It is recommended to upgrade the affected component.",
+                "markdown": "**Vulnerability CVE-2025-6141**\n| Severity | Package | Fixed Version | Link |\n| --- | --- | --- | --- |\n|LOW|ncurses-bin||[CVE-2025-6141](https://avd.aquasec.com/nvd/cve-2025-6141)|\n\nA vulnerability has been found in GNU ncurses up to 6.5-20250322 and classified as problematic. This vulnerability affects the function postprocess_termcap of the file tinfo/parse_entry.c. The manipulation leads to stack-based buffer overflow. The attack needs to be approached locally. Upgrading to version 6.5-20250329 is able to address this issue. It is recommended to upgrade the affected component."
+              },
+              "properties": {
+                "precision": "very-high",
+                "security-severity": "2.0",
+                "tags": [
+                  "vulnerability",
+                  "security",
+                  "LOW"
+                ]
+              }
+            },
+            {
+              "id": "CVE-2025-7709",
+              "name": "OsPackageVulnerability",
+              "shortDescription": {
+                "text": "An integer overflow exists in the  FTS5 https://sqlite.org/fts5.html e ..."
+              },
+              "fullDescription": {
+                "text": "An integer overflow exists in the  FTS5 https://sqlite.org/fts5.html  extension. It occurs when the size of an array of tombstone pointers is calculated and truncated into a 32-bit integer. A pointer to partially controlled data can then be written out of bounds."
+              },
+              "defaultConfiguration": {
+                "level": "warning"
+              },
+              "helpUri": "https://avd.aquasec.com/nvd/cve-2025-7709",
+              "help": {
+                "text": "Vulnerability CVE-2025-7709\nSeverity: MEDIUM\nPackage: libsqlite3-0\nFixed Version: \nLink: [CVE-2025-7709](https://avd.aquasec.com/nvd/cve-2025-7709)\nAn integer overflow exists in the  FTS5 https://sqlite.org/fts5.html  extension. It occurs when the size of an array of tombstone pointers is calculated and truncated into a 32-bit integer. A pointer to partially controlled data can then be written out of bounds.",
+                "markdown": "**Vulnerability CVE-2025-7709**\n| Severity | Package | Fixed Version | Link |\n| --- | --- | --- | --- |\n|MEDIUM|libsqlite3-0||[CVE-2025-7709](https://avd.aquasec.com/nvd/cve-2025-7709)|\n\nAn integer overflow exists in the  FTS5 https://sqlite.org/fts5.html  extension. It occurs when the size of an array of tombstone pointers is calculated and truncated into a 32-bit integer. A pointer to partially controlled data can then be written out of bounds."
+              },
+              "properties": {
+                "precision": "very-high",
+                "security-severity": "5.5",
+                "tags": [
+                  "vulnerability",
+                  "security",
+                  "MEDIUM"
+                ]
+              }
+            },
+            {
+              "id": "CVE-2021-45346",
+              "name": "OsPackageVulnerability",
+              "shortDescription": {
+                "text": "sqlite: crafted SQL query allows a malicious user to obtain sensitive information"
+              },
+              "fullDescription": {
+                "text": "A Memory Leak vulnerability exists in SQLite Project SQLite3 3.35.1 and 3.37.0 via maliciously crafted SQL Queries (made via editing the Database File), it is possible to query a record, and leak subsequent bytes of memory that extend beyond the record, which could let a malicious user obtain sensitive information. NOTE: The developer disputes this as a vulnerability stating that If you give SQLite a corrupted database file and submit a query against the database, it might read parts of the database that you did not intend or expect."
+              },
+              "defaultConfiguration": {
+                "level": "note"
+              },
+              "helpUri": "https://avd.aquasec.com/nvd/cve-2021-45346",
+              "help": {
+                "text": "Vulnerability CVE-2021-45346\nSeverity: LOW\nPackage: libsqlite3-0\nFixed Version: \nLink: [CVE-2021-45346](https://avd.aquasec.com/nvd/cve-2021-45346)\nA Memory Leak vulnerability exists in SQLite Project SQLite3 3.35.1 and 3.37.0 via maliciously crafted SQL Queries (made via editing the Database File), it is possible to query a record, and leak subsequent bytes of memory that extend beyond the record, which could let a malicious user obtain sensitive information. NOTE: The developer disputes this as a vulnerability stating that If you give SQLite a corrupted database file and submit a query against the database, it might read parts of the database that you did not intend or expect.",
+                "markdown": "**Vulnerability CVE-2021-45346**\n| Severity | Package | Fixed Version | Link |\n| --- | --- | --- | --- |\n|LOW|libsqlite3-0||[CVE-2021-45346](https://avd.aquasec.com/nvd/cve-2021-45346)|\n\nA Memory Leak vulnerability exists in SQLite Project SQLite3 3.35.1 and 3.37.0 via maliciously crafted SQL Queries (made via editing the Database File), it is possible to query a record, and leak subsequent bytes of memory that extend beyond the record, which could let a malicious user obtain sensitive information. NOTE: The developer disputes this as a vulnerability stating that If you give SQLite a corrupted database file and submit a query against the database, it might read parts of the database that you did not intend or expect."
+              },
+              "properties": {
+                "precision": "very-high",
+                "security-severity": "2.0",
+                "tags": [
+                  "vulnerability",
+                  "security",
+                  "LOW"
+                ]
+              }
+            },
+            {
+              "id": "CVE-2013-4392",
+              "name": "OsPackageVulnerability",
+              "shortDescription": {
+                "text": "systemd: TOCTOU race condition when updating file permissions and SELinux security contexts"
+              },
+              "fullDescription": {
+                "text": "systemd, when updating file permissions, allows local users to change the permissions and SELinux security contexts for arbitrary files via a symlink attack on unspecified files."
+              },
+              "defaultConfiguration": {
+                "level": "note"
+              },
+              "helpUri": "https://avd.aquasec.com/nvd/cve-2013-4392",
+              "help": {
+                "text": "Vulnerability CVE-2013-4392\nSeverity: LOW\nPackage: libudev1\nFixed Version: \nLink: [CVE-2013-4392](https://avd.aquasec.com/nvd/cve-2013-4392)\nsystemd, when updating file permissions, allows local users to change the permissions and SELinux security contexts for arbitrary files via a symlink attack on unspecified files.",
+                "markdown": "**Vulnerability CVE-2013-4392**\n| Severity | Package | Fixed Version | Link |\n| --- | --- | --- | --- |\n|LOW|libudev1||[CVE-2013-4392](https://avd.aquasec.com/nvd/cve-2013-4392)|\n\nsystemd, when updating file permissions, allows local users to change the permissions and SELinux security contexts for arbitrary files via a symlink attack on unspecified files."
+              },
+              "properties": {
+                "precision": "very-high",
+                "security-severity": "2.0",
+                "tags": [
+                  "vulnerability",
+                  "security",
+                  "LOW"
+                ]
+              }
+            },
+            {
+              "id": "CVE-2023-31437",
+              "name": "OsPackageVulnerability",
+              "shortDescription": {
+                "text": "An issue was discovered in systemd 253. An attacker can modify a seale ..."
+              },
+              "fullDescription": {
+                "text": "An issue was discovered in systemd 253. An attacker can modify a sealed log file such that, in some views, not all existing and sealed log messages are displayed. NOTE: the vendor reportedly sent \"a reply denying that any of the finding was a security vulnerability.\""
+              },
+              "defaultConfiguration": {
+                "level": "note"
+              },
+              "helpUri": "https://avd.aquasec.com/nvd/cve-2023-31437",
+              "help": {
+                "text": "Vulnerability CVE-2023-31437\nSeverity: LOW\nPackage: libudev1\nFixed Version: \nLink: [CVE-2023-31437](https://avd.aquasec.com/nvd/cve-2023-31437)\nAn issue was discovered in systemd 253. An attacker can modify a sealed log file such that, in some views, not all existing and sealed log messages are displayed. NOTE: the vendor reportedly sent \"a reply denying that any of the finding was a security vulnerability.\"",
+                "markdown": "**Vulnerability CVE-2023-31437**\n| Severity | Package | Fixed Version | Link |\n| --- | --- | --- | --- |\n|LOW|libudev1||[CVE-2023-31437](https://avd.aquasec.com/nvd/cve-2023-31437)|\n\nAn issue was discovered in systemd 253. An attacker can modify a sealed log file such that, in some views, not all existing and sealed log messages are displayed. NOTE: the vendor reportedly sent \"a reply denying that any of the finding was a security vulnerability.\""
+              },
+              "properties": {
+                "precision": "very-high",
+                "security-severity": "2.0",
+                "tags": [
+                  "vulnerability",
+                  "security",
+                  "LOW"
+                ]
+              }
+            },
+            {
+              "id": "CVE-2023-31438",
+              "name": "OsPackageVulnerability",
+              "shortDescription": {
+                "text": "An issue was discovered in systemd 253. An attacker can truncate a sea ..."
+              },
+              "fullDescription": {
+                "text": "An issue was discovered in systemd 253. An attacker can truncate a sealed log file and then resume log sealing such that checking the integrity shows no error, despite modifications. NOTE: the vendor reportedly sent \"a reply denying that any of the finding was a security vulnerability.\""
+              },
+              "defaultConfiguration": {
+                "level": "note"
+              },
+              "helpUri": "https://avd.aquasec.com/nvd/cve-2023-31438",
+              "help": {
+                "text": "Vulnerability CVE-2023-31438\nSeverity: LOW\nPackage: libudev1\nFixed Version: \nLink: [CVE-2023-31438](https://avd.aquasec.com/nvd/cve-2023-31438)\nAn issue was discovered in systemd 253. An attacker can truncate a sealed log file and then resume log sealing such that checking the integrity shows no error, despite modifications. NOTE: the vendor reportedly sent \"a reply denying that any of the finding was a security vulnerability.\"",
+                "markdown": "**Vulnerability CVE-2023-31438**\n| Severity | Package | Fixed Version | Link |\n| --- | --- | --- | --- |\n|LOW|libudev1||[CVE-2023-31438](https://avd.aquasec.com/nvd/cve-2023-31438)|\n\nAn issue was discovered in systemd 253. An attacker can truncate a sealed log file and then resume log sealing such that checking the integrity shows no error, despite modifications. NOTE: the vendor reportedly sent \"a reply denying that any of the finding was a security vulnerability.\""
+              },
+              "properties": {
+                "precision": "very-high",
+                "security-severity": "2.0",
+                "tags": [
+                  "vulnerability",
+                  "security",
+                  "LOW"
+                ]
+              }
+            },
+            {
+              "id": "CVE-2023-31439",
+              "name": "OsPackageVulnerability",
+              "shortDescription": {
+                "text": "An issue was discovered in systemd 253. An attacker can modify the con ..."
+              },
+              "fullDescription": {
+                "text": "An issue was discovered in systemd 253. An attacker can modify the contents of past events in a sealed log file and then adjust the file such that checking the integrity shows no error, despite modifications. NOTE: the vendor reportedly sent \"a reply denying that any of the finding was a security vulnerability.\""
+              },
+              "defaultConfiguration": {
+                "level": "note"
+              },
+              "helpUri": "https://avd.aquasec.com/nvd/cve-2023-31439",
+              "help": {
+                "text": "Vulnerability CVE-2023-31439\nSeverity: LOW\nPackage: libudev1\nFixed Version: \nLink: [CVE-2023-31439](https://avd.aquasec.com/nvd/cve-2023-31439)\nAn issue was discovered in systemd 253. An attacker can modify the contents of past events in a sealed log file and then adjust the file such that checking the integrity shows no error, despite modifications. NOTE: the vendor reportedly sent \"a reply denying that any of the finding was a security vulnerability.\"",
+                "markdown": "**Vulnerability CVE-2023-31439**\n| Severity | Package | Fixed Version | Link |\n| --- | --- | --- | --- |\n|LOW|libudev1||[CVE-2023-31439](https://avd.aquasec.com/nvd/cve-2023-31439)|\n\nAn issue was discovered in systemd 253. An attacker can modify the contents of past events in a sealed log file and then adjust the file such that checking the integrity shows no error, despite modifications. NOTE: the vendor reportedly sent \"a reply denying that any of the finding was a security vulnerability.\""
+              },
+              "properties": {
+                "precision": "very-high",
+                "security-severity": "2.0",
+                "tags": [
+                  "vulnerability",
+                  "security",
+                  "LOW"
+                ]
+              }
+            },
+            {
+              "id": "CVE-2007-5686",
+              "name": "OsPackageVulnerability",
+              "shortDescription": {
+                "text": "initscripts in rPath Linux 1 sets insecure permissions for the /var/lo ..."
+              },
+              "fullDescription": {
+                "text": "initscripts in rPath Linux 1 sets insecure permissions for the /var/log/btmp file, which allows local users to obtain sensitive information regarding authentication attempts.  NOTE: because sshd detects the insecure permissions and does not log certain events, this also prevents sshd from logging failed authentication attempts by remote attackers."
+              },
+              "defaultConfiguration": {
+                "level": "note"
+              },
+              "helpUri": "https://avd.aquasec.com/nvd/cve-2007-5686",
+              "help": {
+                "text": "Vulnerability CVE-2007-5686\nSeverity: LOW\nPackage: passwd\nFixed Version: \nLink: [CVE-2007-5686](https://avd.aquasec.com/nvd/cve-2007-5686)\ninitscripts in rPath Linux 1 sets insecure permissions for the /var/log/btmp file, which allows local users to obtain sensitive information regarding authentication attempts.  NOTE: because sshd detects the insecure permissions and does not log certain events, this also prevents sshd from logging failed authentication attempts by remote attackers.",
+                "markdown": "**Vulnerability CVE-2007-5686**\n| Severity | Package | Fixed Version | Link |\n| --- | --- | --- | --- |\n|LOW|passwd||[CVE-2007-5686](https://avd.aquasec.com/nvd/cve-2007-5686)|\n\ninitscripts in rPath Linux 1 sets insecure permissions for the /var/log/btmp file, which allows local users to obtain sensitive information regarding authentication attempts.  NOTE: because sshd detects the insecure permissions and does not log certain events, this also prevents sshd from logging failed authentication attempts by remote attackers."
+              },
+              "properties": {
+                "precision": "very-high",
+                "security-severity": "2.0",
+                "tags": [
+                  "vulnerability",
+                  "security",
+                  "LOW"
+                ]
+              }
+            },
+            {
+              "id": "CVE-2024-56433",
+              "name": "OsPackageVulnerability",
+              "shortDescription": {
+                "text": "shadow-utils: Default subordinate ID configuration in /etc/login.defs could lead to compromise"
+              },
+              "fullDescription": {
+                "text": "shadow-utils (aka shadow) 4.4 through 4.17.0 establishes a default /etc/subuid behavior (e.g., uid 100000 through 165535 for the first user account) that can realistically conflict with the uids of users defined on locally administered networks, potentially leading to account takeover, e.g., by leveraging newuidmap for access to an NFS home directory (or same-host resources in the case of remote logins by these local network users). NOTE: it may also be argued that system administrators should not have assigned uids, within local networks, that are within the range that can occur in /etc/subuid."
+              },
+              "defaultConfiguration": {
+                "level": "note"
+              },
+              "helpUri": "https://avd.aquasec.com/nvd/cve-2024-56433",
+              "help": {
+                "text": "Vulnerability CVE-2024-56433\nSeverity: LOW\nPackage: passwd\nFixed Version: \nLink: [CVE-2024-56433](https://avd.aquasec.com/nvd/cve-2024-56433)\nshadow-utils (aka shadow) 4.4 through 4.17.0 establishes a default /etc/subuid behavior (e.g., uid 100000 through 165535 for the first user account) that can realistically conflict with the uids of users defined on locally administered networks, potentially leading to account takeover, e.g., by leveraging newuidmap for access to an NFS home directory (or same-host resources in the case of remote logins by these local network users). NOTE: it may also be argued that system administrators should not have assigned uids, within local networks, that are within the range that can occur in /etc/subuid.",
+                "markdown": "**Vulnerability CVE-2024-56433**\n| Severity | Package | Fixed Version | Link |\n| --- | --- | --- | --- |\n|LOW|passwd||[CVE-2024-56433](https://avd.aquasec.com/nvd/cve-2024-56433)|\n\nshadow-utils (aka shadow) 4.4 through 4.17.0 establishes a default /etc/subuid behavior (e.g., uid 100000 through 165535 for the first user account) that can realistically conflict with the uids of users defined on locally administered networks, potentially leading to account takeover, e.g., by leveraging newuidmap for access to an NFS home directory (or same-host resources in the case of remote logins by these local network users). NOTE: it may also be argued that system administrators should not have assigned uids, within local networks, that are within the range that can occur in /etc/subuid."
+              },
+              "properties": {
+                "precision": "very-high",
+                "security-severity": "2.0",
+                "tags": [
+                  "vulnerability",
+                  "security",
+                  "LOW"
+                ]
+              }
+            },
+            {
+              "id": "TEMP-0628843-DBAD28",
+              "name": "OsPackageVulnerability",
+              "shortDescription": {
+                "text": "[more related to CVE-2005-4890]"
+              },
+              "fullDescription": {
+                "text": "[more related to CVE-2005-4890]"
+              },
+              "defaultConfiguration": {
+                "level": "note"
+              },
+              "helpUri": "https://security-tracker.debian.org/tracker/TEMP-0628843-DBAD28",
+              "help": {
+                "text": "Vulnerability TEMP-0628843-DBAD28\nSeverity: LOW\nPackage: passwd\nFixed Version: \nLink: [TEMP-0628843-DBAD28](https://security-tracker.debian.org/tracker/TEMP-0628843-DBAD28)\n",
+                "markdown": "**Vulnerability TEMP-0628843-DBAD28**\n| Severity | Package | Fixed Version | Link |\n| --- | --- | --- | --- |\n|LOW|passwd||[TEMP-0628843-DBAD28](https://security-tracker.debian.org/tracker/TEMP-0628843-DBAD28)|\n\n"
+              },
+              "properties": {
+                "precision": "very-high",
+                "security-severity": "2.0",
+                "tags": [
+                  "vulnerability",
+                  "security",
+                  "LOW"
+                ]
+              }
+            },
+            {
+              "id": "CVE-2011-4116",
+              "name": "OsPackageVulnerability",
+              "shortDescription": {
+                "text": "perl: File:: Temp insecure temporary file handling"
+              },
+              "fullDescription": {
+                "text": "_is_safe in the File::Temp module for Perl does not properly handle symlinks."
+              },
+              "defaultConfiguration": {
+                "level": "note"
+              },
+              "helpUri": "https://avd.aquasec.com/nvd/cve-2011-4116",
+              "help": {
+                "text": "Vulnerability CVE-2011-4116\nSeverity: LOW\nPackage: perl-base\nFixed Version: \nLink: [CVE-2011-4116](https://avd.aquasec.com/nvd/cve-2011-4116)\n_is_safe in the File::Temp module for Perl does not properly handle symlinks.",
+                "markdown": "**Vulnerability CVE-2011-4116**\n| Severity | Package | Fixed Version | Link |\n| --- | --- | --- | --- |\n|LOW|perl-base||[CVE-2011-4116](https://avd.aquasec.com/nvd/cve-2011-4116)|\n\n_is_safe in the File::Temp module for Perl does not properly handle symlinks."
+              },
+              "properties": {
+                "precision": "very-high",
+                "security-severity": "2.0",
+                "tags": [
+                  "vulnerability",
+                  "security",
+                  "LOW"
+                ]
+              }
+            },
+            {
+              "id": "TEMP-0517018-A83CE6",
+              "name": "OsPackageVulnerability",
+              "shortDescription": {
+                "text": "[sysvinit: no-root option in expert installer exposes locally exploitable security flaw]"
+              },
+              "fullDescription": {
+                "text": "[sysvinit: no-root option in expert installer exposes locally exploitable security flaw]"
+              },
+              "defaultConfiguration": {
+                "level": "note"
+              },
+              "helpUri": "https://security-tracker.debian.org/tracker/TEMP-0517018-A83CE6",
+              "help": {
+                "text": "Vulnerability TEMP-0517018-A83CE6\nSeverity: LOW\nPackage: sysvinit-utils\nFixed Version: \nLink: [TEMP-0517018-A83CE6](https://security-tracker.debian.org/tracker/TEMP-0517018-A83CE6)\n",
+                "markdown": "**Vulnerability TEMP-0517018-A83CE6**\n| Severity | Package | Fixed Version | Link |\n| --- | --- | --- | --- |\n|LOW|sysvinit-utils||[TEMP-0517018-A83CE6](https://security-tracker.debian.org/tracker/TEMP-0517018-A83CE6)|\n\n"
+              },
+              "properties": {
+                "precision": "very-high",
+                "security-severity": "2.0",
+                "tags": [
+                  "vulnerability",
+                  "security",
+                  "LOW"
+                ]
+              }
+            },
+            {
+              "id": "CVE-2005-2541",
+              "name": "OsPackageVulnerability",
+              "shortDescription": {
+                "text": "tar: does not properly warn the user when extracting setuid or setgid files"
+              },
+              "fullDescription": {
+                "text": "Tar 1.15.1 does not properly warn the user when extracting setuid or setgid files, which may allow local users or remote attackers to gain privileges."
+              },
+              "defaultConfiguration": {
+                "level": "note"
+              },
+              "helpUri": "https://avd.aquasec.com/nvd/cve-2005-2541",
+              "help": {
+                "text": "Vulnerability CVE-2005-2541\nSeverity: LOW\nPackage: tar\nFixed Version: \nLink: [CVE-2005-2541](https://avd.aquasec.com/nvd/cve-2005-2541)\nTar 1.15.1 does not properly warn the user when extracting setuid or setgid files, which may allow local users or remote attackers to gain privileges.",
+                "markdown": "**Vulnerability CVE-2005-2541**\n| Severity | Package | Fixed Version | Link |\n| --- | --- | --- | --- |\n|LOW|tar||[CVE-2005-2541](https://avd.aquasec.com/nvd/cve-2005-2541)|\n\nTar 1.15.1 does not properly warn the user when extracting setuid or setgid files, which may allow local users or remote attackers to gain privileges."
+              },
+              "properties": {
+                "precision": "very-high",
+                "security-severity": "2.0",
+                "tags": [
+                  "vulnerability",
+                  "security",
+                  "LOW"
+                ]
+              }
+            },
+            {
+              "id": "TEMP-0290435-0B57B5",
+              "name": "OsPackageVulnerability",
+              "shortDescription": {
+                "text": "[tar's rmt command may have undesired side effects]"
+              },
+              "fullDescription": {
+                "text": "[tar's rmt command may have undesired side effects]"
+              },
+              "defaultConfiguration": {
+                "level": "note"
+              },
+              "helpUri": "https://security-tracker.debian.org/tracker/TEMP-0290435-0B57B5",
+              "help": {
+                "text": "Vulnerability TEMP-0290435-0B57B5\nSeverity: LOW\nPackage: tar\nFixed Version: \nLink: [TEMP-0290435-0B57B5](https://security-tracker.debian.org/tracker/TEMP-0290435-0B57B5)\n",
+                "markdown": "**Vulnerability TEMP-0290435-0B57B5**\n| Severity | Package | Fixed Version | Link |\n| --- | --- | --- | --- |\n|LOW|tar||[TEMP-0290435-0B57B5](https://security-tracker.debian.org/tracker/TEMP-0290435-0B57B5)|\n\n"
+              },
+              "properties": {
+                "precision": "very-high",
+                "security-severity": "2.0",
+                "tags": [
+                  "vulnerability",
+                  "security",
+                  "LOW"
+                ]
+              }
+            },
+            {
+              "id": "CVE-2025-8869",
+              "name": "LanguageSpecificPackageVulnerability",
+              "shortDescription": {
+                "text": "pip: pip missing checks on symbolic link extraction"
+              },
+              "fullDescription": {
+                "text": "When extracting a tar archive pip may not check symbolic links point into the extraction directory if the tarfile module doesn't implement PEP 706.\nNote that upgrading pip to a \"fixed\" version for this vulnerability doesn't fix all known vulnerabilities that are remediated by using a Python version that implements PEP 706.\n\nNote that this is a vulnerability in pip's fallback implementation of tar extraction for Python versions that don't implement PEP 706\nand therefore are not secure to all vulnerabilities in the Python 'tarfile' module. If you're using a Python version that implements PEP 706\nthen pip doesn't use the \"vulnerable\" fallback code.\n\nMitigations include upgrading to a version of pip that includes the fix, upgrading to a Python version that implements PEP 706 (Python \u003e=3.9.17, \u003e=3.10.12, \u003e=3.11.4, or \u003e=3.12),\napplying the linked patch, or inspecting source distributions (sdists) before installation as is already a best-practice."
+              },
+              "defaultConfiguration": {
+                "level": "warning"
+              },
+              "helpUri": "https://avd.aquasec.com/nvd/cve-2025-8869",
+              "help": {
+                "text": "Vulnerability CVE-2025-8869\nSeverity: MEDIUM\nPackage: pip\nFixed Version: 25.3\nLink: [CVE-2025-8869](https://avd.aquasec.com/nvd/cve-2025-8869)\nWhen extracting a tar archive pip may not check symbolic links point into the extraction directory if the tarfile module doesn't implement PEP 706.\nNote that upgrading pip to a \"fixed\" version for this vulnerability doesn't fix all known vulnerabilities that are remediated by using a Python version that implements PEP 706.\n\nNote that this is a vulnerability in pip's fallback implementation of tar extraction for Python versions that don't implement PEP 706\nand therefore are not secure to all vulnerabilities in the Python 'tarfile' module. If you're using a Python version that implements PEP 706\nthen pip doesn't use the \"vulnerable\" fallback code.\n\nMitigations include upgrading to a version of pip that includes the fix, upgrading to a Python version that implements PEP 706 (Python \u003e=3.9.17, \u003e=3.10.12, \u003e=3.11.4, or \u003e=3.12),\napplying the linked patch, or inspecting source distributions (sdists) before installation as is already a best-practice.",
+                "markdown": "**Vulnerability CVE-2025-8869**\n| Severity | Package | Fixed Version | Link |\n| --- | --- | --- | --- |\n|MEDIUM|pip|25.3|[CVE-2025-8869](https://avd.aquasec.com/nvd/cve-2025-8869)|\n\nWhen extracting a tar archive pip may not check symbolic links point into the extraction directory if the tarfile module doesn't implement PEP 706.\nNote that upgrading pip to a \"fixed\" version for this vulnerability doesn't fix all known vulnerabilities that are remediated by using a Python version that implements PEP 706.\n\nNote that this is a vulnerability in pip's fallback implementation of tar extraction for Python versions that don't implement PEP 706\nand therefore are not secure to all vulnerabilities in the Python 'tarfile' module. If you're using a Python version that implements PEP 706\nthen pip doesn't use the \"vulnerable\" fallback code.\n\nMitigations include upgrading to a version of pip that includes the fix, upgrading to a Python version that implements PEP 706 (Python \u003e=3.9.17, \u003e=3.10.12, \u003e=3.11.4, or \u003e=3.12),\napplying the linked patch, or inspecting source distributions (sdists) before installation as is already a best-practice."
+              },
+              "properties": {
+                "precision": "very-high",
+                "security-severity": "5.5",
+                "tags": [
+                  "vulnerability",
+                  "security",
+                  "MEDIUM"
+                ]
+              }
+            }
+          ],
+          "version": "0.68.1"
+        }
+      },
+      "results": [
+        {
+          "ruleId": "CVE-2011-3374",
+          "ruleIndex": 0,
+          "level": "note",
+          "message": {
+            "text": "Package: apt\nInstalled Version: 3.0.3\nVulnerability CVE-2011-3374\nSeverity: LOW\nFixed Version: \nLink: [CVE-2011-3374](https://avd.aquasec.com/nvd/cve-2011-3374)"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "library/uploader-service",
+                  "uriBaseId": "ROOTPATH"
+                },
+                "region": {
+                  "startLine": 1,
+                  "startColumn": 1,
+                  "endLine": 1,
+                  "endColumn": 1
+                }
+              },
+              "message": {
+                "text": "library/uploader-service: apt@3.0.3"
+              }
+            }
+          ]
+        },
+        {
+          "ruleId": "TEMP-0841856-B18BAF",
+          "ruleIndex": 1,
+          "level": "note",
+          "message": {
+            "text": "Package: bash\nInstalled Version: 5.2.37-2+b5\nVulnerability TEMP-0841856-B18BAF\nSeverity: LOW\nFixed Version: \nLink: [TEMP-0841856-B18BAF](https://security-tracker.debian.org/tracker/TEMP-0841856-B18BAF)"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "library/uploader-service",
+                  "uriBaseId": "ROOTPATH"
+                },
+                "region": {
+                  "startLine": 1,
+                  "startColumn": 1,
+                  "endLine": 1,
+                  "endColumn": 1
+                }
+              },
+              "message": {
+                "text": "library/uploader-service: bash@5.2.37-2+b5"
+              }
+            }
+          ]
+        },
+        {
+          "ruleId": "CVE-2025-14104",
+          "ruleIndex": 2,
+          "level": "warning",
+          "message": {
+            "text": "Package: bsdutils\nInstalled Version: 1:2.41-5\nVulnerability CVE-2025-14104\nSeverity: MEDIUM\nFixed Version: \nLink: [CVE-2025-14104](https://avd.aquasec.com/nvd/cve-2025-14104)"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "library/uploader-service",
+                  "uriBaseId": "ROOTPATH"
+                },
+                "region": {
+                  "startLine": 1,
+                  "startColumn": 1,
+                  "endLine": 1,
+                  "endColumn": 1
+                }
+              },
+              "message": {
+                "text": "library/uploader-service: bsdutils@1:2.41-5"
+              }
+            }
+          ]
+        },
+        {
+          "ruleId": "CVE-2022-0563",
+          "ruleIndex": 3,
+          "level": "note",
+          "message": {
+            "text": "Package: bsdutils\nInstalled Version: 1:2.41-5\nVulnerability CVE-2022-0563\nSeverity: LOW\nFixed Version: \nLink: [CVE-2022-0563](https://avd.aquasec.com/nvd/cve-2022-0563)"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "library/uploader-service",
+                  "uriBaseId": "ROOTPATH"
+                },
+                "region": {
+                  "startLine": 1,
+                  "startColumn": 1,
+                  "endLine": 1,
+                  "endColumn": 1
+                }
+              },
+              "message": {
+                "text": "library/uploader-service: bsdutils@1:2.41-5"
+              }
+            }
+          ]
+        },
+        {
+          "ruleId": "CVE-2017-18018",
+          "ruleIndex": 4,
+          "level": "note",
+          "message": {
+            "text": "Package: coreutils\nInstalled Version: 9.7-3\nVulnerability CVE-2017-18018\nSeverity: LOW\nFixed Version: \nLink: [CVE-2017-18018](https://avd.aquasec.com/nvd/cve-2017-18018)"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "library/uploader-service",
+                  "uriBaseId": "ROOTPATH"
+                },
+                "region": {
+                  "startLine": 1,
+                  "startColumn": 1,
+                  "endLine": 1,
+                  "endColumn": 1
+                }
+              },
+              "message": {
+                "text": "library/uploader-service: coreutils@9.7-3"
+              }
+            }
+          ]
+        },
+        {
+          "ruleId": "CVE-2025-5278",
+          "ruleIndex": 5,
+          "level": "note",
+          "message": {
+            "text": "Package: coreutils\nInstalled Version: 9.7-3\nVulnerability CVE-2025-5278\nSeverity: LOW\nFixed Version: \nLink: [CVE-2025-5278](https://avd.aquasec.com/nvd/cve-2025-5278)"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "library/uploader-service",
+                  "uriBaseId": "ROOTPATH"
+                },
+                "region": {
+                  "startLine": 1,
+                  "startColumn": 1,
+                  "endLine": 1,
+                  "endColumn": 1
+                }
+              },
+              "message": {
+                "text": "library/uploader-service: coreutils@9.7-3"
+              }
+            }
+          ]
+        },
+        {
+          "ruleId": "CVE-2025-10966",
+          "ruleIndex": 6,
+          "level": "note",
+          "message": {
+            "text": "Package: curl\nInstalled Version: 8.14.1-2+deb13u2\nVulnerability CVE-2025-10966\nSeverity: LOW\nFixed Version: \nLink: [CVE-2025-10966](https://avd.aquasec.com/nvd/cve-2025-10966)"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "library/uploader-service",
+                  "uriBaseId": "ROOTPATH"
+                },
+                "region": {
+                  "startLine": 1,
+                  "startColumn": 1,
+                  "endLine": 1,
+                  "endColumn": 1
+                }
+              },
+              "message": {
+                "text": "library/uploader-service: curl@8.14.1-2+deb13u2"
+              }
+            }
+          ]
+        },
+        {
+          "ruleId": "CVE-2011-3374",
+          "ruleIndex": 0,
+          "level": "note",
+          "message": {
+            "text": "Package: libapt-pkg7.0\nInstalled Version: 3.0.3\nVulnerability CVE-2011-3374\nSeverity: LOW\nFixed Version: \nLink: [CVE-2011-3374](https://avd.aquasec.com/nvd/cve-2011-3374)"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "library/uploader-service",
+                  "uriBaseId": "ROOTPATH"
+                },
+                "region": {
+                  "startLine": 1,
+                  "startColumn": 1,
+                  "endLine": 1,
+                  "endColumn": 1
+                }
+              },
+              "message": {
+                "text": "library/uploader-service: libapt-pkg7.0@3.0.3"
+              }
+            }
+          ]
+        },
+        {
+          "ruleId": "CVE-2025-14104",
+          "ruleIndex": 2,
+          "level": "warning",
+          "message": {
+            "text": "Package: libblkid1\nInstalled Version: 2.41-5\nVulnerability CVE-2025-14104\nSeverity: MEDIUM\nFixed Version: \nLink: [CVE-2025-14104](https://avd.aquasec.com/nvd/cve-2025-14104)"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "library/uploader-service",
+                  "uriBaseId": "ROOTPATH"
+                },
+                "region": {
+                  "startLine": 1,
+                  "startColumn": 1,
+                  "endLine": 1,
+                  "endColumn": 1
+                }
+              },
+              "message": {
+                "text": "library/uploader-service: libblkid1@2.41-5"
+              }
+            }
+          ]
+        },
+        {
+          "ruleId": "CVE-2022-0563",
+          "ruleIndex": 3,
+          "level": "note",
+          "message": {
+            "text": "Package: libblkid1\nInstalled Version: 2.41-5\nVulnerability CVE-2022-0563\nSeverity: LOW\nFixed Version: \nLink: [CVE-2022-0563](https://avd.aquasec.com/nvd/cve-2022-0563)"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "library/uploader-service",
+                  "uriBaseId": "ROOTPATH"
+                },
+                "region": {
+                  "startLine": 1,
+                  "startColumn": 1,
+                  "endLine": 1,
+                  "endColumn": 1
+                }
+              },
+              "message": {
+                "text": "library/uploader-service: libblkid1@2.41-5"
+              }
+            }
+          ]
+        },
+        {
+          "ruleId": "CVE-2010-4756",
+          "ruleIndex": 7,
+          "level": "note",
+          "message": {
+            "text": "Package: libc-bin\nInstalled Version: 2.41-12\nVulnerability CVE-2010-4756\nSeverity: LOW\nFixed Version: \nLink: [CVE-2010-4756](https://avd.aquasec.com/nvd/cve-2010-4756)"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "library/uploader-service",
+                  "uriBaseId": "ROOTPATH"
+                },
+                "region": {
+                  "startLine": 1,
+                  "startColumn": 1,
+                  "endLine": 1,
+                  "endColumn": 1
+                }
+              },
+              "message": {
+                "text": "library/uploader-service: libc-bin@2.41-12"
+              }
+            }
+          ]
+        },
+        {
+          "ruleId": "CVE-2018-20796",
+          "ruleIndex": 8,
+          "level": "note",
+          "message": {
+            "text": "Package: libc-bin\nInstalled Version: 2.41-12\nVulnerability CVE-2018-20796\nSeverity: LOW\nFixed Version: \nLink: [CVE-2018-20796](https://avd.aquasec.com/nvd/cve-2018-20796)"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "library/uploader-service",
+                  "uriBaseId": "ROOTPATH"
+                },
+                "region": {
+                  "startLine": 1,
+                  "startColumn": 1,
+                  "endLine": 1,
+                  "endColumn": 1
+                }
+              },
+              "message": {
+                "text": "library/uploader-service: libc-bin@2.41-12"
+              }
+            }
+          ]
+        },
+        {
+          "ruleId": "CVE-2019-1010022",
+          "ruleIndex": 9,
+          "level": "note",
+          "message": {
+            "text": "Package: libc-bin\nInstalled Version: 2.41-12\nVulnerability CVE-2019-1010022\nSeverity: LOW\nFixed Version: \nLink: [CVE-2019-1010022](https://avd.aquasec.com/nvd/cve-2019-1010022)"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "library/uploader-service",
+                  "uriBaseId": "ROOTPATH"
+                },
+                "region": {
+                  "startLine": 1,
+                  "startColumn": 1,
+                  "endLine": 1,
+                  "endColumn": 1
+                }
+              },
+              "message": {
+                "text": "library/uploader-service: libc-bin@2.41-12"
+              }
+            }
+          ]
+        },
+        {
+          "ruleId": "CVE-2019-1010023",
+          "ruleIndex": 10,
+          "level": "note",
+          "message": {
+            "text": "Package: libc-bin\nInstalled Version: 2.41-12\nVulnerability CVE-2019-1010023\nSeverity: LOW\nFixed Version: \nLink: [CVE-2019-1010023](https://avd.aquasec.com/nvd/cve-2019-1010023)"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "library/uploader-service",
+                  "uriBaseId": "ROOTPATH"
+                },
+                "region": {
+                  "startLine": 1,
+                  "startColumn": 1,
+                  "endLine": 1,
+                  "endColumn": 1
+                }
+              },
+              "message": {
+                "text": "library/uploader-service: libc-bin@2.41-12"
+              }
+            }
+          ]
+        },
+        {
+          "ruleId": "CVE-2019-1010024",
+          "ruleIndex": 11,
+          "level": "note",
+          "message": {
+            "text": "Package: libc-bin\nInstalled Version: 2.41-12\nVulnerability CVE-2019-1010024\nSeverity: LOW\nFixed Version: \nLink: [CVE-2019-1010024](https://avd.aquasec.com/nvd/cve-2019-1010024)"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "library/uploader-service",
+                  "uriBaseId": "ROOTPATH"
+                },
+                "region": {
+                  "startLine": 1,
+                  "startColumn": 1,
+                  "endLine": 1,
+                  "endColumn": 1
+                }
+              },
+              "message": {
+                "text": "library/uploader-service: libc-bin@2.41-12"
+              }
+            }
+          ]
+        },
+        {
+          "ruleId": "CVE-2019-1010025",
+          "ruleIndex": 12,
+          "level": "note",
+          "message": {
+            "text": "Package: libc-bin\nInstalled Version: 2.41-12\nVulnerability CVE-2019-1010025\nSeverity: LOW\nFixed Version: \nLink: [CVE-2019-1010025](https://avd.aquasec.com/nvd/cve-2019-1010025)"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "library/uploader-service",
+                  "uriBaseId": "ROOTPATH"
+                },
+                "region": {
+                  "startLine": 1,
+                  "startColumn": 1,
+                  "endLine": 1,
+                  "endColumn": 1
+                }
+              },
+              "message": {
+                "text": "library/uploader-service: libc-bin@2.41-12"
+              }
+            }
+          ]
+        },
+        {
+          "ruleId": "CVE-2019-9192",
+          "ruleIndex": 13,
+          "level": "note",
+          "message": {
+            "text": "Package: libc-bin\nInstalled Version: 2.41-12\nVulnerability CVE-2019-9192\nSeverity: LOW\nFixed Version: \nLink: [CVE-2019-9192](https://avd.aquasec.com/nvd/cve-2019-9192)"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "library/uploader-service",
+                  "uriBaseId": "ROOTPATH"
+                },
+                "region": {
+                  "startLine": 1,
+                  "startColumn": 1,
+                  "endLine": 1,
+                  "endColumn": 1
+                }
+              },
+              "message": {
+                "text": "library/uploader-service: libc-bin@2.41-12"
+              }
+            }
+          ]
+        },
+        {
+          "ruleId": "CVE-2010-4756",
+          "ruleIndex": 7,
+          "level": "note",
+          "message": {
+            "text": "Package: libc6\nInstalled Version: 2.41-12\nVulnerability CVE-2010-4756\nSeverity: LOW\nFixed Version: \nLink: [CVE-2010-4756](https://avd.aquasec.com/nvd/cve-2010-4756)"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "library/uploader-service",
+                  "uriBaseId": "ROOTPATH"
+                },
+                "region": {
+                  "startLine": 1,
+                  "startColumn": 1,
+                  "endLine": 1,
+                  "endColumn": 1
+                }
+              },
+              "message": {
+                "text": "library/uploader-service: libc6@2.41-12"
+              }
+            }
+          ]
+        },
+        {
+          "ruleId": "CVE-2018-20796",
+          "ruleIndex": 8,
+          "level": "note",
+          "message": {
+            "text": "Package: libc6\nInstalled Version: 2.41-12\nVulnerability CVE-2018-20796\nSeverity: LOW\nFixed Version: \nLink: [CVE-2018-20796](https://avd.aquasec.com/nvd/cve-2018-20796)"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "library/uploader-service",
+                  "uriBaseId": "ROOTPATH"
+                },
+                "region": {
+                  "startLine": 1,
+                  "startColumn": 1,
+                  "endLine": 1,
+                  "endColumn": 1
+                }
+              },
+              "message": {
+                "text": "library/uploader-service: libc6@2.41-12"
+              }
+            }
+          ]
+        },
+        {
+          "ruleId": "CVE-2019-1010022",
+          "ruleIndex": 9,
+          "level": "note",
+          "message": {
+            "text": "Package: libc6\nInstalled Version: 2.41-12\nVulnerability CVE-2019-1010022\nSeverity: LOW\nFixed Version: \nLink: [CVE-2019-1010022](https://avd.aquasec.com/nvd/cve-2019-1010022)"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "library/uploader-service",
+                  "uriBaseId": "ROOTPATH"
+                },
+                "region": {
+                  "startLine": 1,
+                  "startColumn": 1,
+                  "endLine": 1,
+                  "endColumn": 1
+                }
+              },
+              "message": {
+                "text": "library/uploader-service: libc6@2.41-12"
+              }
+            }
+          ]
+        },
+        {
+          "ruleId": "CVE-2019-1010023",
+          "ruleIndex": 10,
+          "level": "note",
+          "message": {
+            "text": "Package: libc6\nInstalled Version: 2.41-12\nVulnerability CVE-2019-1010023\nSeverity: LOW\nFixed Version: \nLink: [CVE-2019-1010023](https://avd.aquasec.com/nvd/cve-2019-1010023)"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "library/uploader-service",
+                  "uriBaseId": "ROOTPATH"
+                },
+                "region": {
+                  "startLine": 1,
+                  "startColumn": 1,
+                  "endLine": 1,
+                  "endColumn": 1
+                }
+              },
+              "message": {
+                "text": "library/uploader-service: libc6@2.41-12"
+              }
+            }
+          ]
+        },
+        {
+          "ruleId": "CVE-2019-1010024",
+          "ruleIndex": 11,
+          "level": "note",
+          "message": {
+            "text": "Package: libc6\nInstalled Version: 2.41-12\nVulnerability CVE-2019-1010024\nSeverity: LOW\nFixed Version: \nLink: [CVE-2019-1010024](https://avd.aquasec.com/nvd/cve-2019-1010024)"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "library/uploader-service",
+                  "uriBaseId": "ROOTPATH"
+                },
+                "region": {
+                  "startLine": 1,
+                  "startColumn": 1,
+                  "endLine": 1,
+                  "endColumn": 1
+                }
+              },
+              "message": {
+                "text": "library/uploader-service: libc6@2.41-12"
+              }
+            }
+          ]
+        },
+        {
+          "ruleId": "CVE-2019-1010025",
+          "ruleIndex": 12,
+          "level": "note",
+          "message": {
+            "text": "Package: libc6\nInstalled Version: 2.41-12\nVulnerability CVE-2019-1010025\nSeverity: LOW\nFixed Version: \nLink: [CVE-2019-1010025](https://avd.aquasec.com/nvd/cve-2019-1010025)"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "library/uploader-service",
+                  "uriBaseId": "ROOTPATH"
+                },
+                "region": {
+                  "startLine": 1,
+                  "startColumn": 1,
+                  "endLine": 1,
+                  "endColumn": 1
+                }
+              },
+              "message": {
+                "text": "library/uploader-service: libc6@2.41-12"
+              }
+            }
+          ]
+        },
+        {
+          "ruleId": "CVE-2019-9192",
+          "ruleIndex": 13,
+          "level": "note",
+          "message": {
+            "text": "Package: libc6\nInstalled Version: 2.41-12\nVulnerability CVE-2019-9192\nSeverity: LOW\nFixed Version: \nLink: [CVE-2019-9192](https://avd.aquasec.com/nvd/cve-2019-9192)"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "library/uploader-service",
+                  "uriBaseId": "ROOTPATH"
+                },
+                "region": {
+                  "startLine": 1,
+                  "startColumn": 1,
+                  "endLine": 1,
+                  "endColumn": 1
+                }
+              },
+              "message": {
+                "text": "library/uploader-service: libc6@2.41-12"
+              }
+            }
+          ]
+        },
+        {
+          "ruleId": "CVE-2025-10966",
+          "ruleIndex": 6,
+          "level": "note",
+          "message": {
+            "text": "Package: libcurl4t64\nInstalled Version: 8.14.1-2+deb13u2\nVulnerability CVE-2025-10966\nSeverity: LOW\nFixed Version: \nLink: [CVE-2025-10966](https://avd.aquasec.com/nvd/cve-2025-10966)"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "library/uploader-service",
+                  "uriBaseId": "ROOTPATH"
+                },
+                "region": {
+                  "startLine": 1,
+                  "startColumn": 1,
+                  "endLine": 1,
+                  "endColumn": 1
+                }
+              },
+              "message": {
+                "text": "library/uploader-service: libcurl4t64@8.14.1-2+deb13u2"
+              }
+            }
+          ]
+        },
+        {
+          "ruleId": "CVE-2011-3389",
+          "ruleIndex": 14,
+          "level": "note",
+          "message": {
+            "text": "Package: libgnutls30t64\nInstalled Version: 3.8.9-3\nVulnerability CVE-2011-3389\nSeverity: LOW\nFixed Version: \nLink: [CVE-2011-3389](https://avd.aquasec.com/nvd/cve-2011-3389)"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "library/uploader-service",
+                  "uriBaseId": "ROOTPATH"
+                },
+                "region": {
+                  "startLine": 1,
+                  "startColumn": 1,
+                  "endLine": 1,
+                  "endColumn": 1
+                }
+              },
+              "message": {
+                "text": "library/uploader-service: libgnutls30t64@3.8.9-3"
+              }
+            }
+          ]
+        },
+        {
+          "ruleId": "CVE-2025-9820",
+          "ruleIndex": 15,
+          "level": "note",
+          "message": {
+            "text": "Package: libgnutls30t64\nInstalled Version: 3.8.9-3\nVulnerability CVE-2025-9820\nSeverity: UNKNOWN\nFixed Version: \nLink: [CVE-2025-9820](https://avd.aquasec.com/nvd/cve-2025-9820)"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "library/uploader-service",
+                  "uriBaseId": "ROOTPATH"
+                },
+                "region": {
+                  "startLine": 1,
+                  "startColumn": 1,
+                  "endLine": 1,
+                  "endColumn": 1
+                }
+              },
+              "message": {
+                "text": "library/uploader-service: libgnutls30t64@3.8.9-3"
+              }
+            }
+          ]
+        },
+        {
+          "ruleId": "CVE-2018-5709",
+          "ruleIndex": 16,
+          "level": "note",
+          "message": {
+            "text": "Package: libgssapi-krb5-2\nInstalled Version: 1.21.3-5\nVulnerability CVE-2018-5709\nSeverity: LOW\nFixed Version: \nLink: [CVE-2018-5709](https://avd.aquasec.com/nvd/cve-2018-5709)"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "library/uploader-service",
+                  "uriBaseId": "ROOTPATH"
+                },
+                "region": {
+                  "startLine": 1,
+                  "startColumn": 1,
+                  "endLine": 1,
+                  "endColumn": 1
+                }
+              },
+              "message": {
+                "text": "library/uploader-service: libgssapi-krb5-2@1.21.3-5"
+              }
+            }
+          ]
+        },
+        {
+          "ruleId": "CVE-2024-26458",
+          "ruleIndex": 17,
+          "level": "note",
+          "message": {
+            "text": "Package: libgssapi-krb5-2\nInstalled Version: 1.21.3-5\nVulnerability CVE-2024-26458\nSeverity: LOW\nFixed Version: \nLink: [CVE-2024-26458](https://avd.aquasec.com/nvd/cve-2024-26458)"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "library/uploader-service",
+                  "uriBaseId": "ROOTPATH"
+                },
+                "region": {
+                  "startLine": 1,
+                  "startColumn": 1,
+                  "endLine": 1,
+                  "endColumn": 1
+                }
+              },
+              "message": {
+                "text": "library/uploader-service: libgssapi-krb5-2@1.21.3-5"
+              }
+            }
+          ]
+        },
+        {
+          "ruleId": "CVE-2024-26461",
+          "ruleIndex": 18,
+          "level": "note",
+          "message": {
+            "text": "Package: libgssapi-krb5-2\nInstalled Version: 1.21.3-5\nVulnerability CVE-2024-26461\nSeverity: LOW\nFixed Version: \nLink: [CVE-2024-26461](https://avd.aquasec.com/nvd/cve-2024-26461)"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "library/uploader-service",
+                  "uriBaseId": "ROOTPATH"
+                },
+                "region": {
+                  "startLine": 1,
+                  "startColumn": 1,
+                  "endLine": 1,
+                  "endColumn": 1
+                }
+              },
+              "message": {
+                "text": "library/uploader-service: libgssapi-krb5-2@1.21.3-5"
+              }
+            }
+          ]
+        },
+        {
+          "ruleId": "CVE-2018-5709",
+          "ruleIndex": 16,
+          "level": "note",
+          "message": {
+            "text": "Package: libk5crypto3\nInstalled Version: 1.21.3-5\nVulnerability CVE-2018-5709\nSeverity: LOW\nFixed Version: \nLink: [CVE-2018-5709](https://avd.aquasec.com/nvd/cve-2018-5709)"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "library/uploader-service",
+                  "uriBaseId": "ROOTPATH"
+                },
+                "region": {
+                  "startLine": 1,
+                  "startColumn": 1,
+                  "endLine": 1,
+                  "endColumn": 1
+                }
+              },
+              "message": {
+                "text": "library/uploader-service: libk5crypto3@1.21.3-5"
+              }
+            }
+          ]
+        },
+        {
+          "ruleId": "CVE-2024-26458",
+          "ruleIndex": 17,
+          "level": "note",
+          "message": {
+            "text": "Package: libk5crypto3\nInstalled Version: 1.21.3-5\nVulnerability CVE-2024-26458\nSeverity: LOW\nFixed Version: \nLink: [CVE-2024-26458](https://avd.aquasec.com/nvd/cve-2024-26458)"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "library/uploader-service",
+                  "uriBaseId": "ROOTPATH"
+                },
+                "region": {
+                  "startLine": 1,
+                  "startColumn": 1,
+                  "endLine": 1,
+                  "endColumn": 1
+                }
+              },
+              "message": {
+                "text": "library/uploader-service: libk5crypto3@1.21.3-5"
+              }
+            }
+          ]
+        },
+        {
+          "ruleId": "CVE-2024-26461",
+          "ruleIndex": 18,
+          "level": "note",
+          "message": {
+            "text": "Package: libk5crypto3\nInstalled Version: 1.21.3-5\nVulnerability CVE-2024-26461\nSeverity: LOW\nFixed Version: \nLink: [CVE-2024-26461](https://avd.aquasec.com/nvd/cve-2024-26461)"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "library/uploader-service",
+                  "uriBaseId": "ROOTPATH"
+                },
+                "region": {
+                  "startLine": 1,
+                  "startColumn": 1,
+                  "endLine": 1,
+                  "endColumn": 1
+                }
+              },
+              "message": {
+                "text": "library/uploader-service: libk5crypto3@1.21.3-5"
+              }
+            }
+          ]
+        },
+        {
+          "ruleId": "CVE-2018-5709",
+          "ruleIndex": 16,
+          "level": "note",
+          "message": {
+            "text": "Package: libkrb5-3\nInstalled Version: 1.21.3-5\nVulnerability CVE-2018-5709\nSeverity: LOW\nFixed Version: \nLink: [CVE-2018-5709](https://avd.aquasec.com/nvd/cve-2018-5709)"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "library/uploader-service",
+                  "uriBaseId": "ROOTPATH"
+                },
+                "region": {
+                  "startLine": 1,
+                  "startColumn": 1,
+                  "endLine": 1,
+                  "endColumn": 1
+                }
+              },
+              "message": {
+                "text": "library/uploader-service: libkrb5-3@1.21.3-5"
+              }
+            }
+          ]
+        },
+        {
+          "ruleId": "CVE-2024-26458",
+          "ruleIndex": 17,
+          "level": "note",
+          "message": {
+            "text": "Package: libkrb5-3\nInstalled Version: 1.21.3-5\nVulnerability CVE-2024-26458\nSeverity: LOW\nFixed Version: \nLink: [CVE-2024-26458](https://avd.aquasec.com/nvd/cve-2024-26458)"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "library/uploader-service",
+                  "uriBaseId": "ROOTPATH"
+                },
+                "region": {
+                  "startLine": 1,
+                  "startColumn": 1,
+                  "endLine": 1,
+                  "endColumn": 1
+                }
+              },
+              "message": {
+                "text": "library/uploader-service: libkrb5-3@1.21.3-5"
+              }
+            }
+          ]
+        },
+        {
+          "ruleId": "CVE-2024-26461",
+          "ruleIndex": 18,
+          "level": "note",
+          "message": {
+            "text": "Package: libkrb5-3\nInstalled Version: 1.21.3-5\nVulnerability CVE-2024-26461\nSeverity: LOW\nFixed Version: \nLink: [CVE-2024-26461](https://avd.aquasec.com/nvd/cve-2024-26461)"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "library/uploader-service",
+                  "uriBaseId": "ROOTPATH"
+                },
+                "region": {
+                  "startLine": 1,
+                  "startColumn": 1,
+                  "endLine": 1,
+                  "endColumn": 1
+                }
+              },
+              "message": {
+                "text": "library/uploader-service: libkrb5-3@1.21.3-5"
+              }
+            }
+          ]
+        },
+        {
+          "ruleId": "CVE-2018-5709",
+          "ruleIndex": 16,
+          "level": "note",
+          "message": {
+            "text": "Package: libkrb5support0\nInstalled Version: 1.21.3-5\nVulnerability CVE-2018-5709\nSeverity: LOW\nFixed Version: \nLink: [CVE-2018-5709](https://avd.aquasec.com/nvd/cve-2018-5709)"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "library/uploader-service",
+                  "uriBaseId": "ROOTPATH"
+                },
+                "region": {
+                  "startLine": 1,
+                  "startColumn": 1,
+                  "endLine": 1,
+                  "endColumn": 1
+                }
+              },
+              "message": {
+                "text": "library/uploader-service: libkrb5support0@1.21.3-5"
+              }
+            }
+          ]
+        },
+        {
+          "ruleId": "CVE-2024-26458",
+          "ruleIndex": 17,
+          "level": "note",
+          "message": {
+            "text": "Package: libkrb5support0\nInstalled Version: 1.21.3-5\nVulnerability CVE-2024-26458\nSeverity: LOW\nFixed Version: \nLink: [CVE-2024-26458](https://avd.aquasec.com/nvd/cve-2024-26458)"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "library/uploader-service",
+                  "uriBaseId": "ROOTPATH"
+                },
+                "region": {
+                  "startLine": 1,
+                  "startColumn": 1,
+                  "endLine": 1,
+                  "endColumn": 1
+                }
+              },
+              "message": {
+                "text": "library/uploader-service: libkrb5support0@1.21.3-5"
+              }
+            }
+          ]
+        },
+        {
+          "ruleId": "CVE-2024-26461",
+          "ruleIndex": 18,
+          "level": "note",
+          "message": {
+            "text": "Package: libkrb5support0\nInstalled Version: 1.21.3-5\nVulnerability CVE-2024-26461\nSeverity: LOW\nFixed Version: \nLink: [CVE-2024-26461](https://avd.aquasec.com/nvd/cve-2024-26461)"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "library/uploader-service",
+                  "uriBaseId": "ROOTPATH"
+                },
+                "region": {
+                  "startLine": 1,
+                  "startColumn": 1,
+                  "endLine": 1,
+                  "endColumn": 1
+                }
+              },
+              "message": {
+                "text": "library/uploader-service: libkrb5support0@1.21.3-5"
+              }
+            }
+          ]
+        },
+        {
+          "ruleId": "CVE-2025-14104",
+          "ruleIndex": 2,
+          "level": "warning",
+          "message": {
+            "text": "Package: liblastlog2-2\nInstalled Version: 2.41-5\nVulnerability CVE-2025-14104\nSeverity: MEDIUM\nFixed Version: \nLink: [CVE-2025-14104](https://avd.aquasec.com/nvd/cve-2025-14104)"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "library/uploader-service",
+                  "uriBaseId": "ROOTPATH"
+                },
+                "region": {
+                  "startLine": 1,
+                  "startColumn": 1,
+                  "endLine": 1,
+                  "endColumn": 1
+                }
+              },
+              "message": {
+                "text": "library/uploader-service: liblastlog2-2@2.41-5"
+              }
+            }
+          ]
+        },
+        {
+          "ruleId": "CVE-2022-0563",
+          "ruleIndex": 3,
+          "level": "note",
+          "message": {
+            "text": "Package: liblastlog2-2\nInstalled Version: 2.41-5\nVulnerability CVE-2022-0563\nSeverity: LOW\nFixed Version: \nLink: [CVE-2022-0563](https://avd.aquasec.com/nvd/cve-2022-0563)"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "library/uploader-service",
+                  "uriBaseId": "ROOTPATH"
+                },
+                "region": {
+                  "startLine": 1,
+                  "startColumn": 1,
+                  "endLine": 1,
+                  "endColumn": 1
+                }
+              },
+              "message": {
+                "text": "library/uploader-service: liblastlog2-2@2.41-5"
+              }
+            }
+          ]
+        },
+        {
+          "ruleId": "CVE-2015-3276",
+          "ruleIndex": 19,
+          "level": "note",
+          "message": {
+            "text": "Package: libldap2\nInstalled Version: 2.6.10+dfsg-1\nVulnerability CVE-2015-3276\nSeverity: LOW\nFixed Version: \nLink: [CVE-2015-3276](https://avd.aquasec.com/nvd/cve-2015-3276)"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "library/uploader-service",
+                  "uriBaseId": "ROOTPATH"
+                },
+                "region": {
+                  "startLine": 1,
+                  "startColumn": 1,
+                  "endLine": 1,
+                  "endColumn": 1
+                }
+              },
+              "message": {
+                "text": "library/uploader-service: libldap2@2.6.10+dfsg-1"
+              }
+            }
+          ]
+        },
+        {
+          "ruleId": "CVE-2017-14159",
+          "ruleIndex": 20,
+          "level": "note",
+          "message": {
+            "text": "Package: libldap2\nInstalled Version: 2.6.10+dfsg-1\nVulnerability CVE-2017-14159\nSeverity: LOW\nFixed Version: \nLink: [CVE-2017-14159](https://avd.aquasec.com/nvd/cve-2017-14159)"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "library/uploader-service",
+                  "uriBaseId": "ROOTPATH"
+                },
+                "region": {
+                  "startLine": 1,
+                  "startColumn": 1,
+                  "endLine": 1,
+                  "endColumn": 1
+                }
+              },
+              "message": {
+                "text": "library/uploader-service: libldap2@2.6.10+dfsg-1"
+              }
+            }
+          ]
+        },
+        {
+          "ruleId": "CVE-2017-17740",
+          "ruleIndex": 21,
+          "level": "note",
+          "message": {
+            "text": "Package: libldap2\nInstalled Version: 2.6.10+dfsg-1\nVulnerability CVE-2017-17740\nSeverity: LOW\nFixed Version: \nLink: [CVE-2017-17740](https://avd.aquasec.com/nvd/cve-2017-17740)"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "library/uploader-service",
+                  "uriBaseId": "ROOTPATH"
+                },
+                "region": {
+                  "startLine": 1,
+                  "startColumn": 1,
+                  "endLine": 1,
+                  "endColumn": 1
+                }
+              },
+              "message": {
+                "text": "library/uploader-service: libldap2@2.6.10+dfsg-1"
+              }
+            }
+          ]
+        },
+        {
+          "ruleId": "CVE-2020-15719",
+          "ruleIndex": 22,
+          "level": "note",
+          "message": {
+            "text": "Package: libldap2\nInstalled Version: 2.6.10+dfsg-1\nVulnerability CVE-2020-15719\nSeverity: LOW\nFixed Version: \nLink: [CVE-2020-15719](https://avd.aquasec.com/nvd/cve-2020-15719)"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "library/uploader-service",
+                  "uriBaseId": "ROOTPATH"
+                },
+                "region": {
+                  "startLine": 1,
+                  "startColumn": 1,
+                  "endLine": 1,
+                  "endColumn": 1
+                }
+              },
+              "message": {
+                "text": "library/uploader-service: libldap2@2.6.10+dfsg-1"
+              }
+            }
+          ]
+        },
+        {
+          "ruleId": "CVE-2025-14104",
+          "ruleIndex": 2,
+          "level": "warning",
+          "message": {
+            "text": "Package: libmount1\nInstalled Version: 2.41-5\nVulnerability CVE-2025-14104\nSeverity: MEDIUM\nFixed Version: \nLink: [CVE-2025-14104](https://avd.aquasec.com/nvd/cve-2025-14104)"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "library/uploader-service",
+                  "uriBaseId": "ROOTPATH"
+                },
+                "region": {
+                  "startLine": 1,
+                  "startColumn": 1,
+                  "endLine": 1,
+                  "endColumn": 1
+                }
+              },
+              "message": {
+                "text": "library/uploader-service: libmount1@2.41-5"
+              }
+            }
+          ]
+        },
+        {
+          "ruleId": "CVE-2022-0563",
+          "ruleIndex": 3,
+          "level": "note",
+          "message": {
+            "text": "Package: libmount1\nInstalled Version: 2.41-5\nVulnerability CVE-2022-0563\nSeverity: LOW\nFixed Version: \nLink: [CVE-2022-0563](https://avd.aquasec.com/nvd/cve-2022-0563)"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "library/uploader-service",
+                  "uriBaseId": "ROOTPATH"
+                },
+                "region": {
+                  "startLine": 1,
+                  "startColumn": 1,
+                  "endLine": 1,
+                  "endColumn": 1
+                }
+              },
+              "message": {
+                "text": "library/uploader-service: libmount1@2.41-5"
+              }
+            }
+          ]
+        },
+        {
+          "ruleId": "CVE-2025-6141",
+          "ruleIndex": 23,
+          "level": "note",
+          "message": {
+            "text": "Package: libncursesw6\nInstalled Version: 6.5+20250216-2\nVulnerability CVE-2025-6141\nSeverity: LOW\nFixed Version: \nLink: [CVE-2025-6141](https://avd.aquasec.com/nvd/cve-2025-6141)"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "library/uploader-service",
+                  "uriBaseId": "ROOTPATH"
+                },
+                "region": {
+                  "startLine": 1,
+                  "startColumn": 1,
+                  "endLine": 1,
+                  "endColumn": 1
+                }
+              },
+              "message": {
+                "text": "library/uploader-service: libncursesw6@6.5+20250216-2"
+              }
+            }
+          ]
+        },
+        {
+          "ruleId": "CVE-2025-14104",
+          "ruleIndex": 2,
+          "level": "warning",
+          "message": {
+            "text": "Package: libsmartcols1\nInstalled Version: 2.41-5\nVulnerability CVE-2025-14104\nSeverity: MEDIUM\nFixed Version: \nLink: [CVE-2025-14104](https://avd.aquasec.com/nvd/cve-2025-14104)"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "library/uploader-service",
+                  "uriBaseId": "ROOTPATH"
+                },
+                "region": {
+                  "startLine": 1,
+                  "startColumn": 1,
+                  "endLine": 1,
+                  "endColumn": 1
+                }
+              },
+              "message": {
+                "text": "library/uploader-service: libsmartcols1@2.41-5"
+              }
+            }
+          ]
+        },
+        {
+          "ruleId": "CVE-2022-0563",
+          "ruleIndex": 3,
+          "level": "note",
+          "message": {
+            "text": "Package: libsmartcols1\nInstalled Version: 2.41-5\nVulnerability CVE-2022-0563\nSeverity: LOW\nFixed Version: \nLink: [CVE-2022-0563](https://avd.aquasec.com/nvd/cve-2022-0563)"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "library/uploader-service",
+                  "uriBaseId": "ROOTPATH"
+                },
+                "region": {
+                  "startLine": 1,
+                  "startColumn": 1,
+                  "endLine": 1,
+                  "endColumn": 1
+                }
+              },
+              "message": {
+                "text": "library/uploader-service: libsmartcols1@2.41-5"
+              }
+            }
+          ]
+        },
+        {
+          "ruleId": "CVE-2025-7709",
+          "ruleIndex": 24,
+          "level": "warning",
+          "message": {
+            "text": "Package: libsqlite3-0\nInstalled Version: 3.46.1-7\nVulnerability CVE-2025-7709\nSeverity: MEDIUM\nFixed Version: \nLink: [CVE-2025-7709](https://avd.aquasec.com/nvd/cve-2025-7709)"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "library/uploader-service",
+                  "uriBaseId": "ROOTPATH"
+                },
+                "region": {
+                  "startLine": 1,
+                  "startColumn": 1,
+                  "endLine": 1,
+                  "endColumn": 1
+                }
+              },
+              "message": {
+                "text": "library/uploader-service: libsqlite3-0@3.46.1-7"
+              }
+            }
+          ]
+        },
+        {
+          "ruleId": "CVE-2021-45346",
+          "ruleIndex": 25,
+          "level": "note",
+          "message": {
+            "text": "Package: libsqlite3-0\nInstalled Version: 3.46.1-7\nVulnerability CVE-2021-45346\nSeverity: LOW\nFixed Version: \nLink: [CVE-2021-45346](https://avd.aquasec.com/nvd/cve-2021-45346)"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "library/uploader-service",
+                  "uriBaseId": "ROOTPATH"
+                },
+                "region": {
+                  "startLine": 1,
+                  "startColumn": 1,
+                  "endLine": 1,
+                  "endColumn": 1
+                }
+              },
+              "message": {
+                "text": "library/uploader-service: libsqlite3-0@3.46.1-7"
+              }
+            }
+          ]
+        },
+        {
+          "ruleId": "CVE-2013-4392",
+          "ruleIndex": 26,
+          "level": "note",
+          "message": {
+            "text": "Package: libsystemd0\nInstalled Version: 257.9-1~deb13u1\nVulnerability CVE-2013-4392\nSeverity: LOW\nFixed Version: \nLink: [CVE-2013-4392](https://avd.aquasec.com/nvd/cve-2013-4392)"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "library/uploader-service",
+                  "uriBaseId": "ROOTPATH"
+                },
+                "region": {
+                  "startLine": 1,
+                  "startColumn": 1,
+                  "endLine": 1,
+                  "endColumn": 1
+                }
+              },
+              "message": {
+                "text": "library/uploader-service: libsystemd0@257.9-1~deb13u1"
+              }
+            }
+          ]
+        },
+        {
+          "ruleId": "CVE-2023-31437",
+          "ruleIndex": 27,
+          "level": "note",
+          "message": {
+            "text": "Package: libsystemd0\nInstalled Version: 257.9-1~deb13u1\nVulnerability CVE-2023-31437\nSeverity: LOW\nFixed Version: \nLink: [CVE-2023-31437](https://avd.aquasec.com/nvd/cve-2023-31437)"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "library/uploader-service",
+                  "uriBaseId": "ROOTPATH"
+                },
+                "region": {
+                  "startLine": 1,
+                  "startColumn": 1,
+                  "endLine": 1,
+                  "endColumn": 1
+                }
+              },
+              "message": {
+                "text": "library/uploader-service: libsystemd0@257.9-1~deb13u1"
+              }
+            }
+          ]
+        },
+        {
+          "ruleId": "CVE-2023-31438",
+          "ruleIndex": 28,
+          "level": "note",
+          "message": {
+            "text": "Package: libsystemd0\nInstalled Version: 257.9-1~deb13u1\nVulnerability CVE-2023-31438\nSeverity: LOW\nFixed Version: \nLink: [CVE-2023-31438](https://avd.aquasec.com/nvd/cve-2023-31438)"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "library/uploader-service",
+                  "uriBaseId": "ROOTPATH"
+                },
+                "region": {
+                  "startLine": 1,
+                  "startColumn": 1,
+                  "endLine": 1,
+                  "endColumn": 1
+                }
+              },
+              "message": {
+                "text": "library/uploader-service: libsystemd0@257.9-1~deb13u1"
+              }
+            }
+          ]
+        },
+        {
+          "ruleId": "CVE-2023-31439",
+          "ruleIndex": 29,
+          "level": "note",
+          "message": {
+            "text": "Package: libsystemd0\nInstalled Version: 257.9-1~deb13u1\nVulnerability CVE-2023-31439\nSeverity: LOW\nFixed Version: \nLink: [CVE-2023-31439](https://avd.aquasec.com/nvd/cve-2023-31439)"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "library/uploader-service",
+                  "uriBaseId": "ROOTPATH"
+                },
+                "region": {
+                  "startLine": 1,
+                  "startColumn": 1,
+                  "endLine": 1,
+                  "endColumn": 1
+                }
+              },
+              "message": {
+                "text": "library/uploader-service: libsystemd0@257.9-1~deb13u1"
+              }
+            }
+          ]
+        },
+        {
+          "ruleId": "CVE-2025-6141",
+          "ruleIndex": 23,
+          "level": "note",
+          "message": {
+            "text": "Package: libtinfo6\nInstalled Version: 6.5+20250216-2\nVulnerability CVE-2025-6141\nSeverity: LOW\nFixed Version: \nLink: [CVE-2025-6141](https://avd.aquasec.com/nvd/cve-2025-6141)"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "library/uploader-service",
+                  "uriBaseId": "ROOTPATH"
+                },
+                "region": {
+                  "startLine": 1,
+                  "startColumn": 1,
+                  "endLine": 1,
+                  "endColumn": 1
+                }
+              },
+              "message": {
+                "text": "library/uploader-service: libtinfo6@6.5+20250216-2"
+              }
+            }
+          ]
+        },
+        {
+          "ruleId": "CVE-2013-4392",
+          "ruleIndex": 26,
+          "level": "note",
+          "message": {
+            "text": "Package: libudev1\nInstalled Version: 257.9-1~deb13u1\nVulnerability CVE-2013-4392\nSeverity: LOW\nFixed Version: \nLink: [CVE-2013-4392](https://avd.aquasec.com/nvd/cve-2013-4392)"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "library/uploader-service",
+                  "uriBaseId": "ROOTPATH"
+                },
+                "region": {
+                  "startLine": 1,
+                  "startColumn": 1,
+                  "endLine": 1,
+                  "endColumn": 1
+                }
+              },
+              "message": {
+                "text": "library/uploader-service: libudev1@257.9-1~deb13u1"
+              }
+            }
+          ]
+        },
+        {
+          "ruleId": "CVE-2023-31437",
+          "ruleIndex": 27,
+          "level": "note",
+          "message": {
+            "text": "Package: libudev1\nInstalled Version: 257.9-1~deb13u1\nVulnerability CVE-2023-31437\nSeverity: LOW\nFixed Version: \nLink: [CVE-2023-31437](https://avd.aquasec.com/nvd/cve-2023-31437)"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "library/uploader-service",
+                  "uriBaseId": "ROOTPATH"
+                },
+                "region": {
+                  "startLine": 1,
+                  "startColumn": 1,
+                  "endLine": 1,
+                  "endColumn": 1
+                }
+              },
+              "message": {
+                "text": "library/uploader-service: libudev1@257.9-1~deb13u1"
+              }
+            }
+          ]
+        },
+        {
+          "ruleId": "CVE-2023-31438",
+          "ruleIndex": 28,
+          "level": "note",
+          "message": {
+            "text": "Package: libudev1\nInstalled Version: 257.9-1~deb13u1\nVulnerability CVE-2023-31438\nSeverity: LOW\nFixed Version: \nLink: [CVE-2023-31438](https://avd.aquasec.com/nvd/cve-2023-31438)"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "library/uploader-service",
+                  "uriBaseId": "ROOTPATH"
+                },
+                "region": {
+                  "startLine": 1,
+                  "startColumn": 1,
+                  "endLine": 1,
+                  "endColumn": 1
+                }
+              },
+              "message": {
+                "text": "library/uploader-service: libudev1@257.9-1~deb13u1"
+              }
+            }
+          ]
+        },
+        {
+          "ruleId": "CVE-2023-31439",
+          "ruleIndex": 29,
+          "level": "note",
+          "message": {
+            "text": "Package: libudev1\nInstalled Version: 257.9-1~deb13u1\nVulnerability CVE-2023-31439\nSeverity: LOW\nFixed Version: \nLink: [CVE-2023-31439](https://avd.aquasec.com/nvd/cve-2023-31439)"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "library/uploader-service",
+                  "uriBaseId": "ROOTPATH"
+                },
+                "region": {
+                  "startLine": 1,
+                  "startColumn": 1,
+                  "endLine": 1,
+                  "endColumn": 1
+                }
+              },
+              "message": {
+                "text": "library/uploader-service: libudev1@257.9-1~deb13u1"
+              }
+            }
+          ]
+        },
+        {
+          "ruleId": "CVE-2025-14104",
+          "ruleIndex": 2,
+          "level": "warning",
+          "message": {
+            "text": "Package: libuuid1\nInstalled Version: 2.41-5\nVulnerability CVE-2025-14104\nSeverity: MEDIUM\nFixed Version: \nLink: [CVE-2025-14104](https://avd.aquasec.com/nvd/cve-2025-14104)"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "library/uploader-service",
+                  "uriBaseId": "ROOTPATH"
+                },
+                "region": {
+                  "startLine": 1,
+                  "startColumn": 1,
+                  "endLine": 1,
+                  "endColumn": 1
+                }
+              },
+              "message": {
+                "text": "library/uploader-service: libuuid1@2.41-5"
+              }
+            }
+          ]
+        },
+        {
+          "ruleId": "CVE-2022-0563",
+          "ruleIndex": 3,
+          "level": "note",
+          "message": {
+            "text": "Package: libuuid1\nInstalled Version: 2.41-5\nVulnerability CVE-2022-0563\nSeverity: LOW\nFixed Version: \nLink: [CVE-2022-0563](https://avd.aquasec.com/nvd/cve-2022-0563)"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "library/uploader-service",
+                  "uriBaseId": "ROOTPATH"
+                },
+                "region": {
+                  "startLine": 1,
+                  "startColumn": 1,
+                  "endLine": 1,
+                  "endColumn": 1
+                }
+              },
+              "message": {
+                "text": "library/uploader-service: libuuid1@2.41-5"
+              }
+            }
+          ]
+        },
+        {
+          "ruleId": "CVE-2025-14104",
+          "ruleIndex": 2,
+          "level": "warning",
+          "message": {
+            "text": "Package: login\nInstalled Version: 1:4.16.0-2+really2.41-5\nVulnerability CVE-2025-14104\nSeverity: MEDIUM\nFixed Version: \nLink: [CVE-2025-14104](https://avd.aquasec.com/nvd/cve-2025-14104)"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "library/uploader-service",
+                  "uriBaseId": "ROOTPATH"
+                },
+                "region": {
+                  "startLine": 1,
+                  "startColumn": 1,
+                  "endLine": 1,
+                  "endColumn": 1
+                }
+              },
+              "message": {
+                "text": "library/uploader-service: login@1:4.16.0-2+really2.41-5"
+              }
+            }
+          ]
+        },
+        {
+          "ruleId": "CVE-2022-0563",
+          "ruleIndex": 3,
+          "level": "note",
+          "message": {
+            "text": "Package: login\nInstalled Version: 1:4.16.0-2+really2.41-5\nVulnerability CVE-2022-0563\nSeverity: LOW\nFixed Version: \nLink: [CVE-2022-0563](https://avd.aquasec.com/nvd/cve-2022-0563)"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "library/uploader-service",
+                  "uriBaseId": "ROOTPATH"
+                },
+                "region": {
+                  "startLine": 1,
+                  "startColumn": 1,
+                  "endLine": 1,
+                  "endColumn": 1
+                }
+              },
+              "message": {
+                "text": "library/uploader-service: login@1:4.16.0-2+really2.41-5"
+              }
+            }
+          ]
+        },
+        {
+          "ruleId": "CVE-2007-5686",
+          "ruleIndex": 30,
+          "level": "note",
+          "message": {
+            "text": "Package: login.defs\nInstalled Version: 1:4.17.4-2\nVulnerability CVE-2007-5686\nSeverity: LOW\nFixed Version: \nLink: [CVE-2007-5686](https://avd.aquasec.com/nvd/cve-2007-5686)"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "library/uploader-service",
+                  "uriBaseId": "ROOTPATH"
+                },
+                "region": {
+                  "startLine": 1,
+                  "startColumn": 1,
+                  "endLine": 1,
+                  "endColumn": 1
+                }
+              },
+              "message": {
+                "text": "library/uploader-service: login.defs@1:4.17.4-2"
+              }
+            }
+          ]
+        },
+        {
+          "ruleId": "CVE-2024-56433",
+          "ruleIndex": 31,
+          "level": "note",
+          "message": {
+            "text": "Package: login.defs\nInstalled Version: 1:4.17.4-2\nVulnerability CVE-2024-56433\nSeverity: LOW\nFixed Version: \nLink: [CVE-2024-56433](https://avd.aquasec.com/nvd/cve-2024-56433)"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "library/uploader-service",
+                  "uriBaseId": "ROOTPATH"
+                },
+                "region": {
+                  "startLine": 1,
+                  "startColumn": 1,
+                  "endLine": 1,
+                  "endColumn": 1
+                }
+              },
+              "message": {
+                "text": "library/uploader-service: login.defs@1:4.17.4-2"
+              }
+            }
+          ]
+        },
+        {
+          "ruleId": "TEMP-0628843-DBAD28",
+          "ruleIndex": 32,
+          "level": "note",
+          "message": {
+            "text": "Package: login.defs\nInstalled Version: 1:4.17.4-2\nVulnerability TEMP-0628843-DBAD28\nSeverity: LOW\nFixed Version: \nLink: [TEMP-0628843-DBAD28](https://security-tracker.debian.org/tracker/TEMP-0628843-DBAD28)"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "library/uploader-service",
+                  "uriBaseId": "ROOTPATH"
+                },
+                "region": {
+                  "startLine": 1,
+                  "startColumn": 1,
+                  "endLine": 1,
+                  "endColumn": 1
+                }
+              },
+              "message": {
+                "text": "library/uploader-service: login.defs@1:4.17.4-2"
+              }
+            }
+          ]
+        },
+        {
+          "ruleId": "CVE-2025-14104",
+          "ruleIndex": 2,
+          "level": "warning",
+          "message": {
+            "text": "Package: mount\nInstalled Version: 2.41-5\nVulnerability CVE-2025-14104\nSeverity: MEDIUM\nFixed Version: \nLink: [CVE-2025-14104](https://avd.aquasec.com/nvd/cve-2025-14104)"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "library/uploader-service",
+                  "uriBaseId": "ROOTPATH"
+                },
+                "region": {
+                  "startLine": 1,
+                  "startColumn": 1,
+                  "endLine": 1,
+                  "endColumn": 1
+                }
+              },
+              "message": {
+                "text": "library/uploader-service: mount@2.41-5"
+              }
+            }
+          ]
+        },
+        {
+          "ruleId": "CVE-2022-0563",
+          "ruleIndex": 3,
+          "level": "note",
+          "message": {
+            "text": "Package: mount\nInstalled Version: 2.41-5\nVulnerability CVE-2022-0563\nSeverity: LOW\nFixed Version: \nLink: [CVE-2022-0563](https://avd.aquasec.com/nvd/cve-2022-0563)"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "library/uploader-service",
+                  "uriBaseId": "ROOTPATH"
+                },
+                "region": {
+                  "startLine": 1,
+                  "startColumn": 1,
+                  "endLine": 1,
+                  "endColumn": 1
+                }
+              },
+              "message": {
+                "text": "library/uploader-service: mount@2.41-5"
+              }
+            }
+          ]
+        },
+        {
+          "ruleId": "CVE-2025-6141",
+          "ruleIndex": 23,
+          "level": "note",
+          "message": {
+            "text": "Package: ncurses-base\nInstalled Version: 6.5+20250216-2\nVulnerability CVE-2025-6141\nSeverity: LOW\nFixed Version: \nLink: [CVE-2025-6141](https://avd.aquasec.com/nvd/cve-2025-6141)"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "library/uploader-service",
+                  "uriBaseId": "ROOTPATH"
+                },
+                "region": {
+                  "startLine": 1,
+                  "startColumn": 1,
+                  "endLine": 1,
+                  "endColumn": 1
+                }
+              },
+              "message": {
+                "text": "library/uploader-service: ncurses-base@6.5+20250216-2"
+              }
+            }
+          ]
+        },
+        {
+          "ruleId": "CVE-2025-6141",
+          "ruleIndex": 23,
+          "level": "note",
+          "message": {
+            "text": "Package: ncurses-bin\nInstalled Version: 6.5+20250216-2\nVulnerability CVE-2025-6141\nSeverity: LOW\nFixed Version: \nLink: [CVE-2025-6141](https://avd.aquasec.com/nvd/cve-2025-6141)"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "library/uploader-service",
+                  "uriBaseId": "ROOTPATH"
+                },
+                "region": {
+                  "startLine": 1,
+                  "startColumn": 1,
+                  "endLine": 1,
+                  "endColumn": 1
+                }
+              },
+              "message": {
+                "text": "library/uploader-service: ncurses-bin@6.5+20250216-2"
+              }
+            }
+          ]
+        },
+        {
+          "ruleId": "CVE-2007-5686",
+          "ruleIndex": 30,
+          "level": "note",
+          "message": {
+            "text": "Package: passwd\nInstalled Version: 1:4.17.4-2\nVulnerability CVE-2007-5686\nSeverity: LOW\nFixed Version: \nLink: [CVE-2007-5686](https://avd.aquasec.com/nvd/cve-2007-5686)"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "library/uploader-service",
+                  "uriBaseId": "ROOTPATH"
+                },
+                "region": {
+                  "startLine": 1,
+                  "startColumn": 1,
+                  "endLine": 1,
+                  "endColumn": 1
+                }
+              },
+              "message": {
+                "text": "library/uploader-service: passwd@1:4.17.4-2"
+              }
+            }
+          ]
+        },
+        {
+          "ruleId": "CVE-2024-56433",
+          "ruleIndex": 31,
+          "level": "note",
+          "message": {
+            "text": "Package: passwd\nInstalled Version: 1:4.17.4-2\nVulnerability CVE-2024-56433\nSeverity: LOW\nFixed Version: \nLink: [CVE-2024-56433](https://avd.aquasec.com/nvd/cve-2024-56433)"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "library/uploader-service",
+                  "uriBaseId": "ROOTPATH"
+                },
+                "region": {
+                  "startLine": 1,
+                  "startColumn": 1,
+                  "endLine": 1,
+                  "endColumn": 1
+                }
+              },
+              "message": {
+                "text": "library/uploader-service: passwd@1:4.17.4-2"
+              }
+            }
+          ]
+        },
+        {
+          "ruleId": "TEMP-0628843-DBAD28",
+          "ruleIndex": 32,
+          "level": "note",
+          "message": {
+            "text": "Package: passwd\nInstalled Version: 1:4.17.4-2\nVulnerability TEMP-0628843-DBAD28\nSeverity: LOW\nFixed Version: \nLink: [TEMP-0628843-DBAD28](https://security-tracker.debian.org/tracker/TEMP-0628843-DBAD28)"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "library/uploader-service",
+                  "uriBaseId": "ROOTPATH"
+                },
+                "region": {
+                  "startLine": 1,
+                  "startColumn": 1,
+                  "endLine": 1,
+                  "endColumn": 1
+                }
+              },
+              "message": {
+                "text": "library/uploader-service: passwd@1:4.17.4-2"
+              }
+            }
+          ]
+        },
+        {
+          "ruleId": "CVE-2011-4116",
+          "ruleIndex": 33,
+          "level": "note",
+          "message": {
+            "text": "Package: perl-base\nInstalled Version: 5.40.1-6\nVulnerability CVE-2011-4116\nSeverity: LOW\nFixed Version: \nLink: [CVE-2011-4116](https://avd.aquasec.com/nvd/cve-2011-4116)"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "library/uploader-service",
+                  "uriBaseId": "ROOTPATH"
+                },
+                "region": {
+                  "startLine": 1,
+                  "startColumn": 1,
+                  "endLine": 1,
+                  "endColumn": 1
+                }
+              },
+              "message": {
+                "text": "library/uploader-service: perl-base@5.40.1-6"
+              }
+            }
+          ]
+        },
+        {
+          "ruleId": "TEMP-0517018-A83CE6",
+          "ruleIndex": 34,
+          "level": "note",
+          "message": {
+            "text": "Package: sysvinit-utils\nInstalled Version: 3.14-4\nVulnerability TEMP-0517018-A83CE6\nSeverity: LOW\nFixed Version: \nLink: [TEMP-0517018-A83CE6](https://security-tracker.debian.org/tracker/TEMP-0517018-A83CE6)"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "library/uploader-service",
+                  "uriBaseId": "ROOTPATH"
+                },
+                "region": {
+                  "startLine": 1,
+                  "startColumn": 1,
+                  "endLine": 1,
+                  "endColumn": 1
+                }
+              },
+              "message": {
+                "text": "library/uploader-service: sysvinit-utils@3.14-4"
+              }
+            }
+          ]
+        },
+        {
+          "ruleId": "CVE-2005-2541",
+          "ruleIndex": 35,
+          "level": "note",
+          "message": {
+            "text": "Package: tar\nInstalled Version: 1.35+dfsg-3.1\nVulnerability CVE-2005-2541\nSeverity: LOW\nFixed Version: \nLink: [CVE-2005-2541](https://avd.aquasec.com/nvd/cve-2005-2541)"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "library/uploader-service",
+                  "uriBaseId": "ROOTPATH"
+                },
+                "region": {
+                  "startLine": 1,
+                  "startColumn": 1,
+                  "endLine": 1,
+                  "endColumn": 1
+                }
+              },
+              "message": {
+                "text": "library/uploader-service: tar@1.35+dfsg-3.1"
+              }
+            }
+          ]
+        },
+        {
+          "ruleId": "TEMP-0290435-0B57B5",
+          "ruleIndex": 36,
+          "level": "note",
+          "message": {
+            "text": "Package: tar\nInstalled Version: 1.35+dfsg-3.1\nVulnerability TEMP-0290435-0B57B5\nSeverity: LOW\nFixed Version: \nLink: [TEMP-0290435-0B57B5](https://security-tracker.debian.org/tracker/TEMP-0290435-0B57B5)"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "library/uploader-service",
+                  "uriBaseId": "ROOTPATH"
+                },
+                "region": {
+                  "startLine": 1,
+                  "startColumn": 1,
+                  "endLine": 1,
+                  "endColumn": 1
+                }
+              },
+              "message": {
+                "text": "library/uploader-service: tar@1.35+dfsg-3.1"
+              }
+            }
+          ]
+        },
+        {
+          "ruleId": "CVE-2025-14104",
+          "ruleIndex": 2,
+          "level": "warning",
+          "message": {
+            "text": "Package: util-linux\nInstalled Version: 2.41-5\nVulnerability CVE-2025-14104\nSeverity: MEDIUM\nFixed Version: \nLink: [CVE-2025-14104](https://avd.aquasec.com/nvd/cve-2025-14104)"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "library/uploader-service",
+                  "uriBaseId": "ROOTPATH"
+                },
+                "region": {
+                  "startLine": 1,
+                  "startColumn": 1,
+                  "endLine": 1,
+                  "endColumn": 1
+                }
+              },
+              "message": {
+                "text": "library/uploader-service: util-linux@2.41-5"
+              }
+            }
+          ]
+        },
+        {
+          "ruleId": "CVE-2022-0563",
+          "ruleIndex": 3,
+          "level": "note",
+          "message": {
+            "text": "Package: util-linux\nInstalled Version: 2.41-5\nVulnerability CVE-2022-0563\nSeverity: LOW\nFixed Version: \nLink: [CVE-2022-0563](https://avd.aquasec.com/nvd/cve-2022-0563)"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "library/uploader-service",
+                  "uriBaseId": "ROOTPATH"
+                },
+                "region": {
+                  "startLine": 1,
+                  "startColumn": 1,
+                  "endLine": 1,
+                  "endColumn": 1
+                }
+              },
+              "message": {
+                "text": "library/uploader-service: util-linux@2.41-5"
+              }
+            }
+          ]
+        },
+        {
+          "ruleId": "CVE-2025-8869",
+          "ruleIndex": 37,
+          "level": "warning",
+          "message": {
+            "text": "Package: pip\nInstalled Version: 24.0\nVulnerability CVE-2025-8869\nSeverity: MEDIUM\nFixed Version: 25.3\nLink: [CVE-2025-8869](https://avd.aquasec.com/nvd/cve-2025-8869)"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "usr/local/lib/python3.11/site-packages/pip-24.0.dist-info/METADATA",
+                  "uriBaseId": "ROOTPATH"
+                },
+                "region": {
+                  "startLine": 1,
+                  "startColumn": 1,
+                  "endLine": 1,
+                  "endColumn": 1
+                }
+              },
+              "message": {
+                "text": "usr/local/lib/python3.11/site-packages/pip-24.0.dist-info/METADATA: pip@24.0"
+              }
+            }
+          ]
+        }
+      ],
+      "columnKind": "utf16CodeUnits",
+      "originalUriBaseIds": {
+        "ROOTPATH": {
+          "uri": "file:///"
+        }
+      },
+      "properties": {
+        "imageID": "sha256:a2fa13211a2ddc0497fd8410ac2e30a6a6e96d9d543c1a5d69d9df7f264e59d1",
+        "imageName": "uploader-service:v1.0.4",
+        "repoDigests": [
+          "uploader-service@sha256:a2fa13211a2ddc0497fd8410ac2e30a6a6e96d9d543c1a5d69d9df7f264e59d1"
+        ],
+        "repoTags": [
+          "uploader-service:v1.0.4"
+        ]
+      }
+    }
+  ]
+}

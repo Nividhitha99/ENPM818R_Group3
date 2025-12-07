@@ -20,4 +20,3 @@ EXPOSE 8000
 # Code will be bind-mounted from host, so we don't COPY it here
 # Increase timeout and body size for large file uploads
 CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000", "--reload", "--timeout-keep-alive", "300", "--limit-max-requests", "1000", "--limit-concurrency", "1000"]
-
