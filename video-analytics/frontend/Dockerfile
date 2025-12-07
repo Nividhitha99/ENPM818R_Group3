@@ -41,7 +41,8 @@ RUN npm run build
 # ----------------------------------------------------------------------------
 # Using unprivileged Nginx for security (doesn't run as root)
 # Alpine variant keeps image size minimal (~23MB vs ~133MB for standard Nginx)
-FROM nginxinc/nginx-unprivileged:1.27-alpine
+# Updated to Alpine 3.21.4+ to fix libxml2 vulnerabilities (CVE-2025-49794, CVE-2025-49796, CVE-2025-49795, CVE-2025-6021)
+FROM nginxinc/nginx-unprivileged:1.27-alpine3.21
 
 # Copy built static files from builder stage
 # Only production-ready assets are included (no source code, node_modules, etc.)
