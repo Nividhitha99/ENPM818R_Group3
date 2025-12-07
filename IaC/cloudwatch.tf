@@ -1,10 +1,6 @@
 # CloudWatch Monitoring Configuration for EKS
 # Creates log groups, alarms, and dashboards for cluster observability
 
-# Get current AWS account ID and region
-data "aws_caller_identity" "current" {}
-data "aws_region" "current" {}
-
 # CloudWatch Log Groups
 resource "aws_cloudwatch_log_group" "eks_applications" {
   name              = "/aws/eks/${module.eks.cluster_name}/applications"
@@ -79,7 +75,7 @@ resource "aws_cloudwatch_dashboard" "eks_cluster" {
           ]
           period = 300
           stat   = "Average"
-          region = data.aws_region.current.name
+          region = data.aws_region.current.id
           title  = "EKS Cluster Metrics"
         }
       },
@@ -87,7 +83,7 @@ resource "aws_cloudwatch_dashboard" "eks_cluster" {
         type = "log"
         properties = {
           query   = "fields @timestamp, @message | stats count() by bin(5m)"
-          region  = data.aws_region.current.name
+          region = data.aws_region.current.id
           title   = "Application Log Volume"
         }
       },
@@ -102,7 +98,7 @@ resource "aws_cloudwatch_dashboard" "eks_cluster" {
           ]
           period = 60
           stat   = "Average"
-          region = data.aws_region.current.name
+          region = data.aws_region.current.id
           title  = "Application Load Balancer Metrics"
         }
       }
