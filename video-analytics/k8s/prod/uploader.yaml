@@ -4,7 +4,7 @@ metadata:
   name: uploader-sa
   namespace: prod
   annotations:
-    eks.amazonaws.com/role-arn: arn:aws:iam::385046010615:role/uploader-irsa-role   # to be created later
+    eks.amazonaws.com/role-arn: arn:aws:iam::385046010615:role/uploader-irsa-role
 
 ---
 apiVersion: apps/v1
@@ -14,8 +14,14 @@ metadata:
   namespace: prod
   labels:
     app: uploader
+    version: v1.0.4
 spec:
-  replicas: 1
+  replicas: 3
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
   selector:
     matchLabels:
       app: uploader
@@ -23,17 +29,26 @@ spec:
     metadata:
       labels:
         app: uploader
+        version: v1.0.4
       annotations:
         prometheus.io/scrape: "true"
         prometheus.io/path: "/metrics"
         prometheus.io/port: "8000"
     spec:
       serviceAccountName: uploader-sa
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+        fsGroup: 1000
+        seccompProfile:
+          type: RuntimeDefault
       containers:
         - name: uploader
-          image: 385046010615.dkr.ecr.us-east-1.amazonaws.com/uploader-service:latest
+          image: 385046010615.dkr.ecr.us-east-1.amazonaws.com/uploader-service:v1.0.4
+          imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 8000
+              name: http
           env:
             - name: AWS_REGION
               valueFrom:
@@ -50,12 +65,62 @@ spec:
                 configMapKeyRef:
                   name: video-analytics-config
                   key: SQS_QUEUE_URL
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+            readOnlyRootFilesystem: true
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 8000
+            initialDelaySeconds: 15
+            periodSeconds: 30
+            timeoutSeconds: 10
+            failureThreshold: 3
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 8000
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 2
+          resources:
+            requests:
+              cpu: 100m
+              memory: 256Mi
+            limits:
+              cpu: 500m
+              memory: 512Mi
+          volumeMounts:
+            - name: tmp
+              mountPath: /tmp
+      volumes:
+        - name: tmp
+          emptyDir: {}
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+            - weight: 100
+              podAffinityTerm:
+                labelSelector:
+                  matchExpressions:
+                    - key: app
+                      operator: In
+                      values:
+                        - uploader
+                topologyKey: kubernetes.io/hostname
+
 ---
 apiVersion: v1
 kind: Service
 metadata:
   name: uploader
   namespace: prod
+  labels:
+    app: uploader
 spec:
   type: ClusterIP
   selector:
@@ -64,3 +129,8 @@ spec:
     - port: 8000
       targetPort: 8000
       protocol: TCP
+      name: http
+  sessionAffinity: ClientIP
+  sessionAffinityConfig:
+    clientIP:
+      timeoutSeconds: 10800
