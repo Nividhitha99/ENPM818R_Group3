@@ -24,9 +24,24 @@ spec:
         app: frontend
     spec:
       serviceAccountName: frontend-sa
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 101
+        fsGroup: 101
+        seccompProfile:
+          type: RuntimeDefault
       containers:
       - name: frontend
         image: 385046010615.dkr.ecr.us-east-1.amazonaws.com/frontend:latest
+        imagePullPolicy: Always
+        securityContext:
+          allowPrivilegeEscalation: false
+          readOnlyRootFilesystem: true
+          runAsNonRoot: true
+          runAsUser: 101
+          capabilities:
+            drop:
+              - ALL
         ports:
         - name: http
           containerPort: 8080
@@ -50,6 +65,20 @@ spec:
             port: 8080
           initialDelaySeconds: 15
           periodSeconds: 20
+        volumeMounts:
+          - name: tmp
+            mountPath: /tmp
+          - name: var-cache
+            mountPath: /var/cache/nginx
+          - name: var-run
+            mountPath: /var/run
+      volumes:
+        - name: tmp
+          emptyDir: {}
+        - name: var-cache
+          emptyDir: {}
+        - name: var-run
+          emptyDir: {}
 ---
 apiVersion: v1
 kind: Service

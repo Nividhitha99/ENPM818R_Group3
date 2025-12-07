@@ -83,6 +83,25 @@ module "eks" {
       desired_size = 4
       min_size = 3
       max_size = 5
+      
+      # Security: Disable SSH access to worker nodes
+      remote_access = {
+        ec2_ssh_key               = null # No SSH key = no direct SSH access
+        source_security_group_ids = []   # Only allow access from within cluster
+      }
+      
+      # Security: Enable encryption for EBS volumes
+      block_device_mappings = {
+        xvda = {
+          device_name = "/dev/xvda"
+          ebs = {
+            volume_size           = 50
+            volume_type           = "gp3"
+            encrypted             = true
+            delete_on_termination = true
+          }
+        }
+      }
     }
 
     general-2 = {
@@ -92,6 +111,25 @@ module "eks" {
       desired_size = 4
       min_size = 3
       max_size = 5
+      
+      # Security: Disable SSH access to worker nodes
+      remote_access = {
+        ec2_ssh_key               = null # No SSH key = no direct SSH access
+        source_security_group_ids = []   # Only allow access from within cluster
+      }
+      
+      # Security: Enable encryption for EBS volumes
+      block_device_mappings = {
+        xvda = {
+          device_name = "/dev/xvda"
+          ebs = {
+            volume_size           = 50
+            volume_type           = "gp3"
+            encrypted             = true
+            delete_on_termination = true
+          }
+        }
+      }
     }
   }
 
@@ -107,6 +145,18 @@ module "eks" {
   }
 
   enable_irsa = true
+
+  # Enable EKS Control Plane Logging
+  cluster_enabled_log_types = [
+    "api",
+    "audit",
+    "authenticator",
+    "controllerManager",
+    "scheduler"
+  ]
+
+  # Create CloudWatch log group for EKS control plane
+  create_cloudwatch_log_group = true
 
   tags = {
     Project     = "ENPM818R_Group3"

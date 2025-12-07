@@ -28,10 +28,24 @@ spec:
         prometheus.io/port: "8000"
     spec:
       serviceAccountName: auth-sa
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+        fsGroup: 1000
+        seccompProfile:
+          type: RuntimeDefault
       containers:
         - name: auth
           image: 385046010615.dkr.ecr.us-east-1.amazonaws.com/auth-service:latest
           imagePullPolicy: Always
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            runAsNonRoot: true
+            runAsUser: 1000
+            capabilities:
+              drop:
+                - ALL
           env:
             - name: JWT_SECRET
               valueFrom:
@@ -40,6 +54,13 @@ spec:
                   key: JWT_SECRET
           ports:
             - containerPort: 8000
+          resources:
+            requests:
+              memory: "128Mi"
+              cpu: "100m"
+            limits:
+              memory: "512Mi"
+              cpu: "500m"
           readinessProbe:
             httpGet:
               path: /health
@@ -52,6 +73,12 @@ spec:
               port: 8000
             initialDelaySeconds: 10
             periodSeconds: 20
+          volumeMounts:
+            - name: tmp
+              mountPath: /tmp
+      volumes:
+        - name: tmp
+          emptyDir: {}
 ---
 apiVersion: v1
 kind: Service

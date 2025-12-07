@@ -17,11 +17,51 @@ env:
   AWS_ACCOUNT_ID: 385046010615
 
 jobs:
+  security-scan:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Run Trivy vulnerability scanner in filesystem mode
+        uses: aquasecurity/trivy-action@master
+        with:
+          scan-type: 'fs'
+          scan-ref: '.'
+          ignore-unfixed: true
+          format: 'sarif'
+          output: 'trivy-results.sarif'
+          severity: 'CRITICAL,HIGH'
+
+      - name: Upload Trivy results to GitHub Security
+        uses: github/codeql-action/upload-sarif@v2
+        if: always()
+        with:
+          sarif_file: 'trivy-results.sarif'
+
   build-and-push:
+    needs: security-scan
     runs-on: ubuntu-latest
     permissions:
       contents: read
       id-token: write
+    strategy:
+      matrix:
+        service:
+          - name: auth-service
+            path: video-analytics/backend/auth
+          - name: gateway-service
+            path: video-analytics/backend/gateway
+          - name: uploader-service
+            path: video-analytics/backend/uploader
+          - name: processor-service
+            path: video-analytics/backend/processor
+          - name: analytics-service
+            path: video-analytics/backend/analytics
+          - name: frontend
+            path: video-analytics/frontend
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -40,36 +80,59 @@ jobs:
         id: image-tag
         run: echo "tag=$(echo ${{ github.sha }} | cut -c 1-7)" >> $GITHUB_OUTPUT
 
-      - name: Build, tag, and push image to Amazon ECR
+      - name: Build Docker image
         env:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
         run: |
-          # Auth Service
-          docker build -t $ECR_REGISTRY/auth-service:latest -t $ECR_REGISTRY/auth-service:${{ steps.image-tag.outputs.tag }} video-analytics/backend/auth
-          docker push $ECR_REGISTRY/auth-service:latest
-          docker push $ECR_REGISTRY/auth-service:${{ steps.image-tag.outputs.tag }}
-          
-          # Gateway Service
-          docker build -t $ECR_REGISTRY/gateway-service:latest -t $ECR_REGISTRY/gateway-service:${{ steps.image-tag.outputs.tag }} video-analytics/backend/gateway
-          docker push $ECR_REGISTRY/gateway-service:latest
-          docker push $ECR_REGISTRY/gateway-service:${{ steps.image-tag.outputs.tag }}
-          
-          # Uploader Service
-          docker build -t $ECR_REGISTRY/uploader-service:latest -t $ECR_REGISTRY/uploader-service:${{ steps.image-tag.outputs.tag }} video-analytics/backend/uploader
-          docker push $ECR_REGISTRY/uploader-service:latest
-          docker push $ECR_REGISTRY/uploader-service:${{ steps.image-tag.outputs.tag }}
-          
-          # Processor Service
-          docker build -t $ECR_REGISTRY/processor-service:latest -t $ECR_REGISTRY/processor-service:${{ steps.image-tag.outputs.tag }} video-analytics/backend/processor
-          docker push $ECR_REGISTRY/processor-service:latest
-          docker push $ECR_REGISTRY/processor-service:${{ steps.image-tag.outputs.tag }}
-          
-          # Analytics Service
-          docker build -t $ECR_REGISTRY/analytics-service:latest -t $ECR_REGISTRY/analytics-service:${{ steps.image-tag.outputs.tag }} video-analytics/backend/analytics
-          docker push $ECR_REGISTRY/analytics-service:latest
-          docker push $ECR_REGISTRY/analytics-service:${{ steps.image-tag.outputs.tag }}
-          
-          # Frontend
-          docker build -t $ECR_REGISTRY/frontend:latest -t $ECR_REGISTRY/frontend:${{ steps.image-tag.outputs.tag }} video-analytics/frontend
-          docker push $ECR_REGISTRY/frontend:latest
-          docker push $ECR_REGISTRY/frontend:${{ steps.image-tag.outputs.tag }}
+          docker build -t $ECR_REGISTRY/${{ matrix.service.name }}:${{ steps.image-tag.outputs.tag }} \
+                       -t $ECR_REGISTRY/${{ matrix.service.name }}:latest \
+                       ${{ matrix.service.path }}
+
+      - name: Scan image with Trivy
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: ${{ steps.login-ecr.outputs.registry }}/${{ matrix.service.name }}:${{ steps.image-tag.outputs.tag }}
+          format: 'sarif'
+          output: 'trivy-image-results.sarif'
+          severity: 'CRITICAL,HIGH'
+          ignore-unfixed: true
+          exit-code: '1'
+
+      - name: Upload Trivy image scan results
+        uses: github/codeql-action/upload-sarif@v2
+        if: always()
+        with:
+          sarif_file: 'trivy-image-results.sarif'
+
+      - name: Sign image with Cosign
+        uses: sigstore/cosign-installer@v3
+        continue-on-error: true
+
+      - name: Generate Cosign key pair (if not exists)
+        id: cosign-key
+        continue-on-error: true
+        run: |
+          if [ ! -f cosign.key ]; then
+            cosign generate-key-pair
+            echo "key_created=true" >> $GITHUB_OUTPUT
+          else
+            echo "key_created=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Sign and push image
+        env:
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          COSIGN_PASSWORD: ${{ secrets.COSIGN_PASSWORD }}
+        continue-on-error: true
+        run: |
+          if [ -f cosign.key ]; then
+            cosign sign --key cosign.key $ECR_REGISTRY/${{ matrix.service.name }}:${{ steps.image-tag.outputs.tag }}
+            cosign sign --key cosign.key $ECR_REGISTRY/${{ matrix.service.name }}:latest
+          fi
+
+      - name: Push image to Amazon ECR
+        env:
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+        run: |
+          docker push $ECR_REGISTRY/${{ matrix.service.name }}:${{ steps.image-tag.outputs.tag }}
+          docker push $ECR_REGISTRY/${{ matrix.service.name }}:latest

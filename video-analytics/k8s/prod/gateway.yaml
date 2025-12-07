@@ -26,10 +26,24 @@ spec:
         prometheus.io/port: "8000"
     spec:
       serviceAccountName: gateway-sa
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+        fsGroup: 1000
+        seccompProfile:
+          type: RuntimeDefault
       containers:
         - name: gateway
           image: 385046010615.dkr.ecr.us-east-1.amazonaws.com/gateway-service:latest
           imagePullPolicy: Always
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            runAsNonRoot: true
+            runAsUser: 1000
+            capabilities:
+              drop:
+                - ALL
           env:
             - name: UPLOADER_SERVICE_URL
               value: http://uploader.prod.svc.cluster.local:8000
@@ -39,6 +53,13 @@ spec:
               value: http://auth.prod.svc.cluster.local:8000
           ports:
             - containerPort: 8000
+          resources:
+            requests:
+              memory: "128Mi"
+              cpu: "100m"
+            limits:
+              memory: "512Mi"
+              cpu: "500m"
           readinessProbe:
             httpGet:
               path: /health
@@ -51,6 +72,12 @@ spec:
               port: 8000
             initialDelaySeconds: 10
             periodSeconds: 20
+          volumeMounts:
+            - name: tmp
+              mountPath: /tmp
+      volumes:
+        - name: tmp
+          emptyDir: {}
 ---
 apiVersion: v1
 kind: Service
