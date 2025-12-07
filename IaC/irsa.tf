@@ -87,27 +87,6 @@ resource "aws_iam_role" "analytics_irsa" {
   }
 }
 
-# Analytics DynamoDB Policy
-resource "aws_iam_role_policy" "analytics_dynamodb" {
-  name = "analytics-dynamodb-policy"
-  role = aws_iam_role.analytics_irsa.id
-
-  policy = jsonencode({
-    Version = "2012-10-17"
-    Statement = [
-      {
-        Effect = "Allow"
-        Action = [
-          "dynamodb:Scan",
-          "dynamodb:Query",
-          "dynamodb:GetItem"
-        ]
-        Resource = "arn:aws:dynamodb:${data.aws_caller_identity.current.region}:${data.aws_caller_identity.current.account_id}:table/analytics-*"
-      }
-    ]
-  })
-}
-
 # Processor Service IRSA Role
 resource "aws_iam_role" "processor_irsa" {
   name = "processor-irsa-role"
@@ -175,16 +154,45 @@ resource "aws_iam_role_policy" "uploader_s3" {
     Version = "2012-10-17"
     Statement = [
       {
+        Sid    = "S3ObjectAccess"
         Effect = "Allow"
         Action = [
           "s3:PutObject",
+          "s3:PutObjectAcl",
           "s3:GetObject",
+          "s3:DeleteObject"
+        ]
+        Resource = "arn:aws:s3:::video-analytics-uploads/*"  # Fixed bucket name
+      },
+      {
+        Sid    = "S3BucketList"
+        Effect = "Allow"
+        Action = [
           "s3:ListBucket"
         ]
-        Resource = [
-          "arn:aws:s3:::video-analytics-bucket",
-          "arn:aws:s3:::video-analytics-bucket/*"
+        Resource = "arn:aws:s3:::video-analytics-uploads"  # Fixed bucket name
+      }
+    ]
+  })
+}
+
+# Uploader SQS Policy
+resource "aws_iam_role_policy" "uploader_sqs" {
+  name = "uploader-sqs-policy"
+  role = aws_iam_role.uploader_irsa.id
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Sid    = "SQSAccess"
+        Effect = "Allow"
+        Action = [
+          "sqs:SendMessage",
+          "sqs:GetQueueAttributes",
+          "sqs:GetQueueUrl"
         ]
+        Resource = "arn:aws:sqs:us-east-1:385046010615:video-processing-jobs"
       }
     ]
   })
