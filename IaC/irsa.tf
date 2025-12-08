@@ -204,8 +204,8 @@ resource "aws_iam_role_policy" "uploader_s3" {
           "s3:ListBucket"
         ]
         Resource = [
-          "arn:aws:s3:::video-analytics-bucket",
-          "arn:aws:s3:::video-analytics-bucket/*"
+          "arn:aws:s3:::video-analytics-uploads",
+          "arn:aws:s3:::video-analytics-uploads/*"
         ]
       }
     ]
