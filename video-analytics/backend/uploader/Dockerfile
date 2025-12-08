@@ -59,9 +59,5 @@ EXPOSE 8000
 HEALTHCHECK --interval=30s --timeout=10s --start-period=10s --retries=3 \
   CMD python -c "import urllib.request; urllib.request.urlopen('http://localhost:8000/health').read()"
 
-# Start uvicorn with upload-optimized configuration:
-# --limit-max-requests 1000: Restart worker after 1000 requests (prevents memory leaks)
-# --timeout-keep-alive 300: Keep connections alive for 5 minutes (large uploads)
-# --limit-concurrency 1000: Handle up to 1000 simultaneous upload requests
 CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000", "--limit-max-requests", "1000", "--timeout-keep-alive", "300", "--limit-concurrency", "1000"]
 
