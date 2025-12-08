@@ -29,23 +29,39 @@ spec:
         prometheus.io/port: "8000"
     spec:
       serviceAccountName: analytics-sa
+
+      # Pod-level security required by PodSecurity Standard (restricted)
+      securityContext:
+        runAsNonRoot: true
+        seccompProfile:
+          type: RuntimeDefault
+
       containers:
         - name: analytics
           image: 385046010615.dkr.ecr.us-east-1.amazonaws.com/analytics-service:latest
           imagePullPolicy: Always
+
+          # Container-level security context
+          securityContext:
+            runAsNonRoot: true
+            runAsUser: 1000
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+            seccompProfile:
+              type: RuntimeDefault
+
           env:
             - name: AWS_REGION
               valueFrom:
                 configMapKeyRef:
                   name: video-analytics-config
                   key: AWS_REGION
-            - name: DYNAMODB_TABLE_NAME
-              valueFrom:
-                configMapKeyRef:
-                  name: video-analytics-config
-                  key: DYNAMODB_TABLE_NAME
+
           ports:
             - containerPort: 8000
+              protocol: TCP
 
 ---
 apiVersion: v1

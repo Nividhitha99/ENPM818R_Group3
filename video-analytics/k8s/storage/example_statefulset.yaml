@@ -1,0 +1,81 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: demo-stateful
+  namespace: prod
+spec:
+  serviceName: "demo"
+  replicas: 1
+  selector:
+    matchLabels:
+      app: demo
+  template:
+    metadata:
+      labels:
+        app: demo
+    spec:
+      securityContext:
+        fsGroup: 1000
+        runAsUser: 1000
+        runAsGroup: 1000
+        seccompProfile:
+          type: RuntimeDefault
+
+      containers:
+      - name: demo
+        image: nginx:latest
+        securityContext:
+          runAsNonRoot: true
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop: ["ALL"]
+
+        command: ["/bin/sh"]
+        args:
+          - "-c"
+          - |
+            mkdir -p /workspace/cache;
+            cat <<EOF > /workspace/nginx.conf
+            worker_processes 1;
+
+            events { worker_connections 1024; }
+
+            http {
+              client_body_temp_path /workspace/cache/client_temp;
+              proxy_temp_path        /workspace/cache/proxy_temp;
+              fastcgi_temp_path      /workspace/cache/fastcgi_temp;
+              uwsgi_temp_path        /workspace/cache/uwsgi_temp;
+              scgi_temp_path         /workspace/cache/scgi_temp;
+
+              server {
+                listen 80;
+                location / {
+                  return 200 'Hello from StatefulSet with EBS!';
+                }
+              }
+            }
+            EOF
+
+            nginx -c /workspace/nginx.conf -g 'pid /workspace/nginx.pid;'
+
+        volumeMounts:
+        - name: demo-storage
+          mountPath: /workspace
+
+      volumes:
+      - name: demo-storage
+        persistentVolumeClaim:
+          claimName: data-demo-stateful-0
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: demo
+  namespace: prod
+spec:
+  clusterIP: None
+  selector:
+    app: demo
+  ports:
+    - port: 80
+      targetPort: 80
