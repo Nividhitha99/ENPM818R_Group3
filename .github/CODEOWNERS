@@ -1,7 +1,8 @@
 # CODEOWNERS for ENPM818R Group 3 project
 
 # Default owners for the repo (all files)
-* @Nividhitha99 @danitrical @hdharani-sec @joyson13 @nkafridi1 @s-mahima09 @steward
+* @Nividhitha99 @danitrical @hdharani-sec @joyson13 @nkafridi1 @s-mahima09
+# @steward
 
 # Service-specific ownership
 uploader/ @s-mahima09
@@ -10,4 +11,4 @@ analytics/ @joyson13
 frontend/ @hdharani-sec
 terraform/ @danitrical
 cicd/ @nkafridi1
-observability/ @steward
+#observability/ @steward
