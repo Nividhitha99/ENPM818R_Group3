@@ -1,0 +1,69 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+namespace: staging
+
+bases:
+  - ../../base
+
+namePrefix: staging-
+
+commonLabels:
+  environment: staging
+
+replicas:
+  - name: analytics
+    count: 2
+  - name: auth
+    count: 2
+  - name: gateway
+    count: 2
+  - name: processor
+    count: 1
+  - name: uploader
+    count: 1
+  - name: frontend
+    count: 2
+
+patches:
+  - target:
+      kind: Deployment
+    patch: |-
+      - op: replace
+        path: /spec/template/spec/containers/0/resources/requests/cpu
+        value: 75m
+      - op: replace
+        path: /spec/template/spec/containers/0/resources/requests/memory
+        value: 128Mi
+      - op: replace
+        path: /spec/template/spec/containers/0/resources/limits/cpu
+        value: 250m
+      - op: replace
+        path: /spec/template/spec/containers/0/resources/limits/memory
+        value: 256Mi
+
+configMapGenerator:
+  - name: env-config
+    literals:
+      - ENVIRONMENT=staging
+      - LOG_LEVEL=INFO
+
+images:
+  - name: video-analytics-analytics
+    newName: 385046010615.dkr.ecr.us-east-1.amazonaws.com/video-analytics-analytics
+    newTag: latest
+  - name: video-analytics-auth
+    newName: 385046010615.dkr.ecr.us-east-1.amazonaws.com/video-analytics-auth
+    newTag: latest
+  - name: gateway-service
+    newName: 385046010615.dkr.ecr.us-east-1.amazonaws.com/gateway-service
+    newTag: latest
+  - name: video-analytics-processor
+    newName: 385046010615.dkr.ecr.us-east-1.amazonaws.com/video-analytics-processor
+    newTag: latest
+  - name: video-analytics-uploader
+    newName: 385046010615.dkr.ecr.us-east-1.amazonaws.com/video-analytics-uploader
+    newTag: latest
+  - name: video-analytics-frontend
+    newName: 385046010615.dkr.ecr.us-east-1.amazonaws.com/video-analytics-frontend
+    newTag: latest
