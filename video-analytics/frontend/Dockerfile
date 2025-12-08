@@ -44,6 +44,11 @@ RUN npm run build
 # Updated to Alpine 3.21.4+ to fix libxml2 vulnerabilities (CVE-2025-49794, CVE-2025-49796, CVE-2025-49795, CVE-2025-6021)
 FROM nginxinc/nginx-unprivileged:1.27-alpine3.21
 
+# Bring libxml2 to the patched release to resolve CVE-2025-49794/49796/49795/6021
+USER root
+RUN apk add --no-cache --upgrade libxml2=2.13.9-r0
+USER 101
+
 # Copy built static files from builder stage
 # Only production-ready assets are included (no source code, node_modules, etc.)
 # Destination: /usr/share/nginx/html is default Nginx document root
@@ -52,10 +57,6 @@ COPY --from=builder /app/build /usr/share/nginx/html
 # Expose port 8080 (unprivileged Nginx uses 8080 instead of 80)
 # Port 80 requires root; 8080 is safe for non-root user
 EXPOSE 8080
-
-# Explicitly run as user 101 (nginx user in unprivileged image)
-# Security best practice: prevents container breakout attacks
-USER 101
 
 # No CMD needed - inherited from base image
 # Default: nginx -g 'daemon off;' (runs Nginx in foreground)

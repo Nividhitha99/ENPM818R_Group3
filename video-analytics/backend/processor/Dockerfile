@@ -35,14 +35,16 @@ WORKDIR /app
 ENV PYTHONDONTWRITEBYTECODE=1 \
   PYTHONUNBUFFERED=1
 
-# Install FFmpeg for video processing capabilities
+# Install FFmpeg and keep libpng/libglib patched to drop CVE-2025-64720/65018/66293 and CVE-2025-13601
 # --no-install-recommends: Install only essential packages
 # apt-get clean && rm -rf: Remove package lists to reduce image size
-# FFmpeg is required for video transcoding, thumbnail generation, and format conversion
 RUN apt-get update && \
-  apt-get install -y --no-install-recommends ffmpeg && \
-    apt-get clean && \
-    rm -rf /var/lib/apt/lists/*
+  apt-get install -y --no-install-recommends \
+    ffmpeg \
+    libpng16-16t64 \
+    libglib2.0-0t64 && \
+  apt-get clean && \
+  rm -rf /var/lib/apt/lists/*
 
 # Create non-root user for running the service
 # Video processing doesn't require elevated privileges
