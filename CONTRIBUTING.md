@@ -75,7 +75,7 @@ git checkout -b bugfix/issue-description
 
 ### Making Changes
 
-1. Create a branch f
+1. Create a branch from `main` using the naming convention: `member-number-feature-name`
 2. Make your changes
 3. Write/update tests
 4. Update documentation if needed

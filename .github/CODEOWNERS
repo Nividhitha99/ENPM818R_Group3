@@ -1,42 +1,20 @@
-# CODEOWNERS
-# This file defines code owners for different parts of the repository.
-# When a PR is opened, the listed owners will be automatically requested for review.
-# See: https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-code-owners
+# CODEOWNERS for ENPM818R Group 3 project
 
-# Global owners - review all PRs
-* @your-org/team-leads
+# Default owners for the repo (all files)
+* @Nivedhitha99 
+@danitrical
+@hdharani-sec
+@joyson13
+@nkafridi1
+@s-mahima09
+@steward
 
-# Frontend Service
-/video-analytics/frontend/ @your-org/frontend-team
-
-# Backend Services
-/video-analytics/gateway/ @your-org/backend-team
-/video-analytics/uploader/ @your-org/backend-team
-/video-analytics/processor/ @your-org/backend-team
-/video-analytics/analytics/ @your-org/backend-team
-
-# Infrastructure as Code
-/IaC/ @your-org/devops-team
-*.tf @your-org/devops-team
-
-# Kubernetes Manifests
-/video-analytics/k8s/ @your-org/devops-team
-*.yaml @your-org/devops-team
-*.yml @your-org/devops-team
-
-# CI/CD Pipelines
-/.github/workflows/ @your-org/devops-team
-
-# Documentation
-*.md @your-org/tech-writers
-/docs/ @your-org/tech-writers
-
-# Security and Configuration
-/.github/ @your-org/devops-team
-/.gitignore @your-org/devops-team
-/Dockerfile @your-org/backend-team
-/docker-compose.yml @your-org/backend-team
-
-# Testing
-/tests/ @your-org/qa-team
-/TESTING_GUIDE.md @your-org/qa-team
+# Service-specific ownership (optional examples)
+uploader/ @s-mahima09
+processor/@joyson13
+analytics/@joyson13
+frontend/ @@hdharani-sec
+terraform/ @danitrical
+devops & app building/@Nivedhitha99
+CI/CD  @nkafridi1
+Observability & monitoring @steward
