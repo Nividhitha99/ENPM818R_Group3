@@ -147,7 +147,7 @@ module "eks" {
   enable_irsa = true
 
   # Enable EKS Control Plane Logging
-  cluster_enabled_log_types = [
+  enabled_log_types = [
     "api",
     "audit",
     "authenticator",
