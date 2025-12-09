@@ -31,6 +31,7 @@ spec:
       securityContext:
         runAsNonRoot: true
         runAsUser: 1000
+        fsGroup: 1000
         seccompProfile:
           type: RuntimeDefault
       containers:
@@ -44,7 +45,8 @@ spec:
             privileged: false
             readOnlyRootFilesystem: true
             capabilities:
-              drop: ["ALL"]
+              drop:
+                - ALL
             seccompProfile:
               type: RuntimeDefault
           env:
@@ -56,6 +58,13 @@ spec:
               value: http://auth.prod.svc.cluster.local:8000
           ports:
             - containerPort: 8000
+          resources:
+            requests:
+              cpu: 100m
+              memory: 128Mi
+            limits:
+              cpu: 300m
+              memory: 256Mi
           readinessProbe:
             httpGet:
               path: /health
@@ -68,13 +77,12 @@ spec:
               port: 8000
             initialDelaySeconds: 10
             periodSeconds: 20
-          resources:
-            requests:
-              cpu: 100m
-              memory: 128Mi
-            limits:
-              cpu: 300m
-              memory: 256Mi
+          volumeMounts:
+            - name: tmp
+              mountPath: /tmp
+      volumes:
+        - name: tmp
+          emptyDir: {}
 ---
 apiVersion: v1
 kind: Service

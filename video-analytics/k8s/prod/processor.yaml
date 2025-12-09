@@ -33,6 +33,8 @@ spec:
       # Pod-level security context
       securityContext:
         runAsNonRoot: true
+        runAsUser: 1000
+        fsGroup: 1000
         seccompProfile:
           type: RuntimeDefault
 
@@ -40,19 +42,21 @@ spec:
         - name: processor
           image: 385046010615.dkr.ecr.us-east-1.amazonaws.com/processor-service:latest
           imagePullPolicy: Always
-          ports:
-            - containerPort: 8000
 
           # Container-level security context (required for PodSecurity Restricted)
           securityContext:
             runAsNonRoot: true
             runAsUser: 1000
             allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
             capabilities:
               drop:
                 - ALL
             seccompProfile:
               type: RuntimeDefault
+
+          ports:
+            - containerPort: 8000
 
           env:
             - name: AWS_REGION
@@ -67,11 +71,47 @@ spec:
                   name: video-analytics-config
                   key: SQS_QUEUE_URL
 
+            - name: DYNAMODB_TABLE_NAME
+              valueFrom:
+                configMapKeyRef:
+                  name: video-analytics-config
+                  key: DYNAMODB_TABLE_NAME
+
+          resources:
+            requests:
+              memory: "512Mi"
+              cpu: "500m"
+            limits:
+              memory: "2Gi"
+              cpu: "2000m"
+
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 8000
+            initialDelaySeconds: 5
+            periodSeconds: 10
+
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 8000
+            initialDelaySeconds: 10
+            periodSeconds: 20
+
           volumeMounts:
+            - name: tmp
+              mountPath: /tmp
+            - name: workdir
+              mountPath: /app/work
             - name: ebs-workspace
               mountPath: /workspace
 
       volumes:
+        - name: tmp
+          emptyDir: {}
+        - name: workdir
+          emptyDir: {}
         - name: ebs-workspace
           persistentVolumeClaim:
             claimName: analytics-pvc

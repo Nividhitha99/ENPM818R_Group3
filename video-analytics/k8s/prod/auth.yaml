@@ -31,6 +31,7 @@ spec:
       securityContext:
         runAsNonRoot: true
         runAsUser: 1000
+        fsGroup: 1000
         seccompProfile:
           type: RuntimeDefault
       containers:
@@ -38,13 +39,14 @@ spec:
           image: 385046010615.dkr.ecr.us-east-1.amazonaws.com/auth-service:latest
           imagePullPolicy: Always
           securityContext:
-            runAsNonRoot: true
-            runAsUser: 1000
             allowPrivilegeEscalation: false
             privileged: false
             readOnlyRootFilesystem: true
+            runAsNonRoot: true
+            runAsUser: 1000
             capabilities:
-              drop: ["ALL"]
+              drop:
+                - ALL
             seccompProfile:
               type: RuntimeDefault
           env:
@@ -55,6 +57,13 @@ spec:
                   key: JWT_SECRET
           ports:
             - containerPort: 8000
+          resources:
+            requests:
+              cpu: 100m
+              memory: 128Mi
+            limits:
+              cpu: 300m
+              memory: 256Mi
           readinessProbe:
             httpGet:
               path: /health
@@ -67,13 +76,12 @@ spec:
               port: 8000
             initialDelaySeconds: 10
             periodSeconds: 20
-          resources:
-            requests:
-              cpu: 100m
-              memory: 128Mi
-            limits:
-              cpu: 300m
-              memory: 256Mi
+          volumeMounts:
+            - name: tmp
+              mountPath: /tmp
+      volumes:
+        - name: tmp
+          emptyDir: {}
 ---
 apiVersion: v1
 kind: Service

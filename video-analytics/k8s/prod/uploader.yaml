@@ -32,11 +32,13 @@ spec:
       securityContext:
         runAsNonRoot: true
         runAsUser: 1000
+        fsGroup: 1000
         seccompProfile:
           type: RuntimeDefault
       containers:
         - name: uploader
           image: 385046010615.dkr.ecr.us-east-1.amazonaws.com/uploader-service:latest
+          imagePullPolicy: Always
           securityContext:
             runAsNonRoot: true
             runAsUser: 1000
@@ -44,7 +46,8 @@ spec:
             privileged: false
             readOnlyRootFilesystem: true
             capabilities:
-              drop: ["ALL"]
+              drop:
+                - ALL
             seccompProfile:
               type: RuntimeDefault
           ports:
@@ -84,6 +87,13 @@ spec:
             limits:
               cpu: 400m
               memory: 512Mi
+          volumeMounts:
+            - name: tmp
+              mountPath: /tmp
+      volumes:
+        - name: tmp
+          emptyDir: {}
+
 ---
 apiVersion: v1
 kind: Service
