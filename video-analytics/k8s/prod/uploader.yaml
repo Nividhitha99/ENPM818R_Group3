@@ -40,15 +40,30 @@ spec:
           image: 385046010615.dkr.ecr.us-east-1.amazonaws.com/uploader-service:latest
           imagePullPolicy: Always
           securityContext:
-            allowPrivilegeEscalation: false
-            readOnlyRootFilesystem: true
             runAsNonRoot: true
             runAsUser: 1000
+            allowPrivilegeEscalation: false
+            privileged: false
+            readOnlyRootFilesystem: true
             capabilities:
               drop:
                 - ALL
+            seccompProfile:
+              type: RuntimeDefault
           ports:
             - containerPort: 8000
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 8000
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 8000
+            initialDelaySeconds: 10
+            periodSeconds: 20
           env:
             - name: AWS_REGION
               valueFrom:
@@ -67,29 +82,18 @@ spec:
                   key: SQS_QUEUE_URL
           resources:
             requests:
-              memory: "256Mi"
-              cpu: "200m"
+              cpu: 150m
+              memory: 256Mi
             limits:
-              memory: "1Gi"
-              cpu: "1000m"
-          readinessProbe:
-            httpGet:
-              path: /health
-              port: 8000
-            initialDelaySeconds: 5
-            periodSeconds: 10
-          livenessProbe:
-            httpGet:
-              path: /health
-              port: 8000
-            initialDelaySeconds: 10
-            periodSeconds: 20
+              cpu: 400m
+              memory: 512Mi
           volumeMounts:
             - name: tmp
               mountPath: /tmp
       volumes:
         - name: tmp
           emptyDir: {}
+
 ---
 apiVersion: v1
 kind: Service

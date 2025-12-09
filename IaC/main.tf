@@ -231,13 +231,18 @@ data "aws_iam_policy_document" "autoscaler_assume" {
   statement {
     actions = ["sts:AssumeRoleWithWebIdentity"]
     principals {
-      type = "Federated"
+      type        = "Federated"
       identifiers = [data.aws_iam_openid_connect_provider.oidc.arn]
     }
     condition {
       test     = "StringEquals"
       variable = "${replace(module.eks.cluster_oidc_issuer_url, "https://", "")}:sub"
-      values   = ["system:serviceaccount:kube-system:cluster-autoscaler"]
+      values   = ["system:serviceaccount:kube-system:cluster-autoscaler-aws-cluster-autoscaler"]
+    }
+    condition {
+      test     = "StringEquals"
+      variable = "${replace(module.eks.cluster_oidc_issuer_url, "https://", "")}:aud"
+      values   = ["sts.amazonaws.com"]
     }
   }
 }
@@ -259,7 +264,7 @@ resource "aws_iam_role_policy_attachment" "attach_autoscaler_policy" {
 
 resource "kubernetes_service_account" "cluster_autoscaler" {
   metadata {
-    name      = "cluster-autoscaler"
+    name      = "cluster-autoscaler-aws-cluster-autoscaler"
     namespace = "kube-system"
     annotations = {
       "eks.amazonaws.com/role-arn" = aws_iam_role.cluster_autoscaler_irsa_role.arn

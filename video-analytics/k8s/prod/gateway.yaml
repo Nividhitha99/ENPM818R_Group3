@@ -3,6 +3,8 @@ kind: ServiceAccount
 metadata:
   name: gateway-sa
   namespace: prod
+  annotations:
+    eks.amazonaws.com/role-arn: arn:aws:iam::385046010615:role/gateway-irsa-role
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -37,13 +39,16 @@ spec:
           image: 385046010615.dkr.ecr.us-east-1.amazonaws.com/gateway-service:latest
           imagePullPolicy: Always
           securityContext:
-            allowPrivilegeEscalation: false
-            readOnlyRootFilesystem: true
             runAsNonRoot: true
             runAsUser: 1000
+            allowPrivilegeEscalation: false
+            privileged: false
+            readOnlyRootFilesystem: true
             capabilities:
               drop:
                 - ALL
+            seccompProfile:
+              type: RuntimeDefault
           env:
             - name: UPLOADER_SERVICE_URL
               value: http://uploader.prod.svc.cluster.local:8000
@@ -55,11 +60,11 @@ spec:
             - containerPort: 8000
           resources:
             requests:
-              memory: "128Mi"
-              cpu: "100m"
+              cpu: 100m
+              memory: 128Mi
             limits:
-              memory: "512Mi"
-              cpu: "500m"
+              cpu: 300m
+              memory: 256Mi
           readinessProbe:
             httpGet:
               path: /health

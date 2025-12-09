@@ -35,6 +35,9 @@ spec:
         fsGroup: 1000
         seccompProfile:
           type: RuntimeDefault
+
+    
+
       containers:
         - name: analytics
           image: 385046010615.dkr.ecr.us-east-1.amazonaws.com/analytics-service:latest
@@ -44,22 +47,23 @@ spec:
             readOnlyRootFilesystem: true
             runAsNonRoot: true
             runAsUser: 1000
+            allowPrivilegeEscalation: false
             capabilities:
               drop:
                 - ALL
+            seccompProfile:
+              type: RuntimeDefault
+
           env:
             - name: AWS_REGION
               valueFrom:
                 configMapKeyRef:
                   name: video-analytics-config
                   key: AWS_REGION
-            - name: DYNAMODB_TABLE_NAME
-              valueFrom:
-                configMapKeyRef:
-                  name: video-analytics-config
-                  key: DYNAMODB_TABLE_NAME
+
           ports:
             - containerPort: 8000
+            protocol: TCP
           resources:
             requests:
               memory: "128Mi"
@@ -85,6 +89,7 @@ spec:
       volumes:
         - name: tmp
           emptyDir: {}
+              protocol: TCP
 
 ---
 apiVersion: v1

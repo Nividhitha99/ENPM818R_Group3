@@ -1,0 +1,302 @@
+name: Deploy to EKS
+
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Target environment'
+        required: true
+        type: choice
+        options:
+          - dev
+          - staging
+          - prod
+        default: 'dev'
+      image_tag:
+        description: 'Image tag to deploy'
+        required: false
+        type: string
+        default: 'latest'
+  workflow_call:
+    inputs:
+      environment:
+        required: true
+        type: string
+      image_tag:
+        required: false
+        type: string
+        default: 'latest'
+
+env:
+  AWS_REGION: us-east-1
+  EKS_CLUSTER_NAME: g3-eks-cluster
+  ECR_REGISTRY: 385046010615.dkr.ecr.us-east-1.amazonaws.com
+
+jobs:
+  deploy:
+    name: Deploy to ${{ inputs.environment }}
+    runs-on: ubuntu-latest
+    environment:
+      name: ${{ inputs.environment }}
+      url: ${{ steps.get-url.outputs.url }}
+    permissions:
+      id-token: write
+      contents: read
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: arn:aws:iam::385046010615:role/github-actions-eks-role
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Update kubeconfig
+        run: |
+          aws eks update-kubeconfig --region ${{ env.AWS_REGION }} --name ${{ env.EKS_CLUSTER_NAME }}
+
+      - name: Install kubectl and kustomize
+        run: |
+          # Install kubectl
+          curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
+          chmod +x kubectl
+          sudo mv kubectl /usr/local/bin/
+          
+          # Install kustomize
+          curl -s "https://raw.githubusercontent.com/kubernetes-sigs/kustomize/master/hack/install_kustomize.sh" | bash
+          sudo mv kustomize /usr/local/bin/
+
+      - name: Set namespace based on environment
+        run: |
+          if [ "${{ inputs.environment }}" == "prod" ]; then
+            echo "NAMESPACE=prod" >> $GITHUB_ENV
+          elif [ "${{ inputs.environment }}" == "staging" ]; then
+            echo "NAMESPACE=staging" >> $GITHUB_ENV
+          else
+            echo "NAMESPACE=dev" >> $GITHUB_ENV
+          fi
+
+      - name: Create namespace if not exists
+        run: |
+          kubectl create namespace ${{ env.NAMESPACE }} --dry-run=client -o yaml | kubectl apply -f -
+
+      - name: Save current deployment state for rollback
+        id: save-state
+        run: |
+          # Save current image tags for rollback
+          mkdir -p /tmp/rollback
+          
+          for deployment in analytics auth gateway processor uploader frontend; do
+            IMAGE=$(kubectl get deployment ${deployment} -n ${{ env.NAMESPACE }} -o jsonpath='{.spec.template.spec.containers[0].image}' 2>/dev/null || echo "none")
+            echo "${deployment}=${IMAGE}" >> /tmp/rollback/previous-images.txt
+            echo "Previous ${deployment} image: ${IMAGE}"
+          done
+          
+          # Save deployment state
+          kubectl get deployments -n ${{ env.NAMESPACE }} -o yaml > /tmp/rollback/deployments-backup.yaml || true
+
+      - name: Upload rollback state
+        uses: actions/upload-artifact@v4
+        with:
+          name: rollback-state-${{ inputs.environment }}-${{ github.run_id }}
+          path: /tmp/rollback/
+          retention-days: 7
+
+      - name: Update image tags in Kustomize overlays
+        run: |
+          IMAGE_TAG="${{ inputs.image_tag }}"
+          
+          cd video-analytics/k8s/overlays/${{ inputs.environment }}
+          
+          # Update kustomization.yaml with new image tags
+          kustomize edit set image \
+            video-analytics-analytics=${{ env.ECR_REGISTRY }}/video-analytics-analytics:${IMAGE_TAG} \
+            video-analytics-auth=${{ env.ECR_REGISTRY }}/video-analytics-auth:${IMAGE_TAG} \
+            gateway-service=${{ env.ECR_REGISTRY }}/gateway-service:${IMAGE_TAG} \
+            video-analytics-processor=${{ env.ECR_REGISTRY }}/video-analytics-processor:${IMAGE_TAG} \
+            video-analytics-uploader=${{ env.ECR_REGISTRY }}/video-analytics-uploader:${IMAGE_TAG} \
+            video-analytics-frontend=${{ env.ECR_REGISTRY }}/video-analytics-frontend:${IMAGE_TAG}
+
+      - name: Apply Kustomize configuration
+        run: |
+          cd video-analytics/k8s/overlays/${{ inputs.environment }}
+          kustomize build . | kubectl apply -f -
+
+      - name: Wait for deployments to be ready
+        id: wait-deploy
+        timeout-minutes: 10
+        run: |
+          echo "Waiting for deployments to be ready..."
+          
+          DEPLOYMENTS="analytics auth gateway processor uploader frontend"
+          
+          for deployment in $DEPLOYMENTS; do
+            echo "Waiting for ${deployment}..."
+            kubectl rollout status deployment/${deployment} -n ${{ env.NAMESPACE }} --timeout=8m || {
+              echo "❌ Deployment ${deployment} failed to rollout"
+              echo "ROLLOUT_FAILED=true" >> $GITHUB_ENV
+              exit 1
+            }
+          done
+          
+          echo "✅ All deployments ready"
+
+      - name: Verify pod health
+        if: success()
+        run: |
+          echo "Checking pod health..."
+          kubectl get pods -n ${{ env.NAMESPACE }}
+          
+          # Check if all pods are running
+          NOT_RUNNING=$(kubectl get pods -n ${{ env.NAMESPACE }} --field-selector=status.phase!=Running --no-headers | wc -l)
+          
+          if [ "$NOT_RUNNING" -gt 0 ]; then
+            echo "❌ Found ${NOT_RUNNING} pods not in Running state"
+            kubectl get pods -n ${{ env.NAMESPACE }}
+            echo "HEALTH_CHECK_FAILED=true" >> $GITHUB_ENV
+            exit 1
+          fi
+          
+          echo "✅ All pods are running"
+
+      - name: Run health checks
+        if: success()
+        timeout-minutes: 3
+        run: |
+          echo "Running application health checks..."
+          
+          # Get ALB URL
+          ALB_URL=$(kubectl get ingress video-analytics-ingress -n ${{ env.NAMESPACE }} -o jsonpath='{.status.loadBalancer.ingress[0].hostname}')
+          
+          if [ -z "$ALB_URL" ]; then
+            echo "⚠️ No ALB URL found yet, skipping external health check"
+          else
+            echo "ALB URL: http://${ALB_URL}"
+            
+            # Wait for ALB to be ready
+            sleep 30
+            
+            # Test frontend
+            FRONTEND_STATUS=$(curl -s -o /dev/null -w "%{http_code}" http://${ALB_URL}/ || echo "000")
+            echo "Frontend health check: ${FRONTEND_STATUS}"
+            
+            if [ "$FRONTEND_STATUS" != "200" ]; then
+              echo "❌ Frontend health check failed"
+              echo "HEALTH_CHECK_FAILED=true" >> $GITHUB_ENV
+              exit 1
+            fi
+            
+            # Test gateway
+            GATEWAY_STATUS=$(curl -s -o /dev/null -w "%{http_code}" http://${ALB_URL}/api/analytics/stats || echo "000")
+            echo "Gateway health check: ${GATEWAY_STATUS}"
+            
+            if [ "$GATEWAY_STATUS" != "200" ]; then
+              echo "❌ Gateway health check failed"
+              echo "HEALTH_CHECK_FAILED=true" >> $GITHUB_ENV
+              exit 1
+            fi
+            
+            echo "✅ All health checks passed"
+          fi
+
+      - name: Get deployment URL
+        id: get-url
+        run: |
+          ALB_URL=$(kubectl get ingress video-analytics-ingress -n ${{ env.NAMESPACE }} -o jsonpath='{.status.loadBalancer.ingress[0].hostname}' || echo "pending")
+          echo "url=http://${ALB_URL}" >> $GITHUB_OUTPUT
+          echo "Deployment URL: http://${ALB_URL}"
+
+      - name: Deployment summary
+        if: success()
+        run: |
+          echo "## ✅ Deployment Successful" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Environment:** ${{ inputs.environment }}" >> $GITHUB_STEP_SUMMARY
+          echo "**Image Tag:** ${{ inputs.image_tag }}" >> $GITHUB_STEP_SUMMARY
+          echo "**Namespace:** ${{ env.NAMESPACE }}" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### Deployed Services" >> $GITHUB_STEP_SUMMARY
+          kubectl get deployments -n ${{ env.NAMESPACE }} -o custom-columns=NAME:.metadata.name,READY:.status.readyReplicas,IMAGE:.spec.template.spec.containers[0].image >> $GITHUB_STEP_SUMMARY
+
+  # Automatic rollback on failure
+  rollback:
+    name: Rollback ${{ inputs.environment }}
+    runs-on: ubuntu-latest
+    needs: deploy
+    if: failure()
+    permissions:
+      id-token: write
+      contents: read
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: arn:aws:iam::385046010615:role/github-actions-eks-role
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Update kubeconfig
+        run: |
+          aws eks update-kubeconfig --region ${{ env.AWS_REGION }} --name ${{ env.EKS_CLUSTER_NAME }}
+
+      - name: Set namespace
+        run: |
+          if [ "${{ inputs.environment }}" == "prod" ]; then
+            echo "NAMESPACE=prod" >> $GITHUB_ENV
+          elif [ "${{ inputs.environment }}" == "staging" ]; then
+            echo "NAMESPACE=staging" >> $GITHUB_ENV
+          else
+            echo "NAMESPACE=dev" >> $GITHUB_ENV
+          fi
+
+      - name: Download rollback state
+        uses: actions/download-artifact@v4
+        with:
+          name: rollback-state-${{ inputs.environment }}-${{ github.run_id }}
+          path: /tmp/rollback/
+
+      - name: Perform rollback
+        run: |
+          echo "🔄 Starting rollback to previous deployment state..."
+          
+          # Read previous image tags
+          if [ -f /tmp/rollback/previous-images.txt ]; then
+            while IFS='=' read -r deployment image; do
+              if [ "$image" != "none" ] && [ -n "$image" ]; then
+                echo "Rolling back ${deployment} to ${image}"
+                kubectl set image deployment/${deployment} ${deployment}=${image} -n ${{ env.NAMESPACE }} || true
+              fi
+            done < /tmp/rollback/previous-images.txt
+          else
+            echo "No previous state found, rolling back using kubectl rollout undo"
+            for deployment in analytics auth gateway processor uploader frontend; do
+              kubectl rollout undo deployment/${deployment} -n ${{ env.NAMESPACE }} || true
+            done
+          fi
+          
+          echo "✅ Rollback complete"
+
+      - name: Wait for rollback to complete
+        run: |
+          echo "Waiting for rollback to stabilize..."
+          
+          for deployment in analytics auth gateway processor uploader frontend; do
+            kubectl rollout status deployment/${deployment} -n ${{ env.NAMESPACE }} --timeout=5m || true
+          done
+
+      - name: Rollback summary
+        run: |
+          echo "## 🔄 Automatic Rollback Executed" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Environment:** ${{ inputs.environment }}" >> $GITHUB_STEP_SUMMARY
+          echo "**Reason:** Deployment failed health checks or rollout timeout" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### Current State After Rollback" >> $GITHUB_STEP_SUMMARY
+          kubectl get deployments -n ${{ env.NAMESPACE }} >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          kubectl get pods -n ${{ env.NAMESPACE }} >> $GITHUB_STEP_SUMMARY

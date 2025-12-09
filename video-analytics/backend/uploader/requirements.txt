@@ -3,4 +3,5 @@ uvicorn
 boto3
 python-multipart
 prometheus-client
+urllib3>=2.6.0
 

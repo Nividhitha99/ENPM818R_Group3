@@ -40,12 +40,15 @@ spec:
           imagePullPolicy: Always
           securityContext:
             allowPrivilegeEscalation: false
+            privileged: false
             readOnlyRootFilesystem: true
             runAsNonRoot: true
             runAsUser: 1000
             capabilities:
               drop:
                 - ALL
+            seccompProfile:
+              type: RuntimeDefault
           env:
             - name: JWT_SECRET
               valueFrom:
@@ -56,11 +59,11 @@ spec:
             - containerPort: 8000
           resources:
             requests:
-              memory: "128Mi"
-              cpu: "100m"
+              cpu: 100m
+              memory: 128Mi
             limits:
-              memory: "512Mi"
-              cpu: "500m"
+              cpu: 300m
+              memory: 256Mi
           readinessProbe:
             httpGet:
               path: /health
