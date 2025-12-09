@@ -17,10 +17,10 @@
 
 ## 4. Data Protection
 - **Encryption at Rest**:
-  - S3 Buckets: SSE-S3 (AES-256).
-  - DynamoDB: Server-side encryption enabled.
-  - EBS/EFS: Encrypted with KMS.
-- **Secrets Management**: Kubernetes Secrets used for non-sensitive config; AWS Secrets Manager recommended for high-value creds.
+  - S3 Buckets: SSE-S3 (AES-256)
+  - RDS PostgreSQL: Encrypted with AWS KMS
+  - EBS/EFS: Encrypted with KMS
+- **Secrets Management**: AWS Secrets Manager for RDS credentials and JWT secrets; IRSA for pod-to-secret access
 
 ## 5. Monitoring & Auditing
 - **GuardDuty**: Enabled on AWS account.

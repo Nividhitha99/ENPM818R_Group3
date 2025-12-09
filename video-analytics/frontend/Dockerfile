@@ -54,6 +54,10 @@ USER 101
 # Destination: /usr/share/nginx/html is default Nginx document root
 COPY --from=builder /app/build /usr/share/nginx/html
 
+# Copy custom Nginx configuration for SPA routing
+# Ensures all routes fall back to index.html (required for React Router)
+COPY nginx.conf /etc/nginx/conf.d/default.conf
+
 # Expose port 8080 (unprivileged Nginx uses 8080 instead of 80)
 # Port 80 requires root; 8080 is safe for non-root user
 EXPOSE 8080

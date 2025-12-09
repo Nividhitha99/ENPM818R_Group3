@@ -3,4 +3,6 @@ uvicorn
 boto3
 prometheus-client
 urllib3>=2.6.0
+psycopg2-binary>=2.9.9
+sqlalchemy>=2.0.23
 

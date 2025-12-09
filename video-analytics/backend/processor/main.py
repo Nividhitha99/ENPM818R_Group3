@@ -13,6 +13,12 @@ from io import BytesIO
 from PIL import Image
 from prometheus_client import make_asgi_app, Counter, Histogram
 from botocore.exceptions import ClientError, BotoCoreError
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker, declarative_base
+from sqlalchemy.pool import QueuePool
+from sqlalchemy import Column, String, BigInteger, Integer, TIMESTAMP, UUID as SQLA_UUID
+from sqlalchemy.sql import func
+from urllib.parse import quote
 
 # ============================================================================
 # STRUCTURED JSON LOGGING SETUP
@@ -64,6 +70,95 @@ PROCESSING_TIME = Histogram('video_processing_seconds', 'Time spent processing v
 SQS_MESSAGES_RECEIVED = Counter('sqs_messages_received_total', 'Total SQS messages received')
 SQS_MESSAGES_DELETED = Counter('sqs_messages_deleted_total', 'Total SQS messages deleted')
 SQS_ERRORS = Counter('sqs_errors_total', 'Total SQS errors')
+
+# ============================================================================
+# DATABASE SETUP
+# ============================================================================
+Base = declarative_base()
+
+
+class Video(Base):
+    __tablename__ = "videos"
+    
+    video_id = Column(SQLA_UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    filename = Column(String(255), nullable=False)
+    s3_bucket = Column(String(255), nullable=False)
+    s3_key = Column(String(512), nullable=False)
+    thumbnail_key = Column(String(512))
+    size_bytes = Column(BigInteger)
+    duration_seconds = Column(Integer)
+    status = Column(String(50), default="UPLOADED")
+    uploaded_at = Column(TIMESTAMP, server_default=func.now())
+    processed_at = Column(TIMESTAMP)
+    created_at = Column(TIMESTAMP, server_default=func.now())
+    updated_at = Column(TIMESTAMP, server_default=func.now(), onupdate=func.now())
+
+
+def get_rds_credentials():
+    """Fetch RDS credentials from AWS Secrets Manager"""
+    secret_name = os.getenv("RDS_SECRET_NAME", "video-analytics/rds-password")
+    region = os.getenv("AWS_REGION", "us-east-1")
+    
+    session = boto3.session.Session()
+    client = session.client(
+        service_name='secretsmanager',
+        region_name=region
+    )
+    
+    try:
+        response = client.get_secret_value(SecretId=secret_name)
+        secret = json.loads(response['SecretString'])
+        
+        # If secret only contains 'password', build full credentials from environment
+        if 'password' in secret and 'host' not in secret:
+            return {
+                'username': os.getenv('RDS_USERNAME', 'videoadmin'),
+                'password': secret['password'],
+                'host': os.getenv('RDS_HOST', 'video-analytics-db.cgn280g0e2jq.us-east-1.rds.amazonaws.com'),
+                'port': os.getenv('RDS_PORT', '5432'),
+                'dbname': os.getenv('RDS_DBNAME', 'video_analytics')
+            }
+        return secret
+    except Exception as e:
+        logger.error(f"Failed to fetch RDS credentials: {str(e)}")
+        raise
+
+
+def create_db_engine():
+    """Create SQLAlchemy engine with connection pooling"""
+    creds = get_rds_credentials()
+    
+    # URL-encode password to handle special characters
+    encoded_password = quote(creds['password'], safe='')
+    database_url = f"postgresql://{creds['username']}:{encoded_password}@{creds['host']}:{creds['port']}/{creds['dbname']}"
+    
+    engine = create_engine(
+        database_url,
+        poolclass=QueuePool,
+        pool_size=10,
+        max_overflow=20,
+        pool_timeout=30,
+        pool_recycle=3600,
+        echo=False
+    )
+    
+    return engine
+
+
+def get_db_session():
+    """Get a database session"""
+    engine = create_db_engine()
+    SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+    return SessionLocal()
+
+
+# Initialize database
+try:
+    db_engine = create_db_engine()
+    Base.metadata.create_all(bind=db_engine)
+    logger.info("Database initialized successfully")
+except Exception as e:
+    logger.error(f"Failed to initialize database: {str(e)}")
 
 # ============================================================================
 # AWS CLIENTS & CONFIGURATION
@@ -338,7 +433,34 @@ async def process_video_async(video_id, s3_bucket, s3_video_key, s3_metadata_key
         "correlation_id": correlation_id
     }
     
-    # Store metadata
+    # Store in RDS database
+    try:
+        session = get_db_session()
+        video = Video(
+            video_id=uuid.UUID(video_id),
+            filename=metadata.get('filename', filename),
+            s3_bucket=s3_bucket,
+            s3_key=s3_video_key,
+            thumbnail_key=thumbnail_key if thumbnail_url and not thumbnail_url.startswith('https://via.placeholder') else None,
+            size_bytes=file_size,
+            duration_seconds=runtime_seconds,
+            status="PROCESSED",
+            processed_at=datetime.utcnow()
+        )
+        session.add(video)
+        session.commit()
+        session.close()
+        log_with_context(logging.INFO, 
+            f"Video metadata saved to RDS database", 
+            correlation_id=correlation_id, 
+            video_id=video_id)
+    except Exception as e:
+        log_with_context(logging.ERROR, 
+            f"Failed to save video to RDS: {str(e)}", 
+            correlation_id=correlation_id, 
+            video_id=video_id)
+    
+    # Also store metadata in S3 for backward compatibility
     try:
         s3_client.put_object(
             Bucket=s3_bucket,

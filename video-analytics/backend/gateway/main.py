@@ -160,9 +160,22 @@ async def record_like(video_id: str, request: Request):
     return await forward(request, target, method="POST")
 
 
-# Uploader route (stream body as-is)
-@app.post("/api/uploader/upload")
+# Uploader routes
+@app.get("/api/upload/health")
+async def upload_health(request: Request):
+    target = f"{UPLOADER_URL}/health"
+    return await forward(request, target, method="GET")
+
+
+@app.post("/api/upload")
 async def upload(request: Request):
+    target = f"{UPLOADER_URL}/upload"
+    return await forward(request, target, method="POST")
+
+
+@app.post("/api/uploader/upload")
+async def upload_legacy(request: Request):
+    """Legacy route for backward compatibility"""
     target = f"{UPLOADER_URL}/upload"
     return await forward(request, target, method="POST")
 

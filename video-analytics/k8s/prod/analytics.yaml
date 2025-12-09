@@ -60,6 +60,13 @@ spec:
                 configMapKeyRef:
                   name: video-analytics-config
                   key: AWS_REGION
+            - name: S3_BUCKET_NAME
+              valueFrom:
+                configMapKeyRef:
+                  name: video-analytics-config
+                  key: S3_BUCKET_NAME
+            - name: RDS_SECRET_NAME
+              value: "video-analytics/rds-password"
 
           ports:
             - containerPort: 8000
