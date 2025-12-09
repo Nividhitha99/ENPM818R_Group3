@@ -1,0 +1,51 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+namespace: prod
+
+bases:
+  - ../../base
+
+commonLabels:
+  environment: prod
+
+replicas:
+  - name: analytics
+    count: 2
+  - name: auth
+    count: 2
+  - name: gateway
+    count: 2
+  - name: processor
+    count: 1
+  - name: uploader
+    count: 1
+  - name: frontend
+    count: 2
+
+# Production uses full resource allocations (already defined in base manifests)
+configMapGenerator:
+  - name: env-config
+    literals:
+      - ENVIRONMENT=prod
+      - LOG_LEVEL=WARNING
+
+images:
+  - name: video-analytics-analytics
+    newName: 385046010615.dkr.ecr.us-east-1.amazonaws.com/video-analytics-analytics
+    newTag: latest
+  - name: video-analytics-auth
+    newName: 385046010615.dkr.ecr.us-east-1.amazonaws.com/video-analytics-auth
+    newTag: latest
+  - name: gateway-service
+    newName: 385046010615.dkr.ecr.us-east-1.amazonaws.com/gateway-service
+    newTag: latest
+  - name: video-analytics-processor
+    newName: 385046010615.dkr.ecr.us-east-1.amazonaws.com/video-analytics-processor
+    newTag: latest
+  - name: video-analytics-uploader
+    newName: 385046010615.dkr.ecr.us-east-1.amazonaws.com/video-analytics-uploader
+    newTag: latest
+  - name: video-analytics-frontend
+    newName: 385046010615.dkr.ecr.us-east-1.amazonaws.com/video-analytics-frontend
+    newTag: latest

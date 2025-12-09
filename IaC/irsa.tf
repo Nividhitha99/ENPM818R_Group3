@@ -137,6 +137,28 @@ resource "aws_iam_role" "processor_irsa" {
   }
 }
 
+# Processor SQS Access Policy
+resource "aws_iam_role_policy" "processor_sqs" {
+  name = "processor-sqs-policy"
+  role = aws_iam_role.processor_irsa.id
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Effect = "Allow"
+        Action = [
+          "sqs:ReceiveMessage",
+          "sqs:DeleteMessage",
+          "sqs:GetQueueAttributes",
+          "sqs:ChangeMessageVisibility"
+        ]
+        Resource = "arn:aws:sqs:${data.aws_region.current.id}:${data.aws_caller_identity.current.account_id}:*"
+      }
+    ]
+  })
+}
+
 # Uploader Service IRSA Role
 resource "aws_iam_role" "uploader_irsa" {
   name = "uploader-irsa-role"
@@ -182,8 +204,8 @@ resource "aws_iam_role_policy" "uploader_s3" {
           "s3:ListBucket"
         ]
         Resource = [
-          "arn:aws:s3:::video-analytics-bucket",
-          "arn:aws:s3:::video-analytics-bucket/*"
+          "arn:aws:s3:::video-analytics-uploads",
+          "arn:aws:s3:::video-analytics-uploads/*"
         ]
       }
     ]

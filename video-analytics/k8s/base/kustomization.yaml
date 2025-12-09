@@ -1,0 +1,41 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+namespace: prod
+
+resources:
+  - ../prod/analytics.yaml
+  - ../prod/auth.yaml
+  - ../prod/frontend.yaml
+  - ../prod/gateway.yaml
+  - ../prod/processor.yaml
+  - ../prod/uploader.yaml
+  - ../prod/ingress.yaml
+  - ../prod/config-secrets.yaml
+  - ../networkpolicies/policies.yaml
+
+images:
+  - name: video-analytics-analytics
+    newName: 385046010615.dkr.ecr.us-east-1.amazonaws.com/video-analytics-analytics
+    newTag: latest
+  - name: video-analytics-auth
+    newName: 385046010615.dkr.ecr.us-east-1.amazonaws.com/video-analytics-auth
+    newTag: latest
+  - name: gateway-service
+    newName: 385046010615.dkr.ecr.us-east-1.amazonaws.com/gateway-service
+    newTag: latest
+  - name: video-analytics-processor
+    newName: 385046010615.dkr.ecr.us-east-1.amazonaws.com/video-analytics-processor
+    newTag: latest
+  - name: video-analytics-uploader
+    newName: 385046010615.dkr.ecr.us-east-1.amazonaws.com/video-analytics-uploader
+    newTag: latest
+  - name: video-analytics-frontend
+    newName: 385046010615.dkr.ecr.us-east-1.amazonaws.com/video-analytics-frontend
+    newTag: latest
+
+commonLabels:
+  environment: base
+
+commonAnnotations:
+  managed-by: kustomize

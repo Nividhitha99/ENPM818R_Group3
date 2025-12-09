@@ -1,0 +1,18 @@
+exclude: ^(video-analytics/)?\.venv/|^video-analytics/k8s/
+
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.5.0
+    hooks:
+      - id: trailing-whitespace
+      - id: end-of-file-fixer
+      - id: check-json
+      # YAML check excluded for k8s folder (multi-doc manifests)
+      - id: check-yaml
+        exclude: ^video-analytics/k8s/
+
+  - repo: https://github.com/psf/black
+    rev: 23.10.1
+    hooks:
+      - id: black
+        language_version: python3
