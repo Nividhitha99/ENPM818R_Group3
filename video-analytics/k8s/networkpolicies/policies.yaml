@@ -66,6 +66,78 @@ spec:
     - protocol: TCP
       port: 8000
 ---
+# Allow ALB traffic to frontend pods
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-alb-to-frontend
+  namespace: prod
+spec:
+  podSelector:
+    matchLabels:
+      app: frontend
+  policyTypes:
+  - Ingress
+  ingress:
+  - from:
+    - namespaceSelector:
+        matchLabels:
+          kubernetes.io/metadata.name: kube-system
+      podSelector:
+        matchLabels:
+          app.kubernetes.io/name: aws-load-balancer-controller
+    - ipBlock:
+        cidr: 0.0.0.0/0
+    ports:
+    - protocol: TCP
+      port: 80
+    - protocol: TCP
+      port: 8080
+---
+# Allow ALB traffic to gateway pods
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-alb-to-gateway
+  namespace: prod
+spec:
+  podSelector:
+    matchLabels:
+      app: gateway
+  policyTypes:
+  - Ingress
+  ingress:
+  - from:
+    - ipBlock:
+        cidr: 0.0.0.0/0
+    ports:
+    - protocol: TCP
+      port: 8000
+---
+# Allow IRSA-enabled services to reach AWS APIs over HTTPS (S3/DynamoDB/SQS)
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-aws-egress-for-irsa-services
+  namespace: prod
+spec:
+  podSelector:
+    matchExpressions:
+      - key: app
+        operator: In
+        values:
+          - uploader
+          - processor
+          - analytics
+  policyTypes:
+  - Egress
+  egress:
+  - to:
+    - ipBlock:
+        cidr: 0.0.0.0/0
+    ports:
+    - protocol: TCP
+      port: 443
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:

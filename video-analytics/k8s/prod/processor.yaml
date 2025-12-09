@@ -29,12 +29,39 @@ spec:
         prometheus.io/port: "8000"
     spec:
       serviceAccountName: processor-sa
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+        seccompProfile:
+          type: RuntimeDefault
       containers:
         - name: processor
           image: 385046010615.dkr.ecr.us-east-1.amazonaws.com/processor-service:latest
           imagePullPolicy: Always
+          securityContext:
+            runAsNonRoot: true
+            runAsUser: 1000
+            allowPrivilegeEscalation: false
+            privileged: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop: ["ALL"]
+            seccompProfile:
+              type: RuntimeDefault
           ports:
             - containerPort: 8000
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 8000
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 8000
+            initialDelaySeconds: 10
+            periodSeconds: 20
           env:
             - name: AWS_REGION
               valueFrom:
@@ -51,6 +78,13 @@ spec:
                 configMapKeyRef:
                   name: video-analytics-config
                   key: DYNAMODB_TABLE_NAME
+          resources:
+            requests:
+              cpu: 150m
+              memory: 256Mi
+            limits:
+              cpu: 400m
+              memory: 512Mi
 
 ---
 apiVersion: v1

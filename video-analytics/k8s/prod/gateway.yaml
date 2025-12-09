@@ -3,6 +3,8 @@ kind: ServiceAccount
 metadata:
   name: gateway-sa
   namespace: prod
+  annotations:
+    eks.amazonaws.com/role-arn: arn:aws:iam::385046010615:role/gateway-irsa-role
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -26,10 +28,25 @@ spec:
         prometheus.io/port: "8000"
     spec:
       serviceAccountName: gateway-sa
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+        seccompProfile:
+          type: RuntimeDefault
       containers:
         - name: gateway
           image: 385046010615.dkr.ecr.us-east-1.amazonaws.com/gateway-service:latest
           imagePullPolicy: Always
+          securityContext:
+            runAsNonRoot: true
+            runAsUser: 1000
+            allowPrivilegeEscalation: false
+            privileged: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop: ["ALL"]
+            seccompProfile:
+              type: RuntimeDefault
           env:
             - name: UPLOADER_SERVICE_URL
               value: http://uploader.prod.svc.cluster.local:8000
@@ -51,6 +68,13 @@ spec:
               port: 8000
             initialDelaySeconds: 10
             periodSeconds: 20
+          resources:
+            requests:
+              cpu: 100m
+              memory: 128Mi
+            limits:
+              cpu: 300m
+              memory: 256Mi
 ---
 apiVersion: v1
 kind: Service

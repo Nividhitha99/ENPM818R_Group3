@@ -29,11 +29,38 @@ spec:
         prometheus.io/port: "8000"
     spec:
       serviceAccountName: uploader-sa
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+        seccompProfile:
+          type: RuntimeDefault
       containers:
         - name: uploader
           image: 385046010615.dkr.ecr.us-east-1.amazonaws.com/uploader-service:latest
+          securityContext:
+            runAsNonRoot: true
+            runAsUser: 1000
+            allowPrivilegeEscalation: false
+            privileged: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop: ["ALL"]
+            seccompProfile:
+              type: RuntimeDefault
           ports:
             - containerPort: 8000
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 8000
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 8000
+            initialDelaySeconds: 10
+            periodSeconds: 20
           env:
             - name: AWS_REGION
               valueFrom:
@@ -50,6 +77,13 @@ spec:
                 configMapKeyRef:
                   name: video-analytics-config
                   key: SQS_QUEUE_URL
+          resources:
+            requests:
+              cpu: 150m
+              memory: 256Mi
+            limits:
+              cpu: 400m
+              memory: 512Mi
 ---
 apiVersion: v1
 kind: Service
