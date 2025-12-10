@@ -1,4 +1,5 @@
 name: Build and Push Images to ECR
+# Workflow to build and push container images to ECR
 
 on:
   push:
