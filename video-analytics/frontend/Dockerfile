@@ -41,12 +41,15 @@ RUN npm run build
 # ----------------------------------------------------------------------------
 # Using unprivileged Nginx for security (doesn't run as root)
 # Alpine variant keeps image size minimal (~23MB vs ~133MB for standard Nginx)
-# Updated to Alpine 3.21.4+ to fix libxml2 vulnerabilities (CVE-2025-49794, CVE-2025-49796, CVE-2025-49795, CVE-2025-6021)
-FROM nginxinc/nginx-unprivileged:1.27-alpine3.21
+# Updated to Alpine 3.22+ to fix libxml2 vulnerabilities (CVE-2025-49794, CVE-2025-49796, CVE-2025-49795, CVE-2025-6021)
+FROM nginxinc/nginx-unprivileged:1.27-alpine
 
-# Bring libxml2 to the patched release to resolve CVE-2025-49794/49796/49795/6021
+# Explicitly upgrade libxml2 to patched version (2.13.9-r0 or later)
+# Fixes CRITICAL: CVE-2025-49794, CVE-2025-49796
+# Fixes HIGH: CVE-2025-49795, CVE-2025-6021
+# Also upgrade libpng to fix CVE-2025-64720, CVE-2025-65018, CVE-2025-66293
 USER root
-RUN apk add --no-cache --upgrade libxml2=2.13.9-r0
+RUN apk update && apk upgrade --no-cache libxml2 libpng
 USER 101
 
 # Copy built static files from builder stage
