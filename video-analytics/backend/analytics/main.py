@@ -10,6 +10,12 @@ from datetime import datetime
 from prometheus_client import make_asgi_app, Counter, Histogram
 from typing import Optional
 from botocore.exceptions import ClientError
+from sqlalchemy import create_engine, desc
+from sqlalchemy.orm import sessionmaker, declarative_base
+from sqlalchemy.pool import QueuePool
+from sqlalchemy import Column, String, BigInteger, Integer, TIMESTAMP, ForeignKey, UUID as SQLA_UUID
+from sqlalchemy.sql import func
+from urllib.parse import quote
 
 
 # ============================================================================
@@ -47,6 +53,114 @@ logging.getLogger("uvicorn").handlers = []
 logging.getLogger("uvicorn.access").handlers = []
 logging.getLogger("botocore").setLevel(logging.CRITICAL)
 logging.getLogger("botocore.credentials").setLevel(logging.CRITICAL)
+
+# ============================================================================
+# DATABASE SETUP
+# ============================================================================
+Base = declarative_base()
+
+
+class Video(Base):
+    __tablename__ = "videos"
+    
+    video_id = Column(SQLA_UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    filename = Column(String(255), nullable=False)
+    s3_bucket = Column(String(255), nullable=False)
+    s3_key = Column(String(512), nullable=False)
+    thumbnail_key = Column(String(512))
+    size_bytes = Column(BigInteger)
+    duration_seconds = Column(Integer)
+    status = Column(String(50), default="UPLOADED")
+    uploaded_at = Column(TIMESTAMP, server_default=func.now())
+    processed_at = Column(TIMESTAMP)
+    created_at = Column(TIMESTAMP, server_default=func.now())
+    updated_at = Column(TIMESTAMP, server_default=func.now(), onupdate=func.now())
+
+
+class VideoView(Base):
+    __tablename__ = "video_views"
+    
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    video_id = Column(SQLA_UUID(as_uuid=True), ForeignKey("videos.video_id", ondelete="CASCADE"), nullable=False)
+    viewed_at = Column(TIMESTAMP, server_default=func.now())
+    user_ip = Column(String(45))
+    user_agent = Column(String)
+
+
+class VideoLike(Base):
+    __tablename__ = "video_likes"
+    
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    video_id = Column(SQLA_UUID(as_uuid=True), ForeignKey("videos.video_id", ondelete="CASCADE"), nullable=False)
+    liked_at = Column(TIMESTAMP, server_default=func.now())
+    user_ip = Column(String(45))
+
+
+def get_rds_credentials():
+    """Fetch RDS credentials from AWS Secrets Manager"""
+    secret_name = os.getenv("RDS_SECRET_NAME", "video-analytics/rds-password")
+    region = os.getenv("AWS_REGION", "us-east-1")
+    
+    session = boto3.session.Session()
+    client = session.client(
+        service_name='secretsmanager',
+        region_name=region
+    )
+    
+    try:
+        response = client.get_secret_value(SecretId=secret_name)
+        secret = json.loads(response['SecretString'])
+        
+        # If secret only contains 'password', build full credentials from environment
+        if 'password' in secret and 'host' not in secret:
+            return {
+                'username': os.getenv('RDS_USERNAME', 'videoadmin'),
+                'password': secret['password'],
+                'host': os.getenv('RDS_HOST', 'video-analytics-db.cgn280g0e2jq.us-east-1.rds.amazonaws.com'),
+                'port': os.getenv('RDS_PORT', '5432'),
+                'dbname': os.getenv('RDS_DBNAME', 'video_analytics')
+            }
+        return secret
+    except Exception as e:
+        logger.error(f"Failed to fetch RDS credentials: {str(e)}")
+        raise
+
+
+def create_db_engine():
+    """Create SQLAlchemy engine with connection pooling"""
+    creds = get_rds_credentials()
+    
+    # URL-encode password to handle special characters
+    encoded_password = quote(creds['password'], safe='')
+    database_url = f"postgresql://{creds['username']}:{encoded_password}@{creds['host']}:{creds['port']}/{creds['dbname']}"
+    
+    engine = create_engine(
+        database_url,
+        poolclass=QueuePool,
+        pool_size=10,
+        max_overflow=20,
+        pool_timeout=30,
+        pool_recycle=3600,
+        echo=False
+    )
+    
+    return engine
+
+
+def get_db_session():
+    """Get a database session"""
+    engine = create_db_engine()
+    SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+    return SessionLocal()
+
+
+# Initialize database
+try:
+    db_engine = create_db_engine()
+    Base.metadata.create_all(bind=db_engine)
+    logger.info("Database initialized successfully")
+except Exception as e:
+    logger.error(f"Failed to initialize database: {str(e)}")
 
 app = FastAPI(title="Analytics Service")
 
@@ -131,100 +245,168 @@ def get_videos(
     limit: Optional[int] = Query(100, ge=1, le=1000, description="Maximum number of videos to return"),
     sort_by: Optional[str] = Query("timestamp", description="Sort by: timestamp, views, likes, engagement")
 ):
-    """Get list of all videos with their metadata."""
+    """Get list of all videos with their metadata from RDS database."""
     start_time = time.perf_counter()
     correlation_id = get_correlation_id(request)
     endpoint = "/videos"
     method = "GET"
     try:
         videos = []
+        
+        # Try to fetch from RDS first
         try:
-            response = s3_client.list_objects_v2(
-                Bucket=S3_BUCKET,
-                Prefix="metadata/",
-                MaxKeys=limit * 2
-            )
+            session = get_db_session()
+            db_videos = session.query(Video).filter(Video.status == "PROCESSED").all()
+            
+            for db_video in db_videos:
+                # Generate presigned URL for video access
+                try:
+                    processed_url = s3_client.generate_presigned_url(
+                        'get_object',
+                        Params={
+                            'Bucket': db_video.s3_bucket,
+                            'Key': db_video.s3_key,
+                            'ResponseContentType': 'video/mp4'
+                        },
+                        ExpiresIn=PRESIGNED_URL_EXPIRATION
+                    )
+                except Exception as e:
+                    log_with_context(logging.WARNING, f"Failed to generate presigned URL for {db_video.s3_key}: {str(e)}", correlation_id)
+                    processed_url = f"https://{db_video.s3_bucket}.s3.amazonaws.com/{db_video.s3_key}"
+                
+                # Generate thumbnail URL
+                thumbnail_url = ""
+                if db_video.thumbnail_key:
+                    try:
+                        thumbnail_url = s3_client.generate_presigned_url(
+                            'get_object',
+                            Params={'Bucket': db_video.s3_bucket, 'Key': db_video.thumbnail_key},
+                            ExpiresIn=PRESIGNED_URL_EXPIRATION
+                        )
+                    except Exception as e:
+                        log_with_context(logging.WARNING, f"Failed to generate presigned URL for thumbnail {db_video.thumbnail_key}: {str(e)}", correlation_id)
+                
+                # Fallback thumbnail if not available
+                if not thumbnail_url:
+                    size_mb = round(db_video.size_bytes / (1024 * 1024), 2) if db_video.size_bytes else 0
+                    runtime = db_video.duration_seconds if db_video.duration_seconds else 0
+                    if size_mb > 0 and runtime > 0:
+                        thumbnail_url = f"https://via.placeholder.com/320x180.png?text={size_mb}MB*{runtime}s"
+                
+                # Count views and likes from database
+                views_count = session.query(VideoView).filter(VideoView.video_id == db_video.video_id).count()
+                likes_count = session.query(VideoLike).filter(VideoLike.video_id == db_video.video_id).count()
+                
+                video = {
+                    'video_id': str(db_video.video_id),
+                    'filename': db_video.filename,
+                    's3_bucket': db_video.s3_bucket,
+                    's3_key': db_video.s3_key,
+                    'processed_url': processed_url,
+                    'thumbnail_url': thumbnail_url,
+                    'timestamp': int(db_video.processed_at.timestamp()) if db_video.processed_at else int(db_video.created_at.timestamp()),
+                    'size': int(db_video.size_bytes) if db_video.size_bytes else 0,
+                    'runtime': int(db_video.duration_seconds) if db_video.duration_seconds else 0,
+                    'views': views_count,
+                    'likes': likes_count,
+                    'status': db_video.status
+                }
+                videos.append(video)
+            
+            session.close()
+            log_with_context(logging.INFO, f"[action=get_videos_rds] Retrieved {len(videos)} videos from RDS", correlation_id)
+            
+        except Exception as e:
+            log_with_context(logging.WARNING, f"Failed to fetch from RDS, falling back to S3: {str(e)}", correlation_id)
+            
+            # Fallback to S3 metadata
+            try:
+                response = s3_client.list_objects_v2(
+                    Bucket=S3_BUCKET,
+                    Prefix="metadata/",
+                    MaxKeys=limit * 2
+                )
 
-            if 'Contents' in response:
-                for obj in response['Contents']:
-                    if obj['Key'].endswith('.json'):
-                        try:
-                            metadata_obj = s3_client.get_object(
-                                Bucket=S3_BUCKET,
-                                Key=obj['Key']
-                            )
-                            metadata = json.loads(metadata_obj['Body'].read().decode('utf-8'))
-
-                            s3_key = metadata.get('s3_key', metadata.get('s3_video_key', ''))
-                            # Generate presigned URL for video access with Content-Type for streaming
+                if 'Contents' in response:
+                    for obj in response['Contents']:
+                        if obj['Key'].endswith('.json'):
                             try:
-                                content_type = metadata.get('content_type', 'video/mp4')
-                                processed_url = s3_client.generate_presigned_url(
-                                    'get_object',
-                                    Params={
-                                        'Bucket': S3_BUCKET,
-                                        'Key': s3_key,
-                                        'ResponseContentType': content_type
-                                    },
-                                    ExpiresIn=PRESIGNED_URL_EXPIRATION
+                                metadata_obj = s3_client.get_object(
+                                    Bucket=S3_BUCKET,
+                                    Key=obj['Key']
                                 )
-                            except Exception as e:
-                                log_with_context(logging.WARNING, f"Failed to generate presigned URL for {s3_key}: {str(e)}", correlation_id)
-                                processed_url = metadata.get('processed_url', f"https://{S3_BUCKET}.s3.amazonaws.com/{s3_key}")
+                                metadata = json.loads(metadata_obj['Body'].read().decode('utf-8'))
 
-                            thumbnail_url = metadata.get('thumbnail_url', '')
-
-                            # If thumbnail_url is an S3 key (starts with thumbnails/), generate presigned URL
-                            if thumbnail_url and thumbnail_url.startswith('thumbnails/'):
+                                s3_key = metadata.get('s3_key', metadata.get('s3_video_key', ''))
+                                # Generate presigned URL for video access with Content-Type for streaming
                                 try:
-                                    thumbnail_url = s3_client.generate_presigned_url(
+                                    content_type = metadata.get('content_type', 'video/mp4')
+                                    processed_url = s3_client.generate_presigned_url(
                                         'get_object',
-                                        Params={'Bucket': S3_BUCKET, 'Key': thumbnail_url},
+                                        Params={
+                                            'Bucket': S3_BUCKET,
+                                            'Key': s3_key,
+                                            'ResponseContentType': content_type
+                                        },
                                         ExpiresIn=PRESIGNED_URL_EXPIRATION
                                     )
                                 except Exception as e:
-                                    log_with_context(logging.WARNING, f"Failed to generate presigned URL for thumbnail {thumbnail_url}: {str(e)}", correlation_id)
-                                    # Keep original URL if presigned generation fails
+                                    log_with_context(logging.WARNING, f"Failed to generate presigned URL for {s3_key}: {str(e)}", correlation_id)
+                                    processed_url = metadata.get('processed_url', f"https://{S3_BUCKET}.s3.amazonaws.com/{s3_key}")
 
-                            if not thumbnail_url and metadata.get('status') == 'PROCESSED':
-                                # Check if thumbnail exists in S3
-                                thumbnail_key = f"thumbnails/{metadata.get('video_id')}.jpg"
-                                try:
-                                    s3_client.head_object(Bucket=S3_BUCKET, Key=thumbnail_key)
-                                    thumbnail_url = s3_client.generate_presigned_url(
-                                        'get_object',
-                                        Params={'Bucket': S3_BUCKET, 'Key': thumbnail_key},
-                                        ExpiresIn=PRESIGNED_URL_EXPIRATION
-                                    )
-                                    log_with_context(logging.INFO, f"Found thumbnail in S3 for {metadata.get('video_id')}, generated presigned URL", correlation_id, metadata.get('video_id'))
-                                except ClientError:
-                                    size_mb = round(metadata.get('size', metadata.get('file_size', 0)) / (1024 * 1024), 2)
-                                    runtime = metadata.get('runtime', 0)
-                                    if size_mb > 0 and runtime > 0:
-                                        thumbnail_url = f"https://via.placeholder.com/320x180.png?text={size_mb}MB*{runtime}s"
-                                        log_with_context(logging.INFO, f"Generated fallback thumbnail for {metadata.get('video_id')}: {thumbnail_url}", correlation_id, metadata.get('video_id'))
+                                thumbnail_url = metadata.get('thumbnail_url', '')
 
-                            video = {
-                                'video_id': metadata.get('video_id', ''),
-                                'filename': metadata.get('filename', metadata.get('original_filename', 'unknown')),
-                                's3_bucket': metadata.get('s3_bucket', S3_BUCKET),
-                                's3_key': s3_key,
-                                'processed_url': processed_url,
-                                'thumbnail_url': thumbnail_url,
-                                'timestamp': int(metadata.get('timestamp', metadata.get('upload_timestamp', 0))),
-                                'size': int(metadata.get('size', metadata.get('file_size', 0))),
-                                'runtime': int(metadata.get('runtime', 0)),
-                                'views': int(metadata.get('views', 0)),
-                                'likes': int(metadata.get('likes', 0)),
-                                'status': metadata.get('status', 'UNKNOWN')
-                            }
-                            videos.append(video)
-                        except Exception as e:
-                            log_with_context(logging.WARNING, f"Error reading metadata file {obj['Key']}: {str(e)}", correlation_id)
-                            continue
-        except Exception as e:
-            log_with_context(logging.ERROR, f"Error listing S3 objects: {str(e)}", correlation_id)
-            raise HTTPException(status_code=500, detail=f"Failed to list videos: {str(e)}")
+                                # If thumbnail_url is an S3 key (starts with thumbnails/), generate presigned URL
+                                if thumbnail_url and thumbnail_url.startswith('thumbnails/'):
+                                    try:
+                                        thumbnail_url = s3_client.generate_presigned_url(
+                                            'get_object',
+                                            Params={'Bucket': S3_BUCKET, 'Key': thumbnail_url},
+                                            ExpiresIn=PRESIGNED_URL_EXPIRATION
+                                        )
+                                    except Exception as e:
+                                        log_with_context(logging.WARNING, f"Failed to generate presigned URL for thumbnail {thumbnail_url}: {str(e)}", correlation_id)
+                                        # Keep original URL if presigned generation fails
+
+                                if not thumbnail_url and metadata.get('status') == 'PROCESSED':
+                                    # Check if thumbnail exists in S3
+                                    thumbnail_key = f"thumbnails/{metadata.get('video_id')}.jpg"
+                                    try:
+                                        s3_client.head_object(Bucket=S3_BUCKET, Key=thumbnail_key)
+                                        thumbnail_url = s3_client.generate_presigned_url(
+                                            'get_object',
+                                            Params={'Bucket': S3_BUCKET, 'Key': thumbnail_key},
+                                            ExpiresIn=PRESIGNED_URL_EXPIRATION
+                                        )
+                                        log_with_context(logging.INFO, f"Found thumbnail in S3 for {metadata.get('video_id')}, generated presigned URL", correlation_id, metadata.get('video_id'))
+                                    except ClientError:
+                                        size_mb = round(metadata.get('size', metadata.get('file_size', 0)) / (1024 * 1024), 2)
+                                        runtime = metadata.get('runtime', 0)
+                                        if size_mb > 0 and runtime > 0:
+                                            thumbnail_url = f"https://via.placeholder.com/320x180.png?text={size_mb}MB*{runtime}s"
+                                            log_with_context(logging.INFO, f"Generated fallback thumbnail for {metadata.get('video_id')}: {thumbnail_url}", correlation_id, metadata.get('video_id'))
+
+                                video = {
+                                    'video_id': metadata.get('video_id', ''),
+                                    'filename': metadata.get('filename', metadata.get('original_filename', 'unknown')),
+                                    's3_bucket': metadata.get('s3_bucket', S3_BUCKET),
+                                    's3_key': s3_key,
+                                    'processed_url': processed_url,
+                                    'thumbnail_url': thumbnail_url,
+                                    'timestamp': int(metadata.get('timestamp', metadata.get('upload_timestamp', 0))),
+                                    'size': int(metadata.get('size', metadata.get('file_size', 0))),
+                                    'runtime': int(metadata.get('runtime', 0)),
+                                    'views': int(metadata.get('views', 0)),
+                                    'likes': int(metadata.get('likes', 0)),
+                                    'status': metadata.get('status', 'UNKNOWN')
+                                }
+                                videos.append(video)
+                            except Exception as e:
+                                log_with_context(logging.WARNING, f"Error reading metadata file {obj['Key']}: {str(e)}", correlation_id)
+                                continue
+            except Exception as e:
+                log_with_context(logging.ERROR, f"Error listing S3 objects: {str(e)}", correlation_id)
+                raise HTTPException(status_code=500, detail=f"Failed to list videos: {str(e)}")
 
         if sort_by == 'views':
             videos.sort(key=lambda x: x['views'], reverse=True)
@@ -429,7 +611,7 @@ def get_stats(
 
 @app.post("/view/{video_id}")
 def record_view(video_id: str, request: Request):
-    """Record a view for a video. Increments views and engagement."""
+    """Record a view for a video. Increments views in RDS database."""
     start_time = time.perf_counter()
     correlation_id = get_correlation_id(request)
     endpoint = "/view/{video_id}"
@@ -440,42 +622,37 @@ def record_view(video_id: str, request: Request):
         raise HTTPException(status_code=400, detail="Invalid video_id format")
 
     try:
-        metadata_key = f"metadata/{video_id}.json"
-
+        session = get_db_session()
+        
+        # Check if video exists
         try:
-            metadata_obj = s3_client.get_object(
-                Bucket=S3_BUCKET,
-                Key=metadata_key
-            )
-            metadata = json.loads(metadata_obj['Body'].read().decode('utf-8'))
-        except ClientError as e:
-            if e.response['Error']['Code'] == 'NoSuchKey':
-                raise HTTPException(status_code=404, detail=f"Video {video_id} not found")
-            raise
-
-        metadata['views'] = metadata.get('views', 0) + 1
-        metadata['engagement'] = metadata.get('engagement', 0) + 1
-
-        s3_client.put_object(
-            Bucket=S3_BUCKET,
-            Key=metadata_key,
-            Body=json.dumps(metadata, indent=2),
-            ContentType='application/json'
-        )
-
-        views = metadata['views']
-        engagement = metadata['engagement']
+            video_uuid = uuid.UUID(video_id)
+        except ValueError:
+            session.close()
+            raise HTTPException(status_code=400, detail="Invalid video_id format (must be UUID)")
+        
+        video = session.query(Video).filter(Video.video_id == video_uuid).first()
+        if not video:
+            session.close()
+            raise HTTPException(status_code=404, detail=f"Video {video_id} not found")
+        
+        # Record view
+        view = VideoView(video_id=video_uuid, user_ip=request.client.host if request.client else None)
+        session.add(view)
+        session.commit()
+        
+        # Count total views
+        views_count = session.query(VideoView).filter(VideoView.video_id == video_uuid).count()
+        session.close()
 
         VIEWS_COUNTER.inc()
-        ENGAGEMENT_COUNTER.inc()
 
-        log_with_context(logging.INFO, f"[video_id={video_id}] [action=record_view] View recorded: views={views}, engagement={engagement}", correlation_id, video_id)
+        log_with_context(logging.INFO, f"[video_id={video_id}] [action=record_view] View recorded: total_views={views_count}", correlation_id, video_id)
 
         return {
             "status": "view_recorded",
             "video_id": video_id,
-            "views": views,
-            "engagement": engagement
+            "views": views_count
         }
     except HTTPException as exc:
         API_ERRORS.labels(endpoint=endpoint, status_code=exc.status_code).inc()
@@ -491,7 +668,7 @@ def record_view(video_id: str, request: Request):
 
 @app.post("/like/{video_id}")
 def record_like(video_id: str, request: Request):
-    """Record a like for a video. Increments likes and engagement."""
+    """Record a like for a video. Increments likes in RDS database."""
     start_time = time.perf_counter()
     correlation_id = get_correlation_id(request)
     endpoint = "/like/{video_id}"
@@ -502,42 +679,37 @@ def record_like(video_id: str, request: Request):
         raise HTTPException(status_code=400, detail="Invalid video_id format")
 
     try:
-        metadata_key = f"metadata/{video_id}.json"
-
+        session = get_db_session()
+        
+        # Check if video exists
         try:
-            metadata_obj = s3_client.get_object(
-                Bucket=S3_BUCKET,
-                Key=metadata_key
-            )
-            metadata = json.loads(metadata_obj['Body'].read().decode('utf-8'))
-        except ClientError as e:
-            if e.response['Error']['Code'] == 'NoSuchKey':
-                raise HTTPException(status_code=404, detail=f"Video {video_id} not found")
-            raise
-
-        metadata['likes'] = metadata.get('likes', 0) + 1
-        metadata['engagement'] = metadata.get('engagement', 0) + 1
-
-        s3_client.put_object(
-            Bucket=S3_BUCKET,
-            Key=metadata_key,
-            Body=json.dumps(metadata, indent=2),
-            ContentType='application/json'
-        )
-
-        likes = metadata['likes']
-        engagement = metadata['engagement']
+            video_uuid = uuid.UUID(video_id)
+        except ValueError:
+            session.close()
+            raise HTTPException(status_code=400, detail="Invalid video_id format (must be UUID)")
+        
+        video = session.query(Video).filter(Video.video_id == video_uuid).first()
+        if not video:
+            session.close()
+            raise HTTPException(status_code=404, detail=f"Video {video_id} not found")
+        
+        # Record like
+        like = VideoLike(video_id=video_uuid, user_ip=request.client.host if request.client else None)
+        session.add(like)
+        session.commit()
+        
+        # Count total likes
+        likes_count = session.query(VideoLike).filter(VideoLike.video_id == video_uuid).count()
+        session.close()
 
         LIKES_COUNTER.inc()
-        ENGAGEMENT_COUNTER.inc()
 
-        log_with_context(logging.INFO, f"[video_id={video_id}] [action=record_like] Like recorded: likes={likes}, engagement={engagement}", correlation_id, video_id)
+        log_with_context(logging.INFO, f"[video_id={video_id}] [action=record_like] Like recorded: total_likes={likes_count}", correlation_id, video_id)
 
         return {
             "status": "like_recorded",
             "video_id": video_id,
-            "likes": likes,
-            "engagement": engagement
+            "likes": likes_count
         }
     except HTTPException as exc:
         API_ERRORS.labels(endpoint=endpoint, status_code=exc.status_code).inc()

@@ -58,6 +58,28 @@ resource "aws_iam_role" "auth_irsa" {
   }
 }
 
+# Auth Secrets Manager Policy (for JWT secret)
+resource "aws_iam_role_policy" "auth_secrets" {
+  name = "auth-secrets-policy"
+  role = aws_iam_role.auth_irsa.id
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Effect = "Allow"
+        Action = [
+          "secretsmanager:GetSecretValue",
+          "secretsmanager:DescribeSecret"
+        ]
+        Resource = [
+          aws_secretsmanager_secret.jwt_secret.arn
+        ]
+      }
+    ]
+  })
+}
+
 # Analytics Service IRSA Role
 resource "aws_iam_role" "analytics_irsa" {
   name = "analytics-irsa-role"
@@ -87,9 +109,9 @@ resource "aws_iam_role" "analytics_irsa" {
   }
 }
 
-# Analytics DynamoDB Policy
-resource "aws_iam_role_policy" "analytics_dynamodb" {
-  name = "analytics-dynamodb-policy"
+# Analytics S3 Policy (for listing and reading video metadata)
+resource "aws_iam_role_policy" "analytics_s3" {
+  name = "analytics-s3-policy"
   role = aws_iam_role.analytics_irsa.id
 
   policy = jsonencode({
@@ -98,11 +120,36 @@ resource "aws_iam_role_policy" "analytics_dynamodb" {
       {
         Effect = "Allow"
         Action = [
-          "dynamodb:Scan",
-          "dynamodb:Query",
-          "dynamodb:GetItem"
+          "s3:PutObject",
+          "s3:ListBucket",
+          "s3:GetObject"
         ]
-        Resource = "arn:aws:dynamodb:${data.aws_region.current.id}:${data.aws_caller_identity.current.account_id}:table/analytics-*"
+        Resource = [
+          "arn:aws:s3:::video-analytics-uploads",
+          "arn:aws:s3:::video-analytics-uploads/*"
+        ]
+      }
+    ]
+  })
+}
+
+# Analytics Secrets Manager Policy (for RDS credentials)
+resource "aws_iam_role_policy" "analytics_secrets" {
+  name = "analytics-secrets-policy"
+  role = aws_iam_role.analytics_irsa.id
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Effect = "Allow"
+        Action = [
+          "secretsmanager:GetSecretValue",
+          "secretsmanager:DescribeSecret"
+        ]
+        Resource = [
+          "arn:aws:secretsmanager:${data.aws_region.current.id}:${data.aws_caller_identity.current.account_id}:secret:video-analytics/*"
+        ]
       }
     ]
   })
@@ -154,6 +201,50 @@ resource "aws_iam_role_policy" "processor_sqs" {
           "sqs:ChangeMessageVisibility"
         ]
         Resource = "arn:aws:sqs:${data.aws_region.current.id}:${data.aws_caller_identity.current.account_id}:*"
+      }
+    ]
+  })
+}
+
+# Processor S3 Access Policy
+resource "aws_iam_role_policy" "processor_s3" {
+  name = "processor-s3-policy"
+  role = aws_iam_role.processor_irsa.id
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Effect = "Allow"
+        Action = [
+          "s3:GetObject",
+          "s3:PutObject",
+          "s3:HeadObject",
+          "s3:ListBucket"
+        ]
+        Resource = [
+          "arn:aws:s3:::video-analytics-uploads",
+          "arn:aws:s3:::video-analytics-uploads/*"
+        ]
+      }
+    ]
+  })
+}
+
+# Processor Secrets Manager Access Policy
+resource "aws_iam_role_policy" "processor_secrets" {
+  name = "processor-secrets-policy"
+  role = aws_iam_role.processor_irsa.id
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Effect = "Allow"
+        Action = [
+          "secretsmanager:GetSecretValue"
+        ]
+        Resource = "arn:aws:secretsmanager:${data.aws_region.current.id}:${data.aws_caller_identity.current.account_id}:secret:video-analytics/*"
       }
     ]
   })

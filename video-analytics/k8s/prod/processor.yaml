@@ -71,11 +71,17 @@ spec:
                   name: video-analytics-config
                   key: SQS_QUEUE_URL
 
-            - name: DYNAMODB_TABLE_NAME
+            - name: RDS_DB_NAME
               valueFrom:
                 configMapKeyRef:
                   name: video-analytics-config
-                  key: DYNAMODB_TABLE_NAME
+                  key: RDS_DB_NAME
+
+            - name: RDS_SECRET_NAME
+              valueFrom:
+                configMapKeyRef:
+                  name: video-analytics-config
+                  key: RDS_SECRET_NAME
 
           resources:
             requests:

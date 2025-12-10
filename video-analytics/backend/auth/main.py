@@ -4,6 +4,8 @@ import os
 import uuid
 from datetime import datetime, timedelta
 
+import boto3
+from botocore.exceptions import ClientError
 from fastapi import Depends, FastAPI, HTTPException, Request, status
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from jose import JWTError, jwt
@@ -44,8 +46,34 @@ logging.getLogger("uvicorn.access").handlers = []
 logging.getLogger("botocore").setLevel(logging.CRITICAL)
 
 
+# AWS Secrets Manager integration
+def get_secret_from_secrets_manager(secret_arn: str) -> str:
+    """Fetch secret value from AWS Secrets Manager using IRSA"""
+    try:
+        session = boto3.session.Session()
+        client = session.client(service_name='secretsmanager', region_name=os.getenv('AWS_REGION', 'us-east-1'))
+        response = client.get_secret_value(SecretId=secret_arn)
+        return response['SecretString']
+    except ClientError as e:
+        logger.error(f"Failed to retrieve secret from Secrets Manager: {e}")
+        raise
+    except Exception as e:
+        logger.error(f"Unexpected error retrieving secret: {e}")
+        raise
+
+
 # Configuration
-SECRET_KEY = os.getenv("JWT_SECRET", "supersecretkey")
+if os.getenv("USE_SECRETS_MANAGER", "false").lower() == "true":
+    JWT_SECRET_ARN = os.getenv("JWT_SECRET_ARN")
+    if not JWT_SECRET_ARN:
+        raise ValueError("JWT_SECRET_ARN environment variable is required when USE_SECRETS_MANAGER=true")
+    logger.info("Fetching JWT_SECRET from AWS Secrets Manager")
+    SECRET_KEY = get_secret_from_secrets_manager(JWT_SECRET_ARN)
+    logger.info("Successfully retrieved JWT_SECRET from Secrets Manager")
+else:
+    SECRET_KEY = os.getenv("JWT_SECRET", "supersecretkey")
+    logger.warning("Using JWT_SECRET from environment variable (not recommended for production)")
+
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = int(os.getenv("ACCESS_TOKEN_EXPIRE_MINUTES", "30"))
 DEFAULT_USERS = [

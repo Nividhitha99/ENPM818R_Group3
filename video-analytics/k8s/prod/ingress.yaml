@@ -8,8 +8,8 @@ metadata:
     alb.ingress.kubernetes.io/scheme: internet-facing
     alb.ingress.kubernetes.io/target-type: ip
 
-    # TLS / HTTPS
-    alb.ingress.kubernetes.io/certificate-arn: arn:aws:acm:us-east-1:385046010615:certificate/REPLACE_WITH_YOUR_CERT_ARN
+    # TLS / HTTPS - ACM Certificate for production
+    alb.ingress.kubernetes.io/certificate-arn: arn:aws:acm:us-east-1:385046010615:certificate/ae4330a4-d1c0-4a72-a4dc-43ab0a7bfe57
     alb.ingress.kubernetes.io/ssl-policy: ELBSecurityPolicy-TLS13-1-2-2021-06
     alb.ingress.kubernetes.io/listen-ports: '[{"HTTP": 80}, {"HTTPS": 443}]'
     alb.ingress.kubernetes.io/ssl-redirect: '443'

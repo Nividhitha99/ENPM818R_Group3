@@ -114,7 +114,7 @@ spec:
     - protocol: TCP
       port: 8000
 ---
-# Allow IRSA-enabled services to reach AWS APIs over HTTPS (S3/DynamoDB/SQS)
+# Allow IRSA-enabled services to reach AWS APIs over HTTPS (S3/RDS/SQS/Secrets Manager)
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
@@ -129,6 +129,8 @@ spec:
           - uploader
           - processor
           - analytics
+          - auth
+          - gateway
   policyTypes:
   - Egress
   egress:
@@ -138,7 +140,35 @@ spec:
     ports:
     - protocol: TCP
       port: 443
+---
+# Allow IRSA-enabled services to reach AWS IMDS for IAM credentials
 apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-imds-egress-for-irsa-services
+  namespace: prod
+spec:
+  podSelector:
+    matchExpressions:
+      - key: app
+        operator: In
+        values:
+          - uploader
+          - processor
+          - analytics
+          - auth
+          - gateway
+          - frontend
+  policyTypes:
+  - Egress
+  egress:
+  - to:
+    - ipBlock:
+        cidr: 169.254.169.254/32
+    ports:
+    - protocol: TCP
+      port: 80
+---
 kind: NetworkPolicy
 metadata:
   name: allow-gateway-to-analytics

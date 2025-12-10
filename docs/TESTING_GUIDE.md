@@ -1182,11 +1182,11 @@ kubectl get pods -n prod -o custom-columns=NAME:.metadata.name,CPU_REQ:.spec.con
 - [ ] All pods have AWS credentials via environment variables
 - [ ] IRSA roles have appropriate permissions
 - [ ] S3 access working for uploader service
-- [ ] DynamoDB access working for analytics/uploader services
+- [ ] Secrets Manager access working for analytics/auth services
 
 ### Microservices Health
 - [ ] Auth service: 1/1 Running, health check responds
-- [ ] Analytics service: 1/1 Running, health check responds, DynamoDB connected
+- [ ] Analytics service: 1/1 Running, health check responds, RDS connected
 - [ ] Gateway service: 1/1 Running, health check responds, can route to other services
 - [ ] Processor service: 1/1 Running, health check responds
 - [ ] Uploader service: Running or known config issue, S3 access verified

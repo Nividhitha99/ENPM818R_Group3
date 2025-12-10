@@ -5,3 +5,17 @@ terraform.tfstate.backup
 .terraform*
 local-testing-scripts/
 video-analytics/backend/processor/__pycache__/
+
+# Security: Prevent committing secrets
+**/secret*.yaml
+**/secrets.yaml
+**/*-secrets.yaml
+*.env
+.env.*
+**/.aws/credentials
+**/*.pem
+**/*.key
+*.tfvars
+# Allow config-secrets.yaml since it now only has references, not actual secrets
+!video-analytics/k8s/prod/config-secrets.yaml
+PR_TEMPLATE_FILLED.md
