@@ -117,9 +117,10 @@ jobs:
       
       - name: Install Notation CLI
         run: |
-          curl -Lo notation.tar.gz https://github.com/notaryproject/notation/releases/latest/download/notation-linux-amd64.tar.gz
-          tar -xzf notation.tar.gz
-          sudo mv notation /usr/local/bin/notation
+          curl -LO https://github.com/notaryproject/notation/releases/download/v1.1.0/notation_1.1.0_linux_amd64.tar.gz
+          tar xvzf notation_1.1.0_linux_amd64.tar.gz -C /tmp
+          sudo mv /tmp/notation /usr/local/bin/notation
+          notation version
 
       - name: Sign image using AWS Signer
         env:
