@@ -130,7 +130,8 @@ jobs:
 
           aws signer start-signing-job \
             --profile-name ${{ env.SIGNER_PROFILE }} \
-            --source "{\"imageUri\":\"$IMAGE_URI\"}"
+            --source "imageUri=$IMAGE_URI" \
+            --destination "imageUri=$IMAGE_URI"
 
       - name: Verify image signature
         run: |
