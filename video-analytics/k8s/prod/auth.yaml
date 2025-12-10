@@ -50,11 +50,15 @@ spec:
             seccompProfile:
               type: RuntimeDefault
           env:
-            - name: JWT_SECRET
+            - name: AWS_REGION
               valueFrom:
-                secretKeyRef:
-                  name: video-analytics-secrets
-                  key: JWT_SECRET
+                configMapKeyRef:
+                  name: video-analytics-config
+                  key: AWS_REGION
+            - name: JWT_SECRET_ARN
+              value: "arn:aws:secretsmanager:us-east-1:385046010615:secret:video-analytics/jwt-secret-XUwon6"
+            - name: USE_SECRETS_MANAGER
+              value: "true"
           ports:
             - containerPort: 8000
           resources:
