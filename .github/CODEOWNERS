@@ -11,4 +11,4 @@ analytics/ @joyson13
 frontend/ @hdharani-sec
 terraform/ @danitrical
 cicd/ @nkafridi1
-#observability/ @steward
+observability/ @steward
