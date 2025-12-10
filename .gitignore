@@ -18,3 +18,4 @@ video-analytics/backend/processor/__pycache__/
 *.tfvars
 # Allow config-secrets.yaml since it now only has references, not actual secrets
 !video-analytics/k8s/prod/config-secrets.yaml
+PR_TEMPLATE_FILLED.md
