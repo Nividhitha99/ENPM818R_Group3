@@ -133,6 +133,35 @@ jobs:
           severity: 'HIGH,CRITICAL'
           exit-code: '0'
 
+      - name: Generate Trivy JSON report
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: '${{ env.IMAGE_URI }}'
+          format: 'json'
+          output: 'trivy-analytics-report.json'
+          severity: 'HIGH,CRITICAL'
+          exit-code: '0'
+
+      - name: Generate Trivy HTML report
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: '${{ env.IMAGE_URI }}'
+          format: 'template'
+          template: '@/contrib/html.tpl'
+          output: 'trivy-analytics-report.html'
+          severity: 'HIGH,CRITICAL'
+          exit-code: '0'
+
+      - name: Upload Trivy scan reports
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: trivy-analytics-reports
+          path: |
+            trivy-analytics-report.json
+            trivy-analytics-report.html
+          retention-days: 30
+
       - name: Save image tag for deployment
         run: |
           echo "${{ env.IMAGE_TAG }}" > analytics-image-tag.txt
@@ -188,6 +217,35 @@ jobs:
           format: 'table'
           severity: 'HIGH,CRITICAL'
 
+      - name: Generate Trivy JSON report
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: '${{ env.ECR_REGISTRY }}/auth-service:${{ github.sha }}'
+          format: 'json'
+          output: 'trivy-auth-report.json'
+          severity: 'HIGH,CRITICAL'
+          exit-code: '0'
+
+      - name: Generate Trivy HTML report
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: '${{ env.ECR_REGISTRY }}/auth-service:${{ github.sha }}'
+          format: 'template'
+          template: '@/contrib/html.tpl'
+          output: 'trivy-auth-report.html'
+          severity: 'HIGH,CRITICAL'
+          exit-code: '0'
+
+      - name: Upload Trivy scan reports
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: trivy-auth-reports
+          path: |
+            trivy-auth-report.json
+            trivy-auth-report.html
+          retention-days: 30
+
   # Build and push gateway service
   build-gateway:
     name: Build Gateway Service
@@ -231,6 +289,35 @@ jobs:
           image-ref: '${{ env.ECR_REGISTRY }}/gateway-service:latest'
           format: 'table'
           severity: 'HIGH,CRITICAL'
+
+      - name: Generate Trivy JSON report
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: '${{ env.ECR_REGISTRY }}/gateway-service:latest'
+          format: 'json'
+          output: 'trivy-gateway-report.json'
+          severity: 'HIGH,CRITICAL'
+          exit-code: '0'
+
+      - name: Generate Trivy HTML report
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: '${{ env.ECR_REGISTRY }}/gateway-service:latest'
+          format: 'template'
+          template: '@/contrib/html.tpl'
+          output: 'trivy-gateway-report.html'
+          severity: 'HIGH,CRITICAL'
+          exit-code: '0'
+
+      - name: Upload Trivy scan reports
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: trivy-gateway-reports
+          path: |
+            trivy-gateway-report.json
+            trivy-gateway-report.html
+          retention-days: 30
 
   # Build and push processor service
   build-processor:
@@ -276,6 +363,35 @@ jobs:
           format: 'table'
           severity: 'HIGH,CRITICAL'
 
+      - name: Generate Trivy JSON report
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: '${{ env.ECR_REGISTRY }}/processor-service:latest'
+          format: 'json'
+          output: 'trivy-processor-report.json'
+          severity: 'HIGH,CRITICAL'
+          exit-code: '0'
+
+      - name: Generate Trivy HTML report
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: '${{ env.ECR_REGISTRY }}/processor-service:latest'
+          format: 'template'
+          template: '@/contrib/html.tpl'
+          output: 'trivy-processor-report.html'
+          severity: 'HIGH,CRITICAL'
+          exit-code: '0'
+
+      - name: Upload Trivy scan reports
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: trivy-processor-reports
+          path: |
+            trivy-processor-report.json
+            trivy-processor-report.html
+          retention-days: 30
+
   # Build and push uploader service
   build-uploader:
     name: Build Uploader Service
@@ -320,6 +436,35 @@ jobs:
           format: 'table'
           severity: 'HIGH,CRITICAL'
 
+      - name: Generate Trivy JSON report
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: '${{ env.ECR_REGISTRY }}/uploader-service:latest'
+          format: 'json'
+          output: 'trivy-uploader-report.json'
+          severity: 'HIGH,CRITICAL'
+          exit-code: '0'
+
+      - name: Generate Trivy HTML report
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: '${{ env.ECR_REGISTRY }}/uploader-service:latest'
+          format: 'template'
+          template: '@/contrib/html.tpl'
+          output: 'trivy-uploader-report.html'
+          severity: 'HIGH,CRITICAL'
+          exit-code: '0'
+
+      - name: Upload Trivy scan reports
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: trivy-uploader-reports
+          path: |
+            trivy-uploader-report.json
+            trivy-uploader-report.html
+          retention-days: 30
+
   # Build and push frontend
   build-frontend:
     name: Build Frontend
@@ -363,6 +508,35 @@ jobs:
           image-ref: '${{ env.ECR_REGISTRY }}/frontend:latest'
           format: 'table'
           severity: 'HIGH,CRITICAL'
+
+      - name: Generate Trivy JSON report
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: '${{ env.ECR_REGISTRY }}/frontend:latest'
+          format: 'json'
+          output: 'trivy-frontend-report.json'
+          severity: 'HIGH,CRITICAL'
+          exit-code: '0'
+
+      - name: Generate Trivy HTML report
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: '${{ env.ECR_REGISTRY }}/frontend:latest'
+          format: 'template'
+          template: '@/contrib/html.tpl'
+          output: 'trivy-frontend-report.html'
+          severity: 'HIGH,CRITICAL'
+          exit-code: '0'
+
+      - name: Upload Trivy scan reports
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: trivy-frontend-reports
+          path: |
+            trivy-frontend-report.json
+            trivy-frontend-report.html
+          retention-days: 30
 
   # Trigger deployment workflow
   trigger-deployment:
