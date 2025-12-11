@@ -4,32 +4,9 @@ Report Summary
 ┌─────────────────────────────────────────────────┬────────┬─────────────────┬─────────┐
 │                     Target                      │  Type  │ Vulnerabilities │ Secrets │
 ├─────────────────────────────────────────────────┼────────┼─────────────────┼─────────┤
-│ video-analytics-frontend:latest (alpine 3.21.3) │ alpine │        4        │    -    │
+│ video-analytics-frontend:latest (alpine 3.21.3) │ alpine │        0        │    -    │
 └─────────────────────────────────────────────────┴────────┴─────────────────┴─────────┘
 Legend:
 - '-': Not scanned
 - '0': Clean (no security findings detected)
 
-
-video-analytics-frontend:latest (alpine 3.21.3)
-===============================================
-Total: 4 (HIGH: 2, CRITICAL: 2)
-
-┌─────────┬────────────────┬──────────┬────────┬───────────────────┬───────────────┬──────────────────────────────────────────────────────────────┐
-│ Library │ Vulnerability  │ Severity │ Status │ Installed Version │ Fixed Version │                            Title                             │
-├─────────┼────────────────┼──────────┼────────┼───────────────────┼───────────────┼──────────────────────────────────────────────────────────────┤
-│ libxml2 │ CVE-2025-49794 │ CRITICAL │ fixed  │ 2.13.4-r6         │ 2.13.9-r0     │ libxml: Heap use after free (UAF) leads to Denial of service │
-│         │                │          │        │                   │               │ (DoS)...                                                     │
-│         │                │          │        │                   │               │ https://avd.aquasec.com/nvd/cve-2025-49794                   │
-│         ├────────────────┤          │        │                   │               ├──────────────────────────────────────────────────────────────┤
-│         │ CVE-2025-49796 │          │        │                   │               │ libxml: Type confusion leads to Denial of service (DoS)      │
-│         │                │          │        │                   │               │ https://avd.aquasec.com/nvd/cve-2025-49796                   │
-│         ├────────────────┼──────────┤        │                   │               ├──────────────────────────────────────────────────────────────┤
-│         │ CVE-2025-49795 │ HIGH     │        │                   │               │ libxml: Null pointer dereference leads to Denial of service  │
-│         │                │          │        │                   │               │ (DoS)                                                        │
-│         │                │          │        │                   │               │ https://avd.aquasec.com/nvd/cve-2025-49795                   │
-│         ├────────────────┤          │        │                   │               ├──────────────────────────────────────────────────────────────┤
-│         │ CVE-2025-6021  │          │        │                   │               │ libxml2: Integer Overflow in xmlBuildQName() Leads to Stack  │
-│         │                │          │        │                   │               │ Buffer Overflow in libxml2...                                │
-│         │                │          │        │                   │               │ https://avd.aquasec.com/nvd/cve-2025-6021                    │
-└─────────┴────────────────┴──────────┴────────┴───────────────────┴───────────────┴──────────────────────────────────────────────────────────────┘

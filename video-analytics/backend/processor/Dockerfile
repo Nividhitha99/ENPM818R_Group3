@@ -35,14 +35,15 @@ WORKDIR /app
 ENV PYTHONDONTWRITEBYTECODE=1 \
   PYTHONUNBUFFERED=1
 
-# Install FFmpeg and keep libpng/libglib patched to drop CVE-2025-64720/65018/66293 and CVE-2025-13601
+# Install FFmpeg and upgrade libpng/libglib to patched versions
+# Fixes CVE-2025-64720, CVE-2025-65018, CVE-2025-66293 (libpng buffer overflows)
+# Fixes CVE-2025-13601 (libglib)
 # --no-install-recommends: Install only essential packages
 # apt-get clean && rm -rf: Remove package lists to reduce image size
 RUN apt-get update && \
   apt-get install -y --no-install-recommends \
-    ffmpeg \
-    libpng16-16t64 \
-    libglib2.0-0t64 && \
+    ffmpeg && \
+  apt-get upgrade -y libpng16-16t64 libglib2.0-0t64 && \
   apt-get clean && \
   rm -rf /var/lib/apt/lists/*
 
