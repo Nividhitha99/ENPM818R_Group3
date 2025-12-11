@@ -1,5 +1,5 @@
 # Trivy Security Scan Summary
-**Generated:** 2025-12-07 17:14:35  
+**Generated:** 2025-12-10 17:13:19  
 **Severity Levels:** HIGH,CRITICAL  
 **Services Scanned:** 6
 
@@ -9,12 +9,12 @@
 
 | Service | Image | Critical | High | Total |
 |---------|-------|----------|------|-------|
-| 🟡 uploader | `video-analytics-uploader:latest` | 0 | 2 | 2 |
-| 🟡 processor | `video-analytics-processor:latest` | 0 | 2 | 2 |
-| 🟡 analytics | `video-analytics-analytics:latest` | 0 | 2 | 2 |
+| ✅ uploader | `video-analytics-uploader:latest` | 0 | 0 | 0 |
+| 🟡 processor | `video-analytics-processor:latest` | 0 | 3 | 3 |
+| ✅ analytics | `video-analytics-analytics:latest` | 0 | 0 | 0 |
 | ✅ auth | `video-analytics-auth:latest` | 0 | 0 | 0 |
 | ✅ gateway | `video-analytics-gateway:latest` | 0 | 0 | 0 |
-| 🔴 frontend | `video-analytics-frontend:latest` | 2 | 2 | 4 |
+| ✅ frontend | `video-analytics-frontend:latest` | 0 | 0 | 0 |
 
 ---
 

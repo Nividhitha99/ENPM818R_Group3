@@ -1,17 +1,17 @@
 {
   "SchemaVersion": 2,
-  "ReportID": "019afae1-1bce-7607-bb2d-d9a42094d2d7",
-  "CreatedAt": "2025-12-07T22:14:08.078403132Z",
-  "ArtifactID": "sha256:331fcb154402960a0d56fb4aee0a97e877c31eb25385d03943995ce5904245cb",
+  "ReportID": "019b0a53-45e1-748b-bf42-6bcd9092dbd4",
+  "CreatedAt": "2025-12-10T22:13:08.193300845Z",
+  "ArtifactID": "sha256:15017fbe2b90f58ba2885a398862d448aa4a868dbd559712c9e94ad95bc6f3be",
   "ArtifactName": "video-analytics-frontend:latest",
   "ArtifactType": "container_image",
   "Metadata": {
-    "Size": 53906432,
+    "Size": 57795584,
     "OS": {
       "Family": "alpine",
       "Name": "3.21.3"
     },
-    "ImageID": "sha256:227476f2618fb9fffec616ffca13c16df8e124ed4c8deb079c25f531167c796c",
+    "ImageID": "sha256:2721c96da5d948e019f9fc2b5599ed945b3252d57e409dae69abd98b24e2b8bc",
     "DiffIDs": [
       "sha256:08000c18d16dadf9553d747a58cf44023423a9ab010aab96cf263d2216b8b350",
       "sha256:d250ba61f88e97cc9637c8191eac8a17804598a76792b32cd3b5ab2c4d085132",
@@ -22,18 +22,20 @@
       "sha256:2a34f0eb0786b92bb6c03984237525e781e46595327ed106a27b684764ebb7f7",
       "sha256:da73c9adc02953ee6eb5d167c3cfed0346a2b659c4e9de6d4aca4eb7caf1cc18",
       "sha256:c5b2dfcc7ced4485ca40d2e6258f958c40a789f7bff4128952699131d9f6d252",
-      "sha256:08ca08eae7610438a38e1d7125e735477b11dff1699acc34b9114ef5587f5503"
+      "sha256:276b788c9b5a0a867eb3b247ded738579798020a93bed2c6fa08bec3e2f7b3bd",
+      "sha256:710bd08193ace24815bd5ff1a8ba9380308576fe57ac0dddd600b8f5e87ac171",
+      "sha256:74a22d8dfd4a04dfc6f481a42e2824fc22181ac996ff1bc6557601436d91d4b0"
     ],
     "RepoTags": [
       "video-analytics-frontend:latest"
     ],
     "RepoDigests": [
-      "video-analytics-frontend@sha256:227476f2618fb9fffec616ffca13c16df8e124ed4c8deb079c25f531167c796c"
+      "video-analytics-frontend@sha256:2721c96da5d948e019f9fc2b5599ed945b3252d57e409dae69abd98b24e2b8bc"
     ],
     "Reference": "video-analytics-frontend:latest",
     "ImageConfig": {
       "architecture": "amd64",
-      "created": "2025-12-07T22:08:47.64278047Z",
+      "created": "2025-12-10T19:43:55.664700142Z",
       "history": [
         {
           "created": "2025-02-14T03:28:36Z",
@@ -189,19 +191,35 @@
           "empty_layer": true
         },
         {
-          "created": "2025-12-07T22:08:47Z",
-          "created_by": "COPY /app/build /usr/share/nginx/html # buildkit",
-          "comment": "buildkit.dockerfile.v0"
-        },
-        {
-          "created": "2025-12-07T22:08:47Z",
-          "created_by": "EXPOSE [8080/tcp]",
+          "created": "2025-12-10T19:42:38Z",
+          "created_by": "USER root",
           "comment": "buildkit.dockerfile.v0",
           "empty_layer": true
         },
         {
-          "created": "2025-12-07T22:08:47Z",
+          "created": "2025-12-10T19:42:38Z",
+          "created_by": "RUN /bin/sh -c apk update \u0026\u0026 apk upgrade --no-cache libxml2 libpng # buildkit",
+          "comment": "buildkit.dockerfile.v0"
+        },
+        {
+          "created": "2025-12-10T19:42:38Z",
           "created_by": "USER 101",
+          "comment": "buildkit.dockerfile.v0",
+          "empty_layer": true
+        },
+        {
+          "created": "2025-12-10T19:43:55Z",
+          "created_by": "COPY /app/build /usr/share/nginx/html # buildkit",
+          "comment": "buildkit.dockerfile.v0"
+        },
+        {
+          "created": "2025-12-10T19:43:55Z",
+          "created_by": "COPY nginx.conf /etc/nginx/conf.d/default.conf # buildkit",
+          "comment": "buildkit.dockerfile.v0"
+        },
+        {
+          "created": "2025-12-10T19:43:55Z",
+          "created_by": "EXPOSE [8080/tcp]",
           "comment": "buildkit.dockerfile.v0",
           "empty_layer": true
         }
@@ -219,7 +237,9 @@
           "sha256:2a34f0eb0786b92bb6c03984237525e781e46595327ed106a27b684764ebb7f7",
           "sha256:da73c9adc02953ee6eb5d167c3cfed0346a2b659c4e9de6d4aca4eb7caf1cc18",
           "sha256:c5b2dfcc7ced4485ca40d2e6258f958c40a789f7bff4128952699131d9f6d252",
-          "sha256:08ca08eae7610438a38e1d7125e735477b11dff1699acc34b9114ef5587f5503"
+          "sha256:276b788c9b5a0a867eb3b247ded738579798020a93bed2c6fa08bec3e2f7b3bd",
+          "sha256:710bd08193ace24815bd5ff1a8ba9380308576fe57ac0dddd600b8f5e87ac171",
+          "sha256:74a22d8dfd4a04dfc6f481a42e2824fc22181ac996ff1bc6557601436d91d4b0"
         ]
       },
       "config": {
@@ -309,9 +329,19 @@
         "DiffID": "sha256:c5b2dfcc7ced4485ca40d2e6258f958c40a789f7bff4128952699131d9f6d252"
       },
       {
+        "Size": 3884032,
+        "Digest": "sha256:cfe4c9ccfc86821c51b3189a199d1b1e58daadcf8393f962826e81dee86d8ed0",
+        "DiffID": "sha256:276b788c9b5a0a867eb3b247ded738579798020a93bed2c6fa08bec3e2f7b3bd"
+      },
+      {
         "Size": 4252160,
-        "Digest": "sha256:68a7ccaca8972014fb557d0ec323a13bd146ce8e1016f6f8da4d9ef547f28221",
-        "DiffID": "sha256:08ca08eae7610438a38e1d7125e735477b11dff1699acc34b9114ef5587f5503"
+        "Digest": "sha256:6467ebf671beea33f84003495d75c092b006271d64fd4764c55ef244e3d87446",
+        "DiffID": "sha256:710bd08193ace24815bd5ff1a8ba9380308576fe57ac0dddd600b8f5e87ac171"
+      },
+      {
+        "Size": 5120,
+        "Digest": "sha256:97ba65153b73541114943e01c09b75d770504a1f786c7ab742600a3ba2e84386",
+        "DiffID": "sha256:74a22d8dfd4a04dfc6f481a42e2824fc22181ac996ff1bc6557601436d91d4b0"
       }
     ]
   },
@@ -1028,7 +1058,7 @@
           "Name": "freetype",
           "Identifier": {
             "PURL": "pkg:apk/alpine/freetype@2.13.3-r0?arch=x86_64\u0026distro=3.21.3",
-            "UID": "82295831120102fb"
+            "UID": "9cd47c1118f9c967"
           },
           "Version": "2.13.3-r0",
           "Arch": "x86_64",
@@ -1042,7 +1072,7 @@
           "DependsOn": [
             "brotli-libs@1.1.0-r2",
             "libbz2@1.0.8-r6",
-            "libpng@1.6.47-r0",
+            "libpng@1.6.53-r0",
             "musl@1.2.5-r9",
             "zlib@1.3.1-r2"
           ],
@@ -1398,7 +1428,7 @@
           "Name": "libgd",
           "Identifier": {
             "PURL": "pkg:apk/alpine/libgd@2.3.3-r9?arch=x86_64\u0026distro=3.21.3",
-            "UID": "d61f048dcf9b1167"
+            "UID": "fcf770f26c1fffd8"
           },
           "Version": "2.3.3-r9",
           "Arch": "x86_64",
@@ -1413,7 +1443,7 @@
             "freetype@2.13.3-r0",
             "libavif@1.0.4-r0",
             "libjpeg-turbo@3.0.4-r0",
-            "libpng@1.6.47-r0",
+            "libpng@1.6.53-r0",
             "libwebp@1.4.0-r0",
             "libxpm@3.5.17-r0",
             "musl@1.2.5-r9",
@@ -1638,16 +1668,16 @@
           ]
         },
         {
-          "ID": "libpng@1.6.47-r0",
+          "ID": "libpng@1.6.53-r0",
           "Name": "libpng",
           "Identifier": {
-            "PURL": "pkg:apk/alpine/libpng@1.6.47-r0?arch=x86_64\u0026distro=3.21.3",
-            "UID": "841e48253394e464"
+            "PURL": "pkg:apk/alpine/libpng@1.6.53-r0?arch=x86_64\u0026distro=3.21.3",
+            "UID": "69b255f780b2695f"
           },
-          "Version": "1.6.47-r0",
+          "Version": "1.6.53-r0",
           "Arch": "x86_64",
           "SrcName": "libpng",
-          "SrcVersion": "1.6.47-r0",
+          "SrcVersion": "1.6.53-r0",
           "Licenses": [
             "Libpng"
           ],
@@ -1657,13 +1687,13 @@
             "zlib@1.3.1-r2"
           ],
           "Layer": {
-            "Digest": "sha256:400c1de759f415b6b2a0ba96bcef3e516f26171d5930757dcddc3d6971bf3e81",
-            "DiffID": "sha256:c5b2dfcc7ced4485ca40d2e6258f958c40a789f7bff4128952699131d9f6d252"
+            "Digest": "sha256:cfe4c9ccfc86821c51b3189a199d1b1e58daadcf8393f962826e81dee86d8ed0",
+            "DiffID": "sha256:276b788c9b5a0a867eb3b247ded738579798020a93bed2c6fa08bec3e2f7b3bd"
           },
-          "Digest": "sha1:9a0cedad174fdaac958d8e69343c7f33c41d3163",
+          "Digest": "sha1:56ea013fd6ba6bb52732adf087bd1bb390245c50",
           "InstalledFiles": [
             "usr/lib/libpng16.so.16",
-            "usr/lib/libpng16.so.16.47.0"
+            "usr/lib/libpng16.so.16.53.0"
           ]
         },
         {
@@ -2255,16 +2285,16 @@
           ]
         },
         {
-          "ID": "libxml2@2.13.4-r6",
+          "ID": "libxml2@2.13.9-r0",
           "Name": "libxml2",
           "Identifier": {
-            "PURL": "pkg:apk/alpine/libxml2@2.13.4-r6?arch=x86_64\u0026distro=3.21.3",
-            "UID": "62876aa4513edab3"
+            "PURL": "pkg:apk/alpine/libxml2@2.13.9-r0?arch=x86_64\u0026distro=3.21.3",
+            "UID": "36d077027a922336"
           },
-          "Version": "2.13.4-r6",
+          "Version": "2.13.9-r0",
           "Arch": "x86_64",
           "SrcName": "libxml2",
-          "SrcVersion": "2.13.4-r6",
+          "SrcVersion": "2.13.9-r0",
           "Licenses": [
             "MIT"
           ],
@@ -2275,13 +2305,13 @@
             "zlib@1.3.1-r2"
           ],
           "Layer": {
-            "Digest": "sha256:400c1de759f415b6b2a0ba96bcef3e516f26171d5930757dcddc3d6971bf3e81",
-            "DiffID": "sha256:c5b2dfcc7ced4485ca40d2e6258f958c40a789f7bff4128952699131d9f6d252"
+            "Digest": "sha256:cfe4c9ccfc86821c51b3189a199d1b1e58daadcf8393f962826e81dee86d8ed0",
+            "DiffID": "sha256:276b788c9b5a0a867eb3b247ded738579798020a93bed2c6fa08bec3e2f7b3bd"
           },
-          "Digest": "sha1:d54d544f2b01faa76bee2d12b27a7677d46b956b",
+          "Digest": "sha1:67cb85abbe29bad9f205c1acfa5439e7107aa1b0",
           "InstalledFiles": [
             "usr/lib/libxml2.so.2",
-            "usr/lib/libxml2.so.2.13.4"
+            "usr/lib/libxml2.so.2.13.9"
           ]
         },
         {
@@ -2322,7 +2352,7 @@
           "Name": "libxslt",
           "Identifier": {
             "PURL": "pkg:apk/alpine/libxslt@1.1.42-r2?arch=x86_64\u0026distro=3.21.3",
-            "UID": "658fe6063a1628fe"
+            "UID": "5cf64b5666555e97"
           },
           "Version": "1.1.42-r2",
           "Arch": "x86_64",
@@ -2334,7 +2364,7 @@
           "Maintainer": "Natanael Copa \u003cncopa@alpinelinux.org\u003e",
           "DependsOn": [
             "libgcrypt@1.10.3-r1",
-            "libxml2@2.13.4-r6",
+            "libxml2@2.13.9-r0",
             "musl@1.2.5-r9"
           ],
           "Layer": {
@@ -2656,7 +2686,7 @@
           "Name": "nginx-module-njs",
           "Identifier": {
             "PURL": "pkg:apk/alpine/nginx-module-njs@1.27.5.0.8.10-r1?arch=x86_64\u0026distro=3.21.3",
-            "UID": "9875318b3fc36f97"
+            "UID": "120a5632c5fac72e"
           },
           "Version": "1.27.5.0.8.10-r1",
           "Arch": "x86_64",
@@ -2672,7 +2702,7 @@
             "busybox-binsh@1.37.0-r12",
             "libcrypto3@3.3.3-r0",
             "libedit@20240808.3.1-r0",
-            "libxml2@2.13.4-r6",
+            "libxml2@2.13.9-r0",
             "musl@1.2.5-r9",
             "nginx@1.27.5-r1",
             "pcre2@10.43-r0",
@@ -2698,7 +2728,7 @@
           "Name": "nginx-module-xslt",
           "Identifier": {
             "PURL": "pkg:apk/alpine/nginx-module-xslt@1.27.5-r1?arch=x86_64\u0026distro=3.21.3",
-            "UID": "b997ba9f7d92a10a"
+            "UID": "4ab8cba789451211"
           },
           "Version": "1.27.5-r1",
           "Arch": "x86_64",
@@ -2712,7 +2742,7 @@
           "Maintainer": "NGINX Packaging \u003cnginx-packaging@f5.com\u003e",
           "DependsOn": [
             "busybox-binsh@1.37.0-r12",
-            "libxml2@2.13.4-r6",
+            "libxml2@2.13.9-r0",
             "libxslt@1.1.42-r2",
             "musl@1.2.5-r9",
             "nginx@1.27.5-r1"
@@ -3559,351 +3589,6 @@
             "usr/lib/libzstd.so.1",
             "usr/lib/libzstd.so.1.5.6"
           ]
-        }
-      ],
-      "Vulnerabilities": [
-        {
-          "VulnerabilityID": "CVE-2025-49794",
-          "PkgID": "libxml2@2.13.4-r6",
-          "PkgName": "libxml2",
-          "PkgIdentifier": {
-            "PURL": "pkg:apk/alpine/libxml2@2.13.4-r6?arch=x86_64\u0026distro=3.21.3",
-            "UID": "62876aa4513edab3"
-          },
-          "InstalledVersion": "2.13.4-r6",
-          "FixedVersion": "2.13.9-r0",
-          "Status": "fixed",
-          "Layer": {
-            "Digest": "sha256:400c1de759f415b6b2a0ba96bcef3e516f26171d5930757dcddc3d6971bf3e81",
-            "DiffID": "sha256:c5b2dfcc7ced4485ca40d2e6258f958c40a789f7bff4128952699131d9f6d252"
-          },
-          "PrimaryURL": "https://avd.aquasec.com/nvd/cve-2025-49794",
-          "DataSource": {
-            "ID": "alpine",
-            "Name": "Alpine Secdb",
-            "URL": "https://secdb.alpinelinux.org/"
-          },
-          "Fingerprint": "sha256:784a2bd68ed56b0edcb3155c73344de688b12c3530ab56eab3613309ebcf4fda",
-          "Title": "libxml: Heap use after free (UAF) leads to Denial of service (DoS)",
-          "Description": "A use-after-free vulnerability was found in libxml2. This issue occurs when parsing XPath elements under certain circumstances when the XML schematron has the \u003csch:name path=\"...\"/\u003e schema elements. This flaw allows a malicious actor to craft a malicious XML document used as input for libxml, resulting in the program's crash using libxml or other possible undefined behaviors.",
-          "Severity": "CRITICAL",
-          "CweIDs": [
-            "CWE-825"
-          ],
-          "VendorSeverity": {
-            "alma": 3,
-            "amazon": 3,
-            "azure": 4,
-            "cbl-mariner": 4,
-            "oracle-oval": 3,
-            "photon": 4,
-            "redhat": 3,
-            "rocky": 3,
-            "ubuntu": 2
-          },
-          "CVSS": {
-            "redhat": {
-              "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:H/A:H",
-              "V3Score": 9.1
-            }
-          },
-          "References": [
-            "https://access.redhat.com/errata/RHSA-2025:10630",
-            "https://access.redhat.com/errata/RHSA-2025:10698",
-            "https://access.redhat.com/errata/RHSA-2025:10699",
-            "https://access.redhat.com/errata/RHSA-2025:11580",
-            "https://access.redhat.com/errata/RHSA-2025:12098",
-            "https://access.redhat.com/errata/RHSA-2025:12099",
-            "https://access.redhat.com/errata/RHSA-2025:12199",
-            "https://access.redhat.com/errata/RHSA-2025:12237",
-            "https://access.redhat.com/errata/RHSA-2025:12239",
-            "https://access.redhat.com/errata/RHSA-2025:12240",
-            "https://access.redhat.com/errata/RHSA-2025:12241",
-            "https://access.redhat.com/errata/RHSA-2025:13335",
-            "https://access.redhat.com/errata/RHSA-2025:15397",
-            "https://access.redhat.com/errata/RHSA-2025:15827",
-            "https://access.redhat.com/errata/RHSA-2025:15828",
-            "https://access.redhat.com/errata/RHSA-2025:18217",
-            "https://access.redhat.com/errata/RHSA-2025:18218",
-            "https://access.redhat.com/errata/RHSA-2025:18219",
-            "https://access.redhat.com/errata/RHSA-2025:18240",
-            "https://access.redhat.com/errata/RHSA-2025:19020",
-            "https://access.redhat.com/errata/RHSA-2025:19041",
-            "https://access.redhat.com/errata/RHSA-2025:19046",
-            "https://access.redhat.com/errata/RHSA-2025:19894",
-            "https://access.redhat.com/errata/RHSA-2025:21913",
-            "https://access.redhat.com/security/cve/CVE-2025-49794",
-            "https://bugzilla.redhat.com/2372373",
-            "https://bugzilla.redhat.com/2372385",
-            "https://bugzilla.redhat.com/2372406",
-            "https://bugzilla.redhat.com/show_bug.cgi?id=2372373",
-            "https://bugzilla.redhat.com/show_bug.cgi?id=2372385",
-            "https://bugzilla.redhat.com/show_bug.cgi?id=2372406",
-            "https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2025-49794",
-            "https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2025-49796",
-            "https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2025-6021",
-            "https://errata.almalinux.org/9/ALSA-2025-10699.html",
-            "https://errata.rockylinux.org/RLSA-2025:10699",
-            "https://gitlab.gnome.org/GNOME/libxml2/-/issues/931",
-            "https://linux.oracle.com/cve/CVE-2025-49794.html",
-            "https://linux.oracle.com/errata/ELSA-2025-12240.html",
-            "https://lists.debian.org/debian-lts-announce/2025/07/msg00014.html",
-            "https://nvd.nist.gov/vuln/detail/CVE-2025-49794",
-            "https://ubuntu.com/security/notices/USN-7694-1",
-            "https://www.cve.org/CVERecord?id=CVE-2025-49794"
-          ],
-          "PublishedDate": "2025-06-16T16:15:18.997Z",
-          "LastModifiedDate": "2025-11-22T03:15:48.173Z"
-        },
-        {
-          "VulnerabilityID": "CVE-2025-49796",
-          "PkgID": "libxml2@2.13.4-r6",
-          "PkgName": "libxml2",
-          "PkgIdentifier": {
-            "PURL": "pkg:apk/alpine/libxml2@2.13.4-r6?arch=x86_64\u0026distro=3.21.3",
-            "UID": "62876aa4513edab3"
-          },
-          "InstalledVersion": "2.13.4-r6",
-          "FixedVersion": "2.13.9-r0",
-          "Status": "fixed",
-          "Layer": {
-            "Digest": "sha256:400c1de759f415b6b2a0ba96bcef3e516f26171d5930757dcddc3d6971bf3e81",
-            "DiffID": "sha256:c5b2dfcc7ced4485ca40d2e6258f958c40a789f7bff4128952699131d9f6d252"
-          },
-          "PrimaryURL": "https://avd.aquasec.com/nvd/cve-2025-49796",
-          "DataSource": {
-            "ID": "alpine",
-            "Name": "Alpine Secdb",
-            "URL": "https://secdb.alpinelinux.org/"
-          },
-          "Fingerprint": "sha256:5d9ec54866cd5dd4254ce98ec1f7245448b11a75f85cba44ded7df9c899e48f5",
-          "Title": "libxml: Type confusion leads to Denial of service (DoS)",
-          "Description": "A vulnerability was found in libxml2. Processing certain sch:name elements from the input XML file can trigger a memory corruption issue. This flaw allows an attacker to craft a malicious XML input file that can lead libxml to crash, resulting in a denial of service or other possible undefined behavior due to sensitive data being corrupted in memory.",
-          "Severity": "CRITICAL",
-          "CweIDs": [
-            "CWE-125"
-          ],
-          "VendorSeverity": {
-            "alma": 3,
-            "amazon": 3,
-            "azure": 4,
-            "cbl-mariner": 4,
-            "oracle-oval": 3,
-            "photon": 4,
-            "redhat": 3,
-            "rocky": 3,
-            "ubuntu": 2
-          },
-          "CVSS": {
-            "redhat": {
-              "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:H/A:H",
-              "V3Score": 9.1
-            }
-          },
-          "References": [
-            "https://access.redhat.com/errata/RHSA-2025:10630",
-            "https://access.redhat.com/errata/RHSA-2025:10698",
-            "https://access.redhat.com/errata/RHSA-2025:10699",
-            "https://access.redhat.com/errata/RHSA-2025:11580",
-            "https://access.redhat.com/errata/RHSA-2025:12098",
-            "https://access.redhat.com/errata/RHSA-2025:12099",
-            "https://access.redhat.com/errata/RHSA-2025:12199",
-            "https://access.redhat.com/errata/RHSA-2025:12237",
-            "https://access.redhat.com/errata/RHSA-2025:12239",
-            "https://access.redhat.com/errata/RHSA-2025:12240",
-            "https://access.redhat.com/errata/RHSA-2025:12241",
-            "https://access.redhat.com/errata/RHSA-2025:13267",
-            "https://access.redhat.com/errata/RHSA-2025:13335",
-            "https://access.redhat.com/errata/RHSA-2025:15397",
-            "https://access.redhat.com/errata/RHSA-2025:15827",
-            "https://access.redhat.com/errata/RHSA-2025:15828",
-            "https://access.redhat.com/errata/RHSA-2025:18217",
-            "https://access.redhat.com/errata/RHSA-2025:18218",
-            "https://access.redhat.com/errata/RHSA-2025:18219",
-            "https://access.redhat.com/errata/RHSA-2025:18240",
-            "https://access.redhat.com/errata/RHSA-2025:19020",
-            "https://access.redhat.com/errata/RHSA-2025:19041",
-            "https://access.redhat.com/errata/RHSA-2025:19046",
-            "https://access.redhat.com/errata/RHSA-2025:19894",
-            "https://access.redhat.com/errata/RHSA-2025:21913",
-            "https://access.redhat.com/security/cve/CVE-2025-49796",
-            "https://bugzilla.redhat.com/2372373",
-            "https://bugzilla.redhat.com/2372385",
-            "https://bugzilla.redhat.com/2372406",
-            "https://bugzilla.redhat.com/show_bug.cgi?id=2372373",
-            "https://bugzilla.redhat.com/show_bug.cgi?id=2372385",
-            "https://bugzilla.redhat.com/show_bug.cgi?id=2372406",
-            "https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2025-49794",
-            "https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2025-49796",
-            "https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2025-6021",
-            "https://errata.almalinux.org/9/ALSA-2025-10699.html",
-            "https://errata.rockylinux.org/RLSA-2025:10699",
-            "https://gitlab.gnome.org/GNOME/libxml2/-/issues/933",
-            "https://linux.oracle.com/cve/CVE-2025-49796.html",
-            "https://linux.oracle.com/errata/ELSA-2025-12240.html",
-            "https://lists.debian.org/debian-lts-announce/2025/07/msg00014.html",
-            "https://nvd.nist.gov/vuln/detail/CVE-2025-49796",
-            "https://ubuntu.com/security/notices/USN-7694-1",
-            "https://www.cve.org/CVERecord?id=CVE-2025-49796"
-          ],
-          "PublishedDate": "2025-06-16T16:15:19.37Z",
-          "LastModifiedDate": "2025-11-22T03:15:48.43Z"
-        },
-        {
-          "VulnerabilityID": "CVE-2025-49795",
-          "PkgID": "libxml2@2.13.4-r6",
-          "PkgName": "libxml2",
-          "PkgIdentifier": {
-            "PURL": "pkg:apk/alpine/libxml2@2.13.4-r6?arch=x86_64\u0026distro=3.21.3",
-            "UID": "62876aa4513edab3"
-          },
-          "InstalledVersion": "2.13.4-r6",
-          "FixedVersion": "2.13.9-r0",
-          "Status": "fixed",
-          "Layer": {
-            "Digest": "sha256:400c1de759f415b6b2a0ba96bcef3e516f26171d5930757dcddc3d6971bf3e81",
-            "DiffID": "sha256:c5b2dfcc7ced4485ca40d2e6258f958c40a789f7bff4128952699131d9f6d252"
-          },
-          "PrimaryURL": "https://avd.aquasec.com/nvd/cve-2025-49795",
-          "DataSource": {
-            "ID": "alpine",
-            "Name": "Alpine Secdb",
-            "URL": "https://secdb.alpinelinux.org/"
-          },
-          "Fingerprint": "sha256:51a16990a4e604eae2bec6e5ded4e63e26516ea22849868cdcf11d036bb9e719",
-          "Title": "libxml: Null pointer dereference leads to Denial of service (DoS)",
-          "Description": "A NULL pointer dereference vulnerability was found in libxml2 when processing XPath XML expressions. This flaw allows an attacker to craft a malicious XML input to libxml2, leading to a denial of service.",
-          "Severity": "HIGH",
-          "CweIDs": [
-            "CWE-825"
-          ],
-          "VendorSeverity": {
-            "amazon": 3,
-            "azure": 2,
-            "cbl-mariner": 2,
-            "oracle-oval": 3,
-            "photon": 3,
-            "redhat": 3,
-            "rocky": 3
-          },
-          "CVSS": {
-            "redhat": {
-              "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
-              "V3Score": 7.5
-            }
-          },
-          "References": [
-            "https://access.redhat.com/errata/RHSA-2025:10630",
-            "https://access.redhat.com/errata/RHSA-2025:19020",
-            "https://access.redhat.com/security/cve/CVE-2025-49795",
-            "https://bugzilla.redhat.com/show_bug.cgi?id=2372373",
-            "https://bugzilla.redhat.com/show_bug.cgi?id=2372379",
-            "https://bugzilla.redhat.com/show_bug.cgi?id=2372385",
-            "https://bugzilla.redhat.com/show_bug.cgi?id=2372406",
-            "https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2025-49794",
-            "https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2025-49795",
-            "https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2025-49796",
-            "https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2025-6021",
-            "https://errata.rockylinux.org/RLSA-2025:10630",
-            "https://linux.oracle.com/cve/CVE-2025-49795.html",
-            "https://linux.oracle.com/errata/ELSA-2025-10630.html",
-            "https://nvd.nist.gov/vuln/detail/CVE-2025-49795",
-            "https://www.cve.org/CVERecord?id=CVE-2025-49795"
-          ],
-          "PublishedDate": "2025-06-16T16:15:19.203Z",
-          "LastModifiedDate": "2025-10-27T18:15:41.043Z"
-        },
-        {
-          "VulnerabilityID": "CVE-2025-6021",
-          "PkgID": "libxml2@2.13.4-r6",
-          "PkgName": "libxml2",
-          "PkgIdentifier": {
-            "PURL": "pkg:apk/alpine/libxml2@2.13.4-r6?arch=x86_64\u0026distro=3.21.3",
-            "UID": "62876aa4513edab3"
-          },
-          "InstalledVersion": "2.13.4-r6",
-          "FixedVersion": "2.13.9-r0",
-          "Status": "fixed",
-          "Layer": {
-            "Digest": "sha256:400c1de759f415b6b2a0ba96bcef3e516f26171d5930757dcddc3d6971bf3e81",
-            "DiffID": "sha256:c5b2dfcc7ced4485ca40d2e6258f958c40a789f7bff4128952699131d9f6d252"
-          },
-          "PrimaryURL": "https://avd.aquasec.com/nvd/cve-2025-6021",
-          "DataSource": {
-            "ID": "alpine",
-            "Name": "Alpine Secdb",
-            "URL": "https://secdb.alpinelinux.org/"
-          },
-          "Fingerprint": "sha256:3e2413c1abcb4734fd32c72d9926c2f95a87d8a7a837065cef545de00bc5415f",
-          "Title": "libxml2: Integer Overflow in xmlBuildQName() Leads to Stack Buffer Overflow in libxml2",
-          "Description": "A flaw was found in libxml2's xmlBuildQName function, where integer overflows in buffer size calculations can lead to a stack-based buffer overflow. This issue can result in memory corruption or a denial of service when processing crafted input.",
-          "Severity": "HIGH",
-          "CweIDs": [
-            "CWE-121",
-            "CWE-787"
-          ],
-          "VendorSeverity": {
-            "alma": 3,
-            "amazon": 3,
-            "azure": 2,
-            "cbl-mariner": 2,
-            "oracle-oval": 3,
-            "photon": 3,
-            "redhat": 2,
-            "rocky": 3,
-            "ubuntu": 2
-          },
-          "CVSS": {
-            "redhat": {
-              "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
-              "V3Score": 7.5
-            }
-          },
-          "References": [
-            "https://access.redhat.com/errata/RHSA-2025:10630",
-            "https://access.redhat.com/errata/RHSA-2025:10698",
-            "https://access.redhat.com/errata/RHSA-2025:10699",
-            "https://access.redhat.com/errata/RHSA-2025:11580",
-            "https://access.redhat.com/errata/RHSA-2025:11673",
-            "https://access.redhat.com/errata/RHSA-2025:12098",
-            "https://access.redhat.com/errata/RHSA-2025:12099",
-            "https://access.redhat.com/errata/RHSA-2025:12199",
-            "https://access.redhat.com/errata/RHSA-2025:12237",
-            "https://access.redhat.com/errata/RHSA-2025:12239",
-            "https://access.redhat.com/errata/RHSA-2025:12240",
-            "https://access.redhat.com/errata/RHSA-2025:12241",
-            "https://access.redhat.com/errata/RHSA-2025:13267",
-            "https://access.redhat.com/errata/RHSA-2025:13289",
-            "https://access.redhat.com/errata/RHSA-2025:13325",
-            "https://access.redhat.com/errata/RHSA-2025:13335",
-            "https://access.redhat.com/errata/RHSA-2025:13336",
-            "https://access.redhat.com/errata/RHSA-2025:14059",
-            "https://access.redhat.com/errata/RHSA-2025:14396",
-            "https://access.redhat.com/errata/RHSA-2025:15308",
-            "https://access.redhat.com/errata/RHSA-2025:15672",
-            "https://access.redhat.com/errata/RHSA-2025:19020",
-            "https://access.redhat.com/security/cve/CVE-2025-6021",
-            "https://bugzilla.redhat.com/2372373",
-            "https://bugzilla.redhat.com/2372385",
-            "https://bugzilla.redhat.com/2372406",
-            "https://bugzilla.redhat.com/show_bug.cgi?id=2372373",
-            "https://bugzilla.redhat.com/show_bug.cgi?id=2372385",
-            "https://bugzilla.redhat.com/show_bug.cgi?id=2372406",
-            "https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2025-49794",
-            "https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2025-49796",
-            "https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2025-6021",
-            "https://errata.almalinux.org/9/ALSA-2025-10699.html",
-            "https://errata.rockylinux.org/RLSA-2025:10699",
-            "https://gitlab.gnome.org/GNOME/libxml2/-/issues/926",
-            "https://linux.oracle.com/cve/CVE-2025-6021.html",
-            "https://linux.oracle.com/errata/ELSA-2025-12240.html",
-            "https://lists.debian.org/debian-lts-announce/2025/07/msg00014.html",
-            "https://nvd.nist.gov/vuln/detail/CVE-2025-6021",
-            "https://ubuntu.com/security/notices/USN-7694-1",
-            "https://www.cve.org/CVERecord?id=CVE-2025-6021"
-          ],
-          "PublishedDate": "2025-06-12T13:15:25.59Z",
-          "LastModifiedDate": "2025-11-29T01:16:03.137Z"
         }
       ]
     }
